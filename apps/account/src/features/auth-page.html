@@ -55,7 +55,8 @@
       [attr.aria-invalid]="invalid('password')"
       [attr.aria-describedby]="invalid('password') ? 'password-help password-error' : 'password-help'"
     /><span id="password-help" class="field-help"
-      >Use a passphrase of 12–128 characters, with at least four different characters.</span
+      >{{kind==='sign-in' ? 'Enter the password for your Caelora account.' : 'Use a passphrase of
+      12–128 characters, with at least four different characters.'}}</span
     >@if(invalid('password')){<span id="password-error" class="field-error"
       >Your password must contain 12–128 characters.</span
     >}

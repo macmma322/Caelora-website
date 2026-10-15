@@ -1,0 +1,49 @@
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="portal-header">
+  <a class="portal-brand" [href]="config.websiteUrl"
+    ><img src="/brand/caelora-wordmark.webp" width="480" height="146" alt="Caelora"
+  /></a>
+  <span class="eyebrow">Your account</span>
+  <a class="portal-return" [href]="config.websiteUrl"
+    >Return to the world <span aria-hidden="true">↗</span></a
+  >
+</header>
+<div class="portal-layout" [class.portal-guest]="!api.user()">
+  @if(api.user()){
+  <nav class="portal-nav" aria-label="Account navigation">
+    <span class="eyebrow nav-label">Your place in Caelora</span>
+    <a
+      routerLink="/account"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{exact:true}"
+      ariaCurrentWhenActive="page"
+      >Overview</a
+    >
+    <a routerLink="/account/profile" routerLinkActive="active" ariaCurrentWhenActive="page"
+      >Profile</a
+    >
+    <a routerLink="/account/security" routerLinkActive="active" ariaCurrentWhenActive="page"
+      >Security & sessions</a
+    >
+    <a routerLink="/account/notifications" routerLinkActive="active" ariaCurrentWhenActive="page"
+      >Notifications
+      <span class="notification-count" aria-label="Unread notifications"
+        >{{api.unread()===null?"—":api.unread()}}</span
+      ></a
+    >
+    <button type="button" class="nav-signout" (click)="signout()" [disabled]="signingOut()">
+      {{signingOut()?"Signing out…":"Sign out"}}
+    </button>
+  </nav>
+  }
+  <main id="main">
+    @if(error()){
+    <div class="alert error" role="alert">{{error()}}</div>
+    }
+    <router-outlet />
+  </main>
+</div>
+<footer class="portal-footer">
+  <span>Caelora · In development</span
+  ><span>Creating an account does not grant game ownership.</span>
+</footer>

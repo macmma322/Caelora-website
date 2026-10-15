@@ -139,7 +139,7 @@
   <div class="account-actions">
     <button class="button secondary" (click)="cancel()" [disabled]="busy()" autofocus>Cancel</button
     ><button class="button" (click)="confirm()" [disabled]="busy()">
-      {{busy()?'Applying…':'Confirm action'}}
+      {{busy()?'Applying…':action.title.replace('?','')}}
     </button>
   </div>
   }

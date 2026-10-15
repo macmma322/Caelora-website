@@ -7,8 +7,7 @@ import { AccountApi } from './core/account-api';
   selector: 'caelora-root',
   standalone: true,
   imports: [RouterLink, RouterLinkActive, RouterOutlet],
-  template:
-    '<a class="skip-link" href="#main">Skip to content</a><header class="portal-header"><a class="portal-brand" [href]="config.websiteUrl"><img src="/brand/caelora-wordmark.webp" width="480" height="146" alt="Caelora" /></a><span class="eyebrow">Your account</span></header><div class="portal-layout"><nav class="portal-nav" aria-label="Account navigation">@if(api.user()){<a routerLink="/account" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" ariaCurrentWhenActive="page">Overview</a><a routerLink="/account/profile" routerLinkActive="active" ariaCurrentWhenActive="page">Profile</a><a routerLink="/account/security" routerLinkActive="active" ariaCurrentWhenActive="page">Security & sessions</a><a routerLink="/account/notifications" routerLinkActive="active" ariaCurrentWhenActive="page">Notifications <span class="notification-count" aria-label="Unread notifications">{{api.unread()===null?"—":api.unread()}}</span></a><button type="button" class="nav-signout" (click)="signout()" [disabled]="signingOut()">{{signingOut()?"Signing out…":"Sign out"}}</button>}@else{<a routerLink="/sign-in" routerLinkActive="active" ariaCurrentWhenActive="page">Sign in</a><a routerLink="/register" routerLinkActive="active" ariaCurrentWhenActive="page">Create account</a><a routerLink="/forgot-password" routerLinkActive="active" ariaCurrentWhenActive="page">Account recovery</a>}<a [href]="config.websiteUrl">Return to the world ↗</a></nav><main id="main">@if(error()){<div class="alert error" role="alert">{{error()}}</div>}<router-outlet /></main></div><footer class="portal-footer">Caelora · In development · Accounts are separate from game ownership.</footer>',
+  templateUrl: './shell.html',
 })
 export class AccountShell {
   readonly config = inject(RUNTIME_CONFIG);
