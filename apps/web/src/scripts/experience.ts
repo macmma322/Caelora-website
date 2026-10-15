@@ -16,7 +16,6 @@ function configureMotion() {
   let journeyTop = 0;
   let journeyTravel = 1;
   const visible = new Set<HTMLElement>();
-  let chapter = '';
   const geometries = new Map<HTMLElement, { top: number; height: number }>();
   const layers = journey
     ? new Map(
@@ -59,13 +58,8 @@ function configureMotion() {
       const progress = clamp((y - journeyTop) / journeyTravel);
       const arrival = clamp((progress - 0.3) / 0.5);
       const nextChapter = progress < 0.5 ? 'world' : 'your-path';
-      if (
-        nextChapter !== chapter &&
-        y >= journeyTop - 100 &&
-        y <= journeyTop + journeyTravel + 100
-      ) {
-        chapter = nextChapter;
-        setCurrentChapter(chapter);
+      if (y >= journeyTop - 100 && y <= journeyTop + journeyTravel + 100) {
+        setCurrentChapter(nextChapter);
       }
       const distant = layers.get('distant');
 
@@ -105,6 +99,20 @@ function configureMotion() {
   );
   [...scenes, ...(journey ? [journey] : [])].forEach((scene) => observer.observe(scene));
   measure();
+  void document.fonts.ready.then(() => {
+    if (!signal.aborted) {
+      measure();
+      schedule();
+    }
+  });
+  addEventListener(
+    'pageshow',
+    () => {
+      measure();
+      schedule();
+    },
+    { signal },
+  );
   addEventListener('scroll', schedule, { passive: true, signal });
   addEventListener(
     'resize',
@@ -128,7 +136,12 @@ function configureMotion() {
     { signal },
   );
   function visitHome(behavior: ScrollBehavior) {
+    measure();
     if (journey) scrollTo({ top: journeyTop + journeyTravel * 0.86, behavior });
+    if (behavior === 'instant' && home) {
+      home.tabIndex = -1;
+      home.focus({ preventScroll: true });
+    }
   }
   document.addEventListener(
     'click',
@@ -181,14 +194,11 @@ function configureMotion() {
 }
 configureMotion();
 motionQuery.addEventListener('change', configureMotion);
-addEventListener(
-  'pagehide',
-  () => {
-    teardown();
-    motionQuery.removeEventListener('change', configureMotion);
-  },
-  { once: true },
-);
+addEventListener('pagehide', (event) => {
+  if (event.persisted) return;
+  teardown();
+  motionQuery.removeEventListener('change', configureMotion);
+});
 
 const viewer = document.querySelector<HTMLDialogElement>('.art-viewer');
 const artworkLinks = [...document.querySelectorAll<HTMLAnchorElement>('[data-artwork]')];
@@ -208,7 +218,8 @@ async function showArtwork(index: number) {
   error.hidden = true;
   image.hidden = true;
   heading.textContent =
-    link.closest('figure')?.querySelector('figcaption > span')?.textContent ?? 'Concept study';
+    link.closest('figure')?.querySelector('figcaption > span, figcaption')?.textContent ??
+    'Concept study';
   position.textContent = `${current + 1} / ${artworkLinks.length}`;
   const preload = new Image();
   preload.src = link.href;

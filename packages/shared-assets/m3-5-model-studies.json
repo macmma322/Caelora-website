@@ -1,0 +1,50 @@
+[
+  {
+    "name": "falcon",
+    "source": "D:/Caelora-source-assets/Bonds/Falcon/Meshy_AI_Block_Falcon_1009091117_texture.blend",
+    "triangles": 3178946,
+    "sha256": "b21e97ac53f75d872f72414e303dbfd4261f4e285d514ef500615a6614adee70",
+    "renderEngine": "Blender 5.2.2 / Cycles, 24 samples, AgX, orthographic studio, transparent film",
+    "packedTextures": "3 x 2048px; source inspection found no missing external images",
+    "usage": "Offline-rendered model study, not gameplay or a web-ready mesh",
+    "rights": "User-identified Caelora source master; Meshy provider/plan redistribution rights not independently verified",
+    "outputs": [
+      {
+        "filename": "falcon-640.webp",
+        "width": 640,
+        "height": 640,
+        "bytes": 49316
+      },
+      {
+        "filename": "falcon-960.webp",
+        "width": 960,
+        "height": 960,
+        "bytes": 66608
+      }
+    ]
+  },
+  {
+    "name": "wolf",
+    "source": "D:/Caelora-source-assets/Bonds/Wolf/Meshy_AI_Blockfur_Wolf_1009090039_texture.blend",
+    "triangles": 2339845,
+    "sha256": "372946f4aacba29583acc90ecbde8a3c835aa6bed890b66c22b4b37b15b3307b",
+    "renderEngine": "Blender 5.2.2 / Cycles, 24 samples, AgX, orthographic studio, transparent film",
+    "packedTextures": "3 x 2048px; source inspection found no missing external images",
+    "usage": "Offline-rendered model study, not gameplay or a web-ready mesh",
+    "rights": "User-identified Caelora source master; Meshy provider/plan redistribution rights not independently verified",
+    "outputs": [
+      {
+        "filename": "wolf-640.webp",
+        "width": 640,
+        "height": 640,
+        "bytes": 45990
+      },
+      {
+        "filename": "wolf-960.webp",
+        "width": 960,
+        "height": 960,
+        "bytes": 75476
+      }
+    ]
+  }
+]

@@ -220,3 +220,7 @@ html[data-keyboard] *::before,
 html[data-keyboard] *::after {
   transition-duration: 0s !important;
 }
+
+html[data-keyboard] {
+  scroll-behavior: auto;
+}
