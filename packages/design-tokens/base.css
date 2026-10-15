@@ -121,6 +121,37 @@ input {
 input[aria-invalid='true'] {
   border-color: var(--color-danger);
 }
+.field-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: var(--text-sm);
+  color: var(--color-paper);
+}
+.field-error {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--color-danger);
+  font-size: var(--text-xs);
+}
+.alert {
+  padding: 1rem 1.25rem;
+  border-left: 2px solid var(--color-accent);
+  background: var(--color-surface);
+  font-size: var(--text-sm);
+}
+.alert.error {
+  background: var(--surface-error);
+  border-color: var(--color-danger);
+}
+.alert.success {
+  background: var(--surface-success);
+  border-color: var(--color-success);
+}
+.loading-block {
+  min-height: 6rem;
+  background: var(--color-surface);
+  border-radius: var(--radius-medium);
+}
 .skip-link {
   position: fixed;
   top: -8rem;
