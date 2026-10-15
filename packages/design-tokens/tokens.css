@@ -9,7 +9,7 @@
   --color-faint: oklch(67% 0.027 153);
   --color-accent: oklch(77% 0.092 77);
   --color-accent-hover: oklch(86% 0.078 78);
-  --color-on-accent: oklch(20% 0.016 163);
+  --color-on-accent: oklch(14% 0.016 163);
   --color-line: oklch(38% 0.021 153);
   --color-danger: oklch(81% 0.084 28);
   --color-success: oklch(80% 0.06 145);

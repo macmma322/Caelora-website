@@ -21,6 +21,7 @@ body {
   display: inline-flex;
   align-items: center;
   width: max-content;
+  min-height: 44px;
   color: var(--color-paper);
   text-decoration: none;
   font-family: var(--font-display);

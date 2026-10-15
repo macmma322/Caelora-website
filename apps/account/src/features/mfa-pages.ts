@@ -74,10 +74,10 @@ export class MfaChallengePage {
       this.api.user.set(profile);
       await this.router.navigateByUrl('/account');
       this.api.mfaChallenge.set('');
+      this.form.reset();
     } catch (e) {
       this.error.set(e instanceof Error ? e.message : 'Verification failed.');
     } finally {
-      this.form.reset();
       this.busy.set(false);
     }
   }
