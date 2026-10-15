@@ -1,9 +1,9 @@
 :root {
   color-scheme: dark;
-  --color-ink: #101c1c;
-  --color-surface: #162524;
-  --color-raised: #1c302e;
-  --color-deep: #0d1617;
+  --color-ink: #0d1c1d;
+  --color-surface: #162b29;
+  --color-raised: #203a35;
+  --color-deep: #0a1517;
   --color-paper: #eee7d8;
   --color-muted: #b6c1b8;
   --color-faint: #8faaa0;
@@ -12,6 +12,11 @@
   --color-on-accent: #182221;
   --color-line: #40514a;
   --color-danger: #f0aaa0;
+  --color-success: #abd0b2;
+  --color-warning: #e5c58f;
+  --surface-error: #3b2525;
+  --surface-success: #1b332b;
+  --space-section: clamp(4.5rem, 8vw, 8rem);
   --font-display: 'Caelora Cinzel', 'Palatino Linotype', Georgia, serif;
   --font-body: 'Manrope', 'Segoe UI', sans-serif;
   --text-xs: 0.75rem;

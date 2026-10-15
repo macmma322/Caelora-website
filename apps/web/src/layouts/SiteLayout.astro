@@ -50,15 +50,12 @@ const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
     <header class="site-header">
       <div class="container header-inner">
         <a class="wordmark" href="/" aria-label="Caelora home">
-          <span class="sigil" aria-hidden="true">
-            ✧
-          </span>{' '}
-          CAELORA
+          <img src="/brand/caelora-wordmark.webp" width="480" height="146" alt="Caelora" />
         </a>
         <nav class="desktop-nav" aria-label="Main navigation">
           <a href="/#world">The world</a>
           <a href="/#your-path">Your path</a>
-          <a href="/#journal">Journal</a>
+          <a href="/#journal">Development</a>
           <a href="/#media">Media</a>
         </nav>
         <div class="header-end">
@@ -88,12 +85,20 @@ const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
       <div class="container footer-top">
         <div>
           <a class="wordmark" href="/">
-            CAELORA
+            <img
+              src="/brand/caelora-wordmark.webp"
+              width="480"
+              height="146"
+              alt="Caelora"
+              loading="lazy"
+            />
           </a>
           <p>A world worth making your own.</p>
         </div>
         <nav aria-label="Footer navigation">
           <a href="/journal/foundation/">Development</a>
+          <a href="/#world">The world</a>
+          {accountUrl && <a href={accountUrl}>Your account</a>}
           <a href="/project-information/">Community & support</a>
           <a href="/project-information/#legal">Legal & privacy</a>
         </nav>

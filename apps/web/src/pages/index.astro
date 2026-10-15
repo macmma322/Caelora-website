@@ -1,30 +1,29 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import SectionHeading from '../components/SectionHeading.astro';
-const gallery = [
+const studies = [
   {
-    src: 'valley-960',
-    width: 960,
-    height: 540,
-    title: 'A world beyond the walls',
-    type: 'Environment concept',
-    alt: 'A cloaked traveller, a falcon and an expansive mountain valley beneath an amber sky.',
+    src: 'valley-1672',
+    width: 1672,
+    height: 941,
+    title: 'Beyond the familiar',
+    kind: 'Environment study',
+    alt: 'A traveller and falcon overlook a forested valley, stone settlements and a castle in warm evening light.',
   },
   {
     src: 'dragon-960',
     width: 960,
     height: 840,
-    title: 'Old powers. Wild places.',
-    type: 'Creature concept',
-    alt: 'A horned voxel dragon with layered charcoal scales and ochre-red wings on a grey studio background.',
+    title: 'Something older than kingdoms',
+    kind: 'Creature study',
+    alt: 'An angular horned dragon with layered charcoal scales and wide ochre-red wings.',
   },
   {
     src: 'atlas-960',
     width: 960,
     height: 720,
-    title: 'Somewhere to get lost',
-    type: 'Atlas concept',
-    alt: 'An illustrated atlas of imagined forests, mountains, rivers and settlements, presented in a decorated book.',
+    title: 'A world waiting to be charted',
+    kind: 'Atlas study',
+    alt: 'An ornate open atlas illustrating imagined forests, rivers, villages and mountain ranges.',
   },
 ];
 ---
@@ -33,219 +32,218 @@ const gallery = [
   <main id="main">
     <section class="hero" aria-labelledby="hero-title">
       <picture class="hero-art">
-        <source media="(max-width: 40rem)" srcset="/media/valley-960.webp" />
+        <source media="(max-width:40rem)" srcset="/media/valley-960.webp" />
         <img
           src="/media/valley-1672.webp"
           width="1672"
           height="941"
-          alt="Caelora concept artwork: a traveller surveys a forested voxel kingdom, with waterfalls, distant mountains and a dragon above the castle."
+          alt="Caelora environment concept: a cloaked traveller, a falcon and a vast valley beneath a dragon and a distant castle."
           fetchpriority="high"
-          decoding="async"
         />
       </picture>
       <div class="hero-shade"></div>
       <div class="container hero-content">
-        <span class="eyebrow hero-kicker">
-          <span class="fine-rule"></span> An independent voxel fantasy sandbox
+        <span class="hero-kicker eyebrow">
+          <span class="status-dot" aria-hidden="true"></span> An independent fantasy sandbox · In
+          development
         </span>
-        <h1 id="hero-title">CAELORA</h1>
+        <h1 id="hero-title">
+          <span class="sr-only">Caelora</span>
+          <img
+            class="hero-logo"
+            src="/brand/caelora-logo.webp"
+            width="1000"
+            height="353"
+            alt=""
+            fetchpriority="high"
+          />
+        </h1>
         <p class="hero-promise">
           A world to inhabit.
           <br />
           <span>Not a story you are forced to finish.</span>
         </p>
         <p class="hero-description">
-          Beyond the familiar, a world is taking shape.
-          <br class="desktop-break" /> Find your own place within it.
+          Find your own way through the wilderness.
+          <br />
+          Leave a little of yourself behind.
         </p>
         <div class="hero-actions">
           <a class="button" href="#world">
-            Explore Caelora <span aria-hidden="true">↘</span>
+            Enter the world <span aria-hidden="true">↘</span>
           </a>
-          <a class="journal-link" href="#journal">
-            Development journal <span aria-hidden="true">↗</span>
+          <a class="button secondary" href="#journal">
+            From the workshop <span aria-hidden="true">↗</span>
           </a>
         </div>
       </div>
       <div class="container hero-foot">
         <a href="#world" class="scroll-note">
-          <span aria-hidden="true">↓</span> A world of possibilities
+          <span aria-hidden="true">↓</span> Discover Caelora
         </a>
-        <span>
-          Concept artwork <span aria-hidden="true">/</span> Not gameplay footage
-        </span>
+        <span>Environment concept · Not gameplay footage</span>
       </div>
     </section>
-
-    <div class="world-strip">
-      <div class="container">
-        <span>Explore the unknown</span>
-        <i aria-hidden="true">✧</i>
-        <span>Build a belonging</span>
-        <i aria-hidden="true">✧</i>
-        <span>Leave your own mark</span>
-      </div>
-    </div>
-
-    <section
-      class="container introduction section-space"
-      id="world"
-      aria-labelledby="introduction-title"
-    >
+    <section class="container introduction section-space" id="world" aria-labelledby="world-title">
       <div>
-        <span class="eyebrow">01 / Welcome to Caelora</span>
-        <h2 id="introduction-title">
-          The world is open.
+        <span class="eyebrow">A place before a prophecy</span>
+        <h2 id="world-title">
+          Not every adventure
           <br />
-          <span>The life is yours.</span>
+          needs a <em>chosen one.</em>
         </h2>
       </div>
       <div class="introduction-copy">
-        <p>Not every adventure needs a prophecy.</p>
-        <p>
-          Caelora is an independent medieval-fantasy voxel sandbox in development, built around a
-          simple idea: a world should make room for the person you choose to become.
+        <p class="lead">
+          Some worlds give you a story.
+          <br />
+          This one is being built to make room for yours.
         </p>
         <p>
-          Our vision brings exploration, gathering, building and survival together with villages,
-          creatures and stories you can seek out — or walk past.
+          Caelora is a medieval-fantasy voxel sandbox in development. Exploration, gathering,
+          building and survival are the foundations of a world you can make your own.
         </p>
         <a class="text-link" href="/journal/foundation/">
           Read the founding vision <span aria-hidden="true">↗</span>
         </a>
       </div>
     </section>
-
-    <section class="landscape" aria-labelledby="landscape-title">
+    <section class="landscape" aria-labelledby="explore-title">
       <img
         src="/media/valley-1672.webp"
         width="1672"
         height="941"
-        alt="Environment concept showing a river weaving through forested cliffs, with distant mountains and settlements."
+        alt="Valley environment concept, with pine forests and waterfalls beneath distant stone architecture."
         loading="lazy"
-        decoding="async"
       />
       <div class="landscape-shade"></div>
       <div class="container landscape-content">
-        <span class="eyebrow">The call of the unfamiliar</span>
-        <h2 id="landscape-title">
-          Take the long
+        <span class="eyebrow">01 / Explore</span>
+        <h2 id="explore-title">
+          There is always
           <br />
-          way home.
+          another horizon.
         </h2>
         <p>
-          Mist through the pines. A ruin across the river.
-          <br />A mountain you have never stood upon.
+          A ruin across the river. A light beyond the trees.
+          <br />
+          The freedom to follow your curiosity.
         </p>
-        <p class="small-note">The exploration vision · Environment concept</p>
+        <span class="art-label">The exploration vision / Environment concept</span>
       </div>
-      <span class="image-corner">CAELORA / WORLD STUDIES</span>
+      <div class="landscape-index" aria-hidden="true">
+        <span>FOREST</span>
+        <i></i>
+        <span>STONE</span>
+        <i></i>
+        <span>SKY</span>
+      </div>
     </section>
-
     <section class="container section-space paths" id="your-path" aria-labelledby="paths-title">
       <div class="paths-heading">
-        <span class="eyebrow">02 / Find your own rhythm</span>
+        <span class="eyebrow">02 / Make a life here</span>
         <h2 id="paths-title">
-          More than one way
+          A shelter.
+          <br />A settlement.
           <br />
-          to belong.
+          <em>A sense of belonging.</em>
         </h2>
         <p>
-          These are the pillars guiding development.
-          <br />
-          They describe the intended world, not a launch feature list.
+          From your first gathered materials to the place you call home: the small things should
+          matter.
         </p>
+        <span class="development-note">Development direction — not a released feature list.</span>
       </div>
       <div class="path-list">
         <article>
-          <span class="path-number">I.</span>
+          <span class="path-number">I</span>
           <div>
-            <h3>Raise something that lasts.</h3>
+            <h3>Build with purpose.</h3>
             <p>
-              Gather what the land offers. Learn to survive. Turn a first shelter into a home with a
-              story in every stone.
+              Gather, shape and build. The vision begins with a first shelter and leaves room for
+              something more personal.
             </p>
-            <span class="eyebrow">Building & survival</span>
+            <span class="eyebrow">Building</span>
           </div>
         </article>
         <article>
-          <span class="path-number">II.</span>
+          <span class="path-number">II</span>
           <div>
-            <h3>Share the world with the wild.</h3>
+            <h3>Learn the wilderness.</h3>
             <p>
-              Dragons, wildlife and mythical creatures are part of the vision. Some encounters
-              should make you stop and look up.
+              Find resources, prepare for the journey and make survival part of everyday life — not
+              just a number on a screen.
             </p>
-            <span class="eyebrow">Dragons & creatures</span>
+            <span class="eyebrow">Survival</span>
           </div>
         </article>
         <article>
-          <span class="path-number">III.</span>
+          <span class="path-number">III</span>
           <div>
-            <h3>From a village. To a kingdom.</h3>
+            <h3>Find your people.</h3>
             <p>
-              Villagers, guilds and kingdoms give the world a human scale. Player-created nations
+              Villagers, guilds and kingdoms belong to the intended world. Player-created nations
               are a longer-term ambition.
             </p>
-            <span class="eyebrow">People & possibility</span>
+            <span class="eyebrow">Villages & kingdoms</span>
           </div>
         </article>
       </div>
     </section>
-
     <section class="creature-section" aria-labelledby="creature-title">
       <div class="container creature-inner">
-        <div class="creature-art">
+        <figure class="creature-art">
           <img
             src="/media/dragon-960.webp"
             width="960"
             height="840"
-            alt="Caelora dragon concept: angular stone-coloured horns, layered scales and wide burnt-orange wings."
+            alt="A Caelora dragon concept, preserving its horns, wing structure and layered scales."
             loading="lazy"
-            decoding="async"
           />
-          <span class="art-label">Creature study / Concept artwork</span>
-        </div>
-        <div>
-          <SectionHeading
-            label="A little wonder. A little fear."
-            title="You are not the only legend here."
-          />
+          <figcaption class="art-label">Creature concept / Visual development</figcaption>
+        </figure>
+        <div class="creature-copy">
+          <span class="eyebrow">03 / Meet the extraordinary</span>
+          <h2 id="creature-title">
+            Look up.
+            <br />
+            <em>You are not alone.</em>
+          </h2>
           <p>
-            The horizon should hold more than scenery. We want a world with creatures that feel as
-            though they belonged here long before you arrived.
+            Dragons, wildlife and mythical creatures are part of Caelora’s vision. The world should
+            feel inhabited long before you arrive.
+          </p>
+          <p class="development-note">
+            Creature designs and gameplay systems are still in development.
           </p>
           <a class="text-link" href="#media">
-            Browse the concept gallery <span aria-hidden="true">↗</span>
+            Explore the concept studies <span aria-hidden="true">↗</span>
           </a>
         </div>
       </div>
     </section>
-
     <section class="container freedom section-space" aria-labelledby="freedom-title">
-      <span class="eyebrow">No chosen one required</span>
+      <span class="eyebrow">04 / Choose your own path</span>
       <h2 id="freedom-title">
-        Be a wanderer.
-        <br />A builder. <em>A little of both.</em>
+        Follow the lore.
+        <br />
+        Or just <em>follow the river.</em>
       </h2>
       <p>
-        Seek the lore or follow the river. Build close to others or find a quiet corner.
-        <br class="desktop-break" /> The ambition is freedom — including the freedom to take your
-        time.
+        Be a wanderer, a builder, a little of both.
+        <br />
+        The ambition is freedom — including the freedom to take your time.
       </p>
-      <span class="freedom-mark" aria-hidden="true">
-        ✧
-      </span>
+      <div class="freedom-rule" aria-hidden="true"></div>
     </section>
-
     <section class="journal-section section-space" id="journal" aria-labelledby="journal-title">
       <div class="container">
         <div class="section-row">
           <div>
-            <span class="eyebrow">03 / From the workshop</span>
-            <h2 id="journal-title">The development journal</h2>
+            <span class="eyebrow">The development journal</span>
+            <h2 id="journal-title">A world in the making.</h2>
           </div>
-          <span class="muted journal-status">A world in the making</span>
+          <span class="development-note">Notes from an independent project</span>
         </div>
         <a class="journal-entry" href="/journal/foundation/">
           <div class="journal-image">
@@ -253,15 +251,14 @@ const gallery = [
               src="/media/atlas-960.webp"
               width="960"
               height="720"
-              alt="Caelora atlas concept in an ornate open book, showing imagined terrain and settlements."
+              alt="Caelora's illustrated atlas concept, an early visual study of an imagined world."
               loading="lazy"
-              decoding="async"
             />
+            <span class="image-note">Atlas concept</span>
           </div>
           <div class="journal-copy">
             <span class="eyebrow">
-              Founding note <span aria-hidden="true">·</span>{' '}
-              <time datetime="2026-10-15">15 October 2026</time>
+              Founding note · <time datetime="2026-10-15">15 October 2026</time>
             </span>
             <h3>
               Making room for
@@ -269,75 +266,156 @@ const gallery = [
               your kind of adventure.
             </h3>
             <p>
-              What Caelora is setting out to become, why the world comes first, and what this first
-              website does — and does not — promise.
+              The idea behind Caelora, the world-first approach, and an honest account of what this
+              beginning promises.
             </p>
             <span class="text-link">
-              Read the founding note <span aria-hidden="true">↗</span>
+              Read the journal <span aria-hidden="true">↗</span>
             </span>
           </div>
         </a>
       </div>
     </section>
-
     <section class="container section-space media-section" id="media" aria-labelledby="media-title">
       <div class="section-row">
         <div>
-          <span class="eyebrow">04 / A glimpse of the vision</span>
-          <h2 id="media-title">From the world of Caelora</h2>
+          <span class="eyebrow">From the artist’s table</span>
+          <h2 id="media-title">Glimpses of Caelora.</h2>
         </div>
-        <p class="muted gallery-note">
-          Concept studies. Not gameplay.
+        <p class="development-note">
+          Concept artwork, not gameplay.
           <br />
-          Artwork may evolve during development.
+          Open a study to see the full composition.
         </p>
       </div>
       <div class="gallery">
-        {gallery.map((item, index) => (
+        {studies.map((art, index) => (
           <figure class:list={['gallery-item', { 'gallery-wide': index === 0 }]}>
-            <a href={`/media/${item.src}.webp`} aria-label={`Open artwork: ${item.title}`}>
+            <a
+              href={'/media/' + art.src + '.webp'}
+              data-artwork={index}
+              aria-label={'View ' + art.title}
+            >
               <img
-                src={`/media/${item.src}.webp`}
-                width={item.width}
-                height={item.height}
-                alt={item.alt}
+                src={'/media/' + art.src + '.webp'}
+                width={art.width}
+                height={art.height}
+                alt={art.alt}
                 loading="lazy"
-                decoding="async"
               />
               <span class="gallery-open" aria-hidden="true">
                 ↗
               </span>
             </a>
             <figcaption>
-              <span>{item.title}</span>
-              <span class="eyebrow">{item.type}</span>
+              <span>{art.title}</span>
+              <span class="eyebrow">{art.kind}</span>
             </figcaption>
           </figure>
         ))}
       </div>
     </section>
-
     <section class="closing">
       <div class="container closing-inner">
         <div>
-          <span class="eyebrow">The journey is taking shape</span>
+          <span class="eyebrow">Build. Explore. Belong.</span>
           <h2>
-            Every world starts
+            A world worth
             <br />
-            with a possibility.
+            making your own.
           </h2>
         </div>
         <div>
           <p>
-            Follow the making of Caelora.
+            Caelora is in development.
             <br />
             No release date has been announced.
           </p>
           <a class="button secondary" href="/journal/foundation/">
-            Inside the project <span aria-hidden="true">↗</span>
+            Follow the making <span aria-hidden="true">↗</span>
           </a>
         </div>
       </div>
     </section>
   </main>
+  <dialog class="art-viewer" aria-labelledby="viewer-title">
+    <div class="viewer-toolbar">
+      <span class="eyebrow">Caelora / Concept studies</span>
+      <button type="button" class="viewer-close" aria-label="Close artwork">
+        Close <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="viewer-image">
+      <img id="viewer-image" alt="" width="1672" height="941" />
+      <p class="viewer-error" role="status" hidden>
+        Artwork could not be loaded. Close the viewer and try again.
+      </p>
+    </div>
+    <div class="viewer-caption">
+      <div>
+        <h2 id="viewer-title">Concept study</h2>
+        <p>Concept artwork. Not gameplay. Designs may change.</p>
+      </div>
+      <div class="viewer-controls">
+        <button type="button" data-direction="-1" aria-label="Previous artwork">
+          ←
+        </button>
+        <span class="viewer-position" aria-live="polite"></span>
+        <button type="button" data-direction="1" aria-label="Next artwork">
+          →
+        </button>
+      </div>
+    </div>
+  </dialog>
+  <script>
+    const viewer = document.querySelector<HTMLDialogElement>('.art-viewer');
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-artwork]')];
+    const image = document.querySelector<HTMLImageElement>('#viewer-image');
+    const heading = document.querySelector<HTMLElement>('#viewer-title');
+    const position = document.querySelector<HTMLElement>('.viewer-position');
+    const error = document.querySelector<HTMLElement>('.viewer-error');
+    let current = 0;
+    let trigger: HTMLElement | null = null;
+    function show(index: number) {
+      current = (index + links.length) % links.length;
+      const link = links[current];
+      const source = link?.querySelector('img');
+      if (!source || !image || !heading || !position || !error) return;
+      error.hidden = true;
+      image.src = link.href;
+      image.alt = source.alt;
+      heading.textContent =
+        link.closest('figure')?.querySelector('figcaption > span')?.textContent ?? 'Concept study';
+      position.textContent = current + 1 + ' / ' + links.length;
+    }
+    links.forEach((link, index) =>
+      link.addEventListener('click', (event) => {
+        if (!viewer) return;
+        event.preventDefault();
+        trigger = link;
+        show(index);
+        viewer.showModal();
+      }),
+    );
+    viewer?.querySelector('.viewer-close')?.addEventListener('click', () => viewer.close());
+    viewer
+      ?.querySelectorAll<HTMLButtonElement>('[data-direction]')
+      .forEach((button) =>
+        button.addEventListener('click', () => show(current + Number(button.dataset.direction))),
+      );
+    viewer?.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        show(current + 1);
+      }
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        show(current - 1);
+      }
+    });
+    viewer?.addEventListener('close', () => trigger?.focus());
+    image?.addEventListener('error', () => {
+      if (error) error.hidden = false;
+    });
+  </script>
 </SiteLayout>
