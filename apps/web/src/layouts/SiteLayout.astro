@@ -2,8 +2,6 @@
 import '@caelora/design-tokens/tokens.css';
 import '@caelora/design-tokens/base.css';
 import '../styles/site.css';
-import '@fontsource/manrope/latin-400.css';
-import '@fontsource/manrope/latin-600.css';
 interface Props {
   title?: string;
   description?: string;
@@ -30,7 +28,13 @@ const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
     <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preload" href="/fonts/cinzel-variable.ttf" as="font" type="font/ttf" crossorigin />
+    <link
+      rel="preload"
+      href="/fonts/cinzel-latin-variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Caelora" />
     <meta property="og:title" content={title} />
@@ -50,7 +54,14 @@ const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
     <header class="site-header">
       <div class="container header-inner">
         <a class="wordmark" href="/" aria-label="Caelora home">
-          <img src="/brand/caelora-wordmark.webp" width="480" height="146" alt="Caelora" />
+          <img
+            src="/brand/caelora-nav-360.webp"
+            srcset="/brand/caelora-nav-240.webp 240w, /brand/caelora-nav-360.webp 360w, /brand/caelora-nav-480.webp 480w"
+            sizes="(max-width:45rem) 145px, 230px"
+            width="480"
+            height="146"
+            alt="Caelora"
+          />
         </a>
         <nav class="desktop-nav" aria-label="Main navigation">
           <a href="/#world">The world</a>
@@ -61,13 +72,13 @@ const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
         <div class="header-end">
           {accountUrl ? (
             <a class="portal-link" href={accountUrl}>
-              Account portal <span aria-hidden="true">↗</span>
+              Your account <span aria-hidden="true">↗</span>
             </a>
           ) : (
             <span class="development-tag">In development</span>
           )}
           <details class="mobile-nav">
-            <summary aria-label="Toggle navigation">
+            <summary aria-label="Menu">
               Menu <span aria-hidden="true">☰</span>
             </summary>
             <nav aria-label="Mobile navigation">
@@ -86,7 +97,9 @@ const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
         <div>
           <a class="wordmark" href="/">
             <img
-              src="/brand/caelora-wordmark.webp"
+              src="/brand/caelora-nav-360.webp"
+              srcset="/brand/caelora-nav-240.webp 240w, /brand/caelora-nav-360.webp 360w, /brand/caelora-nav-480.webp 480w"
+              sizes="(max-width:45rem) 145px, 230px"
               width="480"
               height="146"
               alt="Caelora"
@@ -109,6 +122,7 @@ const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
       </div>
     </footer>
     <script>
+      import '../scripts/navigation';
       const menu = document.querySelector<HTMLDetailsElement>('.mobile-nav');
       menu?.querySelectorAll('a').forEach((link) =>
         link.addEventListener('click', () => {

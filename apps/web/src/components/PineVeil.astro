@@ -1,0 +1,36 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+const trees = [
+  { x: 8, y: 28, size: 1.25 },
+  { x: 104, y: 85, size: 0.95 },
+  { x: 178, y: 130, size: 0.9 },
+  { x: 244, y: 176, size: 0.65 },
+  { x: 334, y: 224, size: 0.5 },
+  { x: 434, y: 266, size: 0.42 },
+  { x: 1165, y: 252, size: 0.45 },
+  { x: 1260, y: 210, size: 0.65 },
+  { x: 1345, y: 152, size: 0.8 },
+  { x: 1440, y: 76, size: 1.05 },
+  { x: 1550, y: 8, size: 1.35 },
+];
+---
+
+<svg
+  class={className}
+  viewBox="0 0 1600 420"
+  fill="currentColor"
+  aria-hidden="true"
+  focusable="false"
+  preserveAspectRatio="none"
+>
+  {trees.map((tree) => (
+    <path
+      d="M0 0 8 35 3 35 3 41 20 66 11 66 11 72 31 99 19 99 19 105 44 137 27 137 27 143 57 175 36 175 36 181 69 219 45 219 45 225 77 259 8 246 7 290 -7 290 -8 246 -77 259 -45 225 -45 219 -69 219 -36 181 -36 175 -57 175 -27 143 -27 137 -44 137 -19 105 -19 99 -31 99 -11 72 -11 66 -20 66 -3 41 -3 35 -8 35Z"
+      transform={`translate(${tree.x} ${tree.y}) scale(${tree.size})`}
+    />
+  ))}
+  <path d="M0 276 Q170 266 320 335 T680 370 Q900 396 1120 350 T1600 260V420H0Z" />
+</svg>

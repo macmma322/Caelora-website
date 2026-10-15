@@ -1,0 +1,58 @@
+[
+  {
+    "source": "valley-1672.webp",
+    "sha256": "d28bc40b87b9c2c7fcf8694cb953eb72a772c457f529c8e4aa41be45417942b0",
+    "operation": "resize/compress only; original composition unchanged",
+    "outputs": [
+      {
+        "filename": "valley-640.avif",
+        "width": 640,
+        "bytes": 56092
+      },
+      {
+        "filename": "valley-960.avif",
+        "width": 960,
+        "bytes": 109276
+      },
+      {
+        "filename": "valley-1672.avif",
+        "width": 1672,
+        "bytes": 259075
+      }
+    ]
+  },
+  {
+    "source": "dragon-960.webp",
+    "sha256": "f03ce5c70aa7e349103f141642b352ddb1bc51cea7ac0ce5475270bd04cce899",
+    "operation": "resize/compress only; original composition unchanged",
+    "outputs": [
+      {
+        "filename": "dragon-640.avif",
+        "width": 640,
+        "bytes": 47707
+      },
+      {
+        "filename": "dragon-960.avif",
+        "width": 960,
+        "bytes": 97331
+      }
+    ]
+  },
+  {
+    "source": "atlas-960.webp",
+    "sha256": "fea1b888596a197c69f6677d0cd0b9c767b62a5411075513c10e180a44744b6a",
+    "operation": "resize/compress only; original composition unchanged",
+    "outputs": [
+      {
+        "filename": "atlas-640.avif",
+        "width": 640,
+        "bytes": 77964
+      },
+      {
+        "filename": "atlas-960.avif",
+        "width": 960,
+        "bytes": 166416
+      }
+    ]
+  }
+]
