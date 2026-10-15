@@ -218,7 +218,8 @@ async function showArtwork(index: number) {
   error.hidden = true;
   image.hidden = true;
   heading.textContent =
-    link.closest('figure')?.querySelector('figcaption > span, figcaption')?.textContent ??
+    link.closest('figure')?.querySelector('figcaption > span')?.textContent ??
+    link.closest('figure')?.querySelector('figcaption')?.textContent ??
     'Concept study';
   position.textContent = `${current + 1} / ${artworkLinks.length}`;
   const preload = new Image();

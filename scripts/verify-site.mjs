@@ -25,6 +25,14 @@ for (const file of htmlFiles) {
     !html.includes('id="main"')
   )
     throw new Error(`Missing page semantics: ${file}`);
+  for (const match of html.matchAll(/\bsrcset="([^"]+)"/g)) {
+    for (const candidate of match[1].split(',')) {
+      const target = candidate.trim().split(/\s+/)[0];
+      if (!target || /^(?:https?:|data:)/.test(target)) continue;
+      await access(path.join(root, target));
+      checked++;
+    }
+  }
   for (const match of html.matchAll(/<(?:img)\b[^>]*>/g)) {
     if (!/\balt=/.test(match[0]) || !/\bwidth=/.test(match[0]) || !/\bheight=/.test(match[0]))
       throw new Error(`Missing image attributes: ${file}`);

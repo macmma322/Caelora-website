@@ -1615,3 +1615,16 @@ body:has(.art-viewer[open]) {
     gap: 0.5rem;
   }
 }
+@media (max-width: 60rem) {
+  .hero-brand {
+    width: min(56vw, 430px);
+    top: 135px;
+  }
+}
+@media (max-width: 45rem) {
+  .hero-brand {
+    top: 120px;
+    width: 80%;
+    max-width: 370px;
+  }
+}
