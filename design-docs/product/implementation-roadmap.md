@@ -6,11 +6,15 @@ Static Astro landing/journal/information/404, shared CSS tokens, Angular informa
 
 ## Milestone 2 — identity and demonstrable account security
 
+M2 completed locally: refined visual identity and real registration, mail verification, sign-in/out, recovery, profile and security/session overview. See [M2 report](../audits/m2-report.md). The original milestone goals below remain useful acceptance context; native OIDC provider selection and production operations are still future work.
+
 Implement ASP.NET Core Identity + PostgreSQL migrations, verified email through a real sandbox provider, secure cookies, CSRF, session revocation, recovery, audit logging and rate-limit policies. Introduce one useful account flow with server authorization and end-to-end tests before adding profile decoration. Select a maintained OIDC provider/server strategy for native PKCE flows rather than building one from scratch. Decide operational hosting, actual origins, secret/key storage, publisher/legal ownership and art rights before any public launch.
 
 Acceptance: registration/verification/sign-in/sign-out/recovery operate with sandbox infrastructure; session revocation actually invalidates credentials; sensitive data is inaccessible on direct API calls; error paths, CSRF and cross-account access are tested. Do not spend this milestone on badges, chat, cosmetic roles or a large component library.
 
 ## Milestone 3 — entitlement proof before sales
+
+Revised next priority after M2: harden the account foundation with a durable mail outbox, MFA/step-up design, retention/cleanup and operational recovery, then verify a real HTTPS staging environment and healthy container runtime. Entitlement/provider proof below follows that gate; no live commerce should precede it.
 
 Design source grants and provider event idempotency. Implement Steam linking/ticket/ownership validation using real developer setup and test identities. Implement Stripe test-mode checkout and signed lifecycle webhooks, with refund/chargeback/reconciliation tests. Ensure a second valid ownership source survives revocation of the first. Review terms/support/refunds, retention and abuse response before activating live commerce.
 

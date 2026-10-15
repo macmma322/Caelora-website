@@ -7,11 +7,12 @@ This repository is the surrounding platform: public discovery, future commerce, 
 ```mermaid
 flowchart LR
   Visitor --> Web[Astro static public site]
-  Player --> Account[Angular account shell]
+  Player --> Account[Angular account application]
   Operator --> Admin[Separate Angular admin shell]
   Account --> API[ASP.NET modular platform API]
   Admin -. Future authorized contracts .-> API
   API --> DB[(PostgreSQL durable state)]
+  API --> Mail[Configured identity SMTP / local Mailpit]
   API --> Cache[(Redis transient state)]
   Launcher[Future native Avalonia launcher] -. OIDC PKCE / API .-> API
   Steam[Steam servers] -. Verified identity and ownership .-> API
@@ -20,7 +21,7 @@ flowchart LR
   Unity[Separate Unity game] -. Bounded authorization lease .-> API
 ```
 
-Dashed connections are architecture for later milestones, not current integrations. The only application API today is GET `/api/v1/platform`. PostgreSQL/Redis readiness integrations are real and opt-in locally; both are mandatory outside Development/Testing.
+Dashed connections are future architecture. M2 implements Identity account operations alongside `/api/v1/platform`; PostgreSQL owns durable users, browser sessions and security events. SMTP delivery is real, locally verified through Mailpit. Redis readiness remains opt-in locally and has not been runtime-verified on this workstation; both dependencies are mandatory outside Development/Testing. See [current API operations](api-boundaries.md) and [M2 evidence](../audits/m2-report.md).
 
 ## Backend boundary and evolution
 

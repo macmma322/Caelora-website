@@ -2,7 +2,7 @@
 
 The public website and future commercial/account ecosystem for an independent native Unity 6 medieval-fantasy voxel sandbox. The Unity game remains in its own repository and does not depend on this frontend code.
 
-**Foundation milestone:** working Astro site, two informational Angular shells and a small ASP.NET Core API. No purchases, registration, Steam ownership verification, launcher distribution, email delivery or privileged admin functions exist yet. Nothing is deployed publicly.
+**M2 milestone:** refined Astro website using the actual Caelora identity; functioning Angular accounts backed by ASP.NET Core Identity, PostgreSQL and real local Mailpit delivery. Registration, verification, browser login/logout, recovery, profile and security activity are implemented. Purchases, Steam linking, launcher distribution and privileged admin operations remain absent. Nothing is deployed publicly. See the [M2 report](design-docs/audits/m2-report.md).
 
 ## Start locally
 
@@ -21,12 +21,14 @@ Use separate terminals for each:
 | Application                       | Command             | Address                                       |
 | --------------------------------- | ------------------- | --------------------------------------------- |
 | Public website                    | npm run dev:web     | http://localhost:4321                         |
-| Account introduction              | npm run dev:account | http://localhost:4200                         |
+| Account application               | npm run dev:account | http://localhost:4200                         |
 | Administrative access information | npm run dev:admin   | http://localhost:4300                         |
 | Platform API                      | npm run dev:api     | http://localhost:5080                         |
 | Optional dependencies             | npm run infra:up    | PostgreSQL 55432 / Redis 56379, loopback only |
 
-The API exposes `/api/v1/platform`, `/health/live`, `/health/ready` and Development/Testing `/openapi/v1.json`. It runs without dependencies locally unless explicitly enabled; readiness reports enabled flags. Unimplemented sensitive endpoints return 404.
+The API exposes `/api/v1/platform`, health/readiness and Development/Testing OpenAPI. Accounts are explicitly opt-in; their routes require PostgreSQL, durable keys and configured mail. Unimplemented sensitive endpoints remain absent. See [API boundaries](design-docs/architecture/api-boundaries.md).
+
+For the verified Windows identity setup (PostgreSQL 18 binaries installed), run `npm run infra:native`, then `pwsh -NoProfile -File scripts/dev-api.ps1 -Migrate` before starting the API. Open Mailpit at http://localhost:8025 for local verification/reset links. Set public `PUBLIC_ACCOUNT_URL=http://localhost:4200` in apps/web/.env. Run `npm run test:identity` for the real PostgreSQL suite; default verification skips those cases without an explicit test connection. See [local development](design-docs/deployment/local-development.md).
 
 For dependencies, run `pwsh -NoProfile -File scripts/bootstrap.ps1 -EnableDependencies`, start infrastructure, apply the explicit migration with `pwsh -NoProfile -File scripts/dev-api.ps1 -Migrate`, then start the API. Existing local files are preserved, and generated credentials are never printed. See [local development](design-docs/deployment/local-development.md) for container commands and details.
 
