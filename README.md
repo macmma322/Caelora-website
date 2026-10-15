@@ -2,7 +2,7 @@
 
 The public website and future commercial/account ecosystem for an independent native Unity 6 medieval-fantasy voxel sandbox. The Unity game remains in its own repository and does not depend on this frontend code.
 
-**M2 milestone:** refined Astro website using the actual Caelora identity; functioning Angular accounts backed by ASP.NET Core Identity, PostgreSQL and real local Mailpit delivery. Registration, verification, browser login/logout, recovery, profile and security activity are implemented. Purchases, Steam linking, launcher distribution and privileged admin operations remain absent. Nothing is deployed publicly. See the [M2 report](design-docs/audits/m2-report.md).
+**M3 milestone:** the M2 website/account foundation now includes a PostgreSQL transactional email outbox, real authenticator MFA/recovery codes, browser-session revocation, persisted security notifications and bounded retention. Native PostgreSQL/Mailpit and trusted local HTTPS are exercised. Container runtime and public staging remain unverified. Purchases, Steam linking, launcher distribution and privileged admin operations remain absent. Nothing is deployed publicly. See [M3 verification](design-docs/audits/m3-verification.md), [HTTPS commands](design-docs/deployment/https-staging-validation.md) and the historical [M2 report](design-docs/audits/m2-report.md).
 
 ## Start locally
 
