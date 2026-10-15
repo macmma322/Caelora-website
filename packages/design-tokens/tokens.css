@@ -26,7 +26,7 @@
   --color-clear: oklch(15% 0.014 173 / 0%);
   --color-bronze-line: oklch(77% 0.092 77 / 30%);
   --font-display: 'Caelora Cinzel', 'Palatino Linotype', Georgia, serif;
-  --font-body: 'Manrope', 'Segoe UI', sans-serif;
+  --font-body: 'EB Garamond', Georgia, serif;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
@@ -44,8 +44,11 @@
   --space-12: 3rem;
   --space-16: 4rem;
   --space-24: 6rem;
-  --radius-small: 2px;
-  --radius-medium: 4px;
+  --radius-control: 4px;
+  --radius-card: 6px;
+  --radius-dialog: 8px;
+  --radius-small: var(--radius-control);
+  --radius-medium: var(--radius-card);
   --duration-press: 100ms;
   --duration-fast: 160ms;
   --duration-normal: 240ms;

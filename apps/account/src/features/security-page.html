@@ -20,7 +20,7 @@
   <div class="account-actions">
     <button class="button secondary" (click)="ask('regenerate')" [disabled]="busy()">
       Replace recovery codes</button
-    ><button class="button secondary danger-action" (click)="ask('disable')" [disabled]="busy()">
+    ><button class="button danger" (click)="ask('disable')" [disabled]="busy()">
       Disable authenticator
     </button>
   </div>
@@ -37,15 +37,25 @@
   </p>
   <form [formGroup]="form" (ngSubmit)="reauthenticate()" [attr.aria-busy]="busy()">
     <div class="form-field">
-      <label for="reauth-password">Current password</label
-      ><input
-        id="reauth-password"
-        type="password"
-        autocomplete="current-password"
-        formControlName="password"
-        maxlength="128"
-        required
-      />
+      <label for="reauth-password">Current password</label>
+      <div class="password-control">
+        <input
+          id="reauth-password"
+          [type]="showPassword()?'text':'password'"
+          autocomplete="current-password"
+          formControlName="password"
+          maxlength="128"
+          required
+        /><button
+          type="button"
+          class="password-toggle"
+          (click)="togglePassword()"
+          [attr.aria-pressed]="showPassword()"
+          [attr.aria-label]="showPassword()?'Hide password':'Show password'"
+        >
+          {{showPassword()?'Hide':'Show'}}
+        </button>
+      </div>
     </div>
     @if(mfa()?.enabled){
     <div class="form-field">
@@ -96,7 +106,7 @@
   <div class="account-actions">
     <button class="button secondary" (click)="ask('others')" [disabled]="busy()">
       Sign out other sessions</button
-    ><button class="button secondary danger-action" (click)="ask('everywhere')" [disabled]="busy()">
+    ><button class="button danger" (click)="ask('everywhere')" [disabled]="busy()">
       Sign out everywhere
     </button>
   </div>
@@ -127,20 +137,14 @@
   </p>
   <a routerLink="/forgot-password">Request a password reset ↗</a>
 </div>
-<dialog
-  #confirmationDialog
-  class="security-dialog"
-  aria-labelledby="confirmation-title"
-  (close)="closed()"
->
-  @if(confirmation();as action){
-  <h2 id="confirmation-title">{{action.title}}</h2>
-  <p>{{action.description}}</p>
-  <div class="account-actions">
-    <button class="button secondary" (click)="cancel()" [disabled]="busy()" autofocus>Cancel</button
-    ><button class="button" (click)="confirm()" [disabled]="busy()">
-      {{busy()?'Applying…':action.title.replace('?','')}}
-    </button>
-  </div>
-  }
-</dialog>
+@if(confirmation();as action){
+<caelora-confirmation-dialog
+  [title]="action.title"
+  [description]="action.description"
+  [confirmLabel]="action.title.replace('?','')"
+  [danger]="action.kind==='disable'||action.kind==='everywhere'||action.kind==='selected'"
+  [busy]="busy()"
+  (confirmed)="confirm()"
+  (closed)="confirmation.set(null)"
+/>
+}

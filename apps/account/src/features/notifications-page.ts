@@ -47,7 +47,12 @@ interface NoticePage {
       <div class="notification-list">
         @for (item of result.items; track item.id) {
           <article [class.unread]="!item.readAt">
-            <span class="eyebrow">{{ item.severity }} · {{ item.readAt ? 'Read' : 'Unread' }}</span>
+            <div class="notification-meta">
+              <span class="notification-state" [class.is-unread]="!item.readAt">{{
+                item.readAt ? 'Read' : 'Unread'
+              }}</span>
+              <span>{{ item.category }} · {{ item.severity }}</span>
+            </div>
             <h2>{{ item.title }}</h2>
             <p>{{ item.summary }}</p>
             <time [attr.datetime]="item.createdAt">{{ item.createdAt | date: 'medium' }}</time>

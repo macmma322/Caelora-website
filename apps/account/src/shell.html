@@ -3,10 +3,30 @@
   <a class="portal-brand" [href]="config.websiteUrl"
     ><img src="/brand/caelora-wordmark.webp" width="480" height="146" alt="Caelora"
   /></a>
-  <span class="eyebrow">Your account</span>
-  <a class="portal-return" [href]="config.websiteUrl"
-    >Return to the world <span aria-hidden="true">↗</span></a
-  >
+  <span class="eyebrow">Account portal</span>
+  <div class="portal-header-actions">
+    <a class="portal-return" [href]="config.websiteUrl"
+      >Return to the world <span aria-hidden="true">↗</span></a
+    >
+    @if(api.user();as user){
+    <details #accountMenu class="account-menu">
+      <summary aria-label="Open account menu">
+        <span>{{user.displayName}}</span><span aria-hidden="true">▾</span>
+      </summary>
+      <nav aria-label="Account menu">
+        <a routerLink="/account" (click)="closeMenus()">Account</a>
+        <a routerLink="/account/profile" (click)="closeMenus()">Profile</a>
+        <a routerLink="/account/security" (click)="closeMenus()">Security</a>
+        <a routerLink="/account/notifications" (click)="closeMenus()">Notifications</a>
+        <button type="button" (click)="signout()" [disabled]="signingOut()">
+          {{signingOut()?"Signing out…":"Sign out"}}
+        </button>
+      </nav>
+    </details>
+    }@else{
+    <a class="portal-account-trigger" routerLink="/sign-in">Sign in</a>
+    }
+  </div>
 </header>
 <div class="portal-layout" [class.portal-guest]="!api.user()">
   @if(api.user()){
@@ -28,13 +48,30 @@
     <a routerLink="/account/notifications" routerLinkActive="active" ariaCurrentWhenActive="page"
       >Notifications
       <span class="notification-count" aria-label="Unread notifications"
-        >{{api.unread()===null?"—":api.unread()}}</span
+        >{{api.unread()===null?"…":api.unread()}}</span
       ></a
     >
     <button type="button" class="nav-signout" (click)="signout()" [disabled]="signingOut()">
       {{signingOut()?"Signing out…":"Sign out"}}
     </button>
   </nav>
+  <details #mobileAccountMenu class="account-mobile-nav">
+    <summary>Account navigation <span aria-hidden="true">▾</span></summary>
+    <nav aria-label="Mobile account navigation">
+      <a routerLink="/account" (click)="closeMenus()">Overview</a>
+      <a routerLink="/account/profile" (click)="closeMenus()">Profile</a>
+      <a routerLink="/account/security" (click)="closeMenus()">Security & sessions</a>
+      <a routerLink="/account/notifications" (click)="closeMenus()"
+        >Notifications
+        <span class="notification-count" aria-label="Unread notifications"
+          >{{api.unread()===null?"…":api.unread()}}</span
+        ></a
+      >
+      <button type="button" (click)="signout()" [disabled]="signingOut()">
+        {{signingOut()?"Signing out…":"Sign out"}}
+      </button>
+    </nav>
+  </details>
   }
   <main id="main">
     @if(error()){

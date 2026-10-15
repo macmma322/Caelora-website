@@ -1,5 +1,5 @@
-@import '@fontsource/manrope/latin-400.css';
-@import '@fontsource/manrope/latin-600.css';
+@import '@fontsource/eb-garamond/latin-400.css';
+@import '@fontsource/eb-garamond/latin-600.css';
 *,
 *::before,
 *::after {
@@ -19,7 +19,9 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
 }
 button,
@@ -80,15 +82,17 @@ h3 {
   min-height: 48px;
   padding: 0.8rem 1.6rem;
   border: 1px solid var(--color-accent);
-  border-radius: var(--radius-small);
+  border-radius: var(--radius-control);
   background: var(--color-accent);
   color: var(--color-on-accent);
   text-decoration: none;
-  font-size: var(--text-xs);
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-size: var(--text-base);
+  font-weight: 600;
+  line-height: 1;
   transition:
     background var(--duration-fast) ease,
+    border-color var(--duration-fast) ease,
+    color var(--duration-fast) ease,
     transform var(--duration-fast) var(--ease-out);
   cursor: pointer;
 }
@@ -99,28 +103,72 @@ h3 {
   transform: scale(0.98);
 }
 .button.secondary {
-  background: transparent;
+  background: var(--color-surface);
   color: var(--color-paper);
-  border-color: var(--color-line);
+  border-color: var(--color-bronze-line);
 }
 .button.secondary:hover {
   background: var(--color-raised);
+  border-color: var(--color-accent);
+}
+.button.ghost {
+  background: transparent;
+  color: var(--color-muted);
+  border-color: transparent;
+}
+.button.ghost:hover {
+  background: var(--color-surface);
+  color: var(--color-paper);
+}
+.button.danger {
+  background: var(--surface-error);
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+.button.danger:hover {
+  background: var(--color-danger);
+  color: var(--color-deep);
+}
+.button[aria-busy='true'] {
+  cursor: progress;
 }
 button:disabled,
 .button[aria-disabled='true'] {
   opacity: 0.5;
   cursor: not-allowed;
 }
-input {
+input:not([type='checkbox']):not([type='radio']),
+select,
+textarea {
   width: 100%;
   min-height: 48px;
   padding: 0.7rem 1rem;
   border: 1px solid var(--color-line);
   background: var(--color-deep);
   color: var(--color-paper);
-  border-radius: var(--radius-small);
+  border-radius: var(--radius-control);
+  transition:
+    border-color var(--duration-fast) ease,
+    background var(--duration-fast) ease;
 }
-input[aria-invalid='true'] {
+textarea {
+  min-height: 7rem;
+  resize: vertical;
+}
+select {
+  color-scheme: dark;
+}
+input[type='checkbox'],
+input[type='radio'] {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  accent-color: var(--color-accent);
+  flex: 0 0 auto;
+}
+input[aria-invalid='true'],
+select[aria-invalid='true'],
+textarea[aria-invalid='true'] {
   border-color: var(--color-danger);
 }
 .field-label {
@@ -188,15 +236,21 @@ body {
 }
 button,
 input,
+select,
+textarea,
 summary,
 a {
   touch-action: manipulation;
 }
-input {
+input,
+select,
+textarea {
   font-size: 1rem;
   line-height: 1.5;
 }
-input:focus-visible {
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
   outline-offset: 3px;
 }
 .button:disabled:active {
@@ -207,7 +261,16 @@ input:focus-visible {
     background: var(--color-accent);
   }
   .button.secondary:hover {
+    background: var(--color-surface);
+    border-color: var(--color-bronze-line);
+  }
+  .button.ghost:hover {
     background: transparent;
+    color: var(--color-muted);
+  }
+  .button.danger:hover {
+    background: var(--surface-error);
+    color: var(--color-danger);
   }
 }
 @media (prefers-reduced-motion: no-preference) {

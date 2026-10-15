@@ -13,27 +13,27 @@ import { AccountApi } from '../core/account-api';
 type Kind = 'register' | 'sign-in' | 'forgot-password' | 'reset-password' | 'verify-email';
 const copy: Record<Kind, { label: string; title: string; description: string; action: string }> = {
   register: {
-    label: 'Your first step',
-    title: 'Make a place for yourself.',
+    label: 'Begin here',
+    title: 'Create your account.',
     description:
       'Create your Caelora account. Game ownership and purchases are separate and are not available yet.',
     action: 'Create account',
   },
   'sign-in': {
-    label: 'Welcome back',
-    title: 'Return to Caelora.',
-    description: 'Sign in with your verified email address.',
+    label: 'Sign in',
+    title: 'Welcome back.',
+    description: 'Return with your verified email address and account password.',
     action: 'Sign in',
   },
   'forgot-password': {
     label: 'Account recovery',
-    title: 'Find your way back.',
+    title: 'Reset your password.',
     description:
       'Request a password reset link. The response is the same whether or not an eligible account exists.',
     action: 'Request reset link',
   },
   'reset-password': {
-    label: 'A fresh beginning',
+    label: 'Account recovery',
     title: 'Choose a new password.',
     description:
       'Reset your password using the link sent to your email. Existing browser sessions will end.',
@@ -41,7 +41,7 @@ const copy: Record<Kind, { label: string; title: string; description: string; ac
   },
   'verify-email': {
     label: 'Confirm your email',
-    title: 'One last step.',
+    title: 'Verify your email.',
     description:
       'Open the verification link from your email, then confirm it here. You must verify your email before signing in.',
     action: 'Verify email',
@@ -79,6 +79,8 @@ export class AuthPage {
   readonly error = signal('');
   readonly message = signal('');
   readonly submitted = signal(false);
+  readonly showPassword = signal(false);
+  readonly showRepeat = signal(false);
   readonly form = this.builder.nonNullable.group(
     {
       email: [
@@ -118,6 +120,10 @@ export class AuthPage {
   invalid(field: 'email' | 'password' | 'repeat' | 'displayName'): boolean {
     const control = this.form.controls[field];
     return control.invalid && (control.touched || this.submitted());
+  }
+  togglePassword(field: 'password' | 'repeat'): void {
+    const state = field === 'password' ? this.showPassword : this.showRepeat;
+    state.update((visible) => !visible);
   }
   async submit(): Promise<void> {
     this.submitted.set(true);

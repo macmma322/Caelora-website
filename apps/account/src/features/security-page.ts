@@ -1,8 +1,9 @@
-import { ChangeDetectorRef, Component, ElementRef, ViewChild, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AccountApi, type SecurityOverview } from '../core/account-api';
+import { ConfirmationDialog } from '../shared/confirmation-dialog';
 
 type Action = {
   kind: 'selected' | 'others' | 'everywhere' | 'regenerate' | 'disable';
@@ -12,7 +13,7 @@ type Action = {
 };
 @Component({
   standalone: true,
-  imports: [DatePipe, ReactiveFormsModule, RouterLink],
+  imports: [DatePipe, ReactiveFormsModule, RouterLink, ConfirmationDialog],
   templateUrl: './security-page.html',
 })
 export class SecurityDashboard {
@@ -26,14 +27,17 @@ export class SecurityDashboard {
   readonly error = signal('');
   readonly message = signal('');
   readonly confirmation = signal<Action | null>(null);
-  @ViewChild('confirmationDialog', { static: true }) private dialog!: ElementRef<HTMLDialogElement>;
-  private trigger: HTMLElement | null = null;
+  @ViewChild(ConfirmationDialog) private dialog!: ConfirmationDialog;
+  readonly showPassword = signal(false);
   readonly form = inject(FormBuilder).nonNullable.group({
     password: ['', [Validators.required, Validators.maxLength(128)]],
     code: ['', [Validators.maxLength(16)]],
   });
   constructor() {
     void this.load();
+  }
+  togglePassword(): void {
+    this.showPassword.update((visible) => !visible);
   }
   async load(): Promise<void> {
     this.loading.set(true);
@@ -93,17 +97,10 @@ export class SecurityDashboard {
                   'End this browser session?',
                   'The selected browser session will lose access on its next request.',
                 ];
-    this.trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     this.confirmation.set({ kind, id, title: text[0]!, description: text[1]! });
     this.changeDetector.detectChanges();
-    this.dialog.nativeElement.showModal();
-  }
-  closed(): void {
-    this.confirmation.set(null);
-    this.trigger?.focus();
-  }
-  cancel(): void {
-    this.dialog.nativeElement.close();
+    this.dialog.open(trigger);
   }
   async confirm(): Promise<void> {
     const action = this.confirmation();
@@ -121,7 +118,7 @@ export class SecurityDashboard {
         this.api.user.set(null);
         this.api.unread.set(null);
         this.api.notice.set(result.message);
-        this.dialog.nativeElement.close();
+        this.dialog.close();
         if (result.recoveryCodes?.length) {
           this.api.recoveryCodes.set(result.recoveryCodes);
           await this.router.navigateByUrl('/recovery-codes');
@@ -133,7 +130,7 @@ export class SecurityDashboard {
           { scope: action.kind, sessionId: action.id },
         );
         this.message.set(result.message);
-        this.dialog.nativeElement.close();
+        this.dialog.close();
         if (result.signedOut) {
           this.api.user.set(null);
           this.api.unread.set(null);
@@ -146,7 +143,7 @@ export class SecurityDashboard {
       }
     } catch (e) {
       this.error.set(e instanceof Error ? e.message : 'The action failed.');
-      this.dialog.nativeElement.close();
+      this.dialog.close();
     } finally {
       this.busy.set(false);
     }

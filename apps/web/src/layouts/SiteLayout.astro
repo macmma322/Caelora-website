@@ -8,7 +8,7 @@ interface Props {
   noindex?: boolean;
 }
 const {
-  title = 'Caelora — A world to inhabit',
+  title = 'Caelora · A world to inhabit',
   description = 'An independent medieval-fantasy voxel sandbox in development. Explore the vision for a world of wild landscapes, building, dragons and player-made stories.',
   noindex = false,
 } = Astro.props;
@@ -72,7 +72,7 @@ const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
         <div class="header-end">
           {accountUrl ? (
             <a class="portal-link" href={accountUrl}>
-              Your account <span aria-hidden="true">↗</span>
+              Sign in <span aria-hidden="true">↗</span>
             </a>
           ) : (
             <span class="development-tag">In development</span>
@@ -111,7 +111,7 @@ const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
         <nav aria-label="Footer navigation">
           <a href="/journal/foundation/">Development</a>
           <a href="/#world">The world</a>
-          {accountUrl && <a href={accountUrl}>Your account</a>}
+          {accountUrl && <a href={accountUrl}>Account</a>}
           <a href="/project-information/">Community & support</a>
           <a href="/project-information/#legal">Legal & privacy</a>
         </nav>

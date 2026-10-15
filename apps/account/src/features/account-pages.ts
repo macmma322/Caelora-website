@@ -8,18 +8,33 @@ import { AccountApi, type AccountProfile } from '../core/account-api';
   standalone: true,
   imports: [RouterLink, DatePipe],
   template: `<span class="eyebrow">Your account</span>
-    <h1>Welcome back,<br />{{ api.user()?.displayName }}.</h1>
-    <p class="lead">A place for your identity, and the journeys still to come.</p>
+    <h1>Welcome back, {{ api.user()?.displayName }}.</h1>
+    <p class="lead">Manage your Caelora identity and account security.</p>
     <div class="account-summary">
-      <div>
-        <span class="eyebrow">Email</span>
-        <p>{{ api.user()?.email }}</p>
-        <span class="verified-label">Verified</span>
-      </div>
-      <div>
-        <span class="eyebrow">Account created</span>
-        <p>{{ api.user()?.createdAt | date: 'longDate' }}</p>
-      </div>
+      <dl class="account-status-list">
+        <div>
+          <dt>Email address</dt>
+          <dd>{{ api.user()?.email }}</dd>
+        </div>
+        <div>
+          <dt>Email status</dt>
+          <dd class="verified-label">
+            {{ api.user()?.emailVerified ? 'Verified' : 'Not verified' }}
+          </dd>
+        </div>
+        <div>
+          <dt>Authenticator</dt>
+          <dd>{{ mfaLabel() }}</dd>
+        </div>
+        <div>
+          <dt>Active sessions</dt>
+          <dd>{{ sessionLabel() }}</dd>
+        </div>
+        <div>
+          <dt>Account created</dt>
+          <dd>{{ api.user()?.createdAt | date: 'longDate' }}</dd>
+        </div>
+      </dl>
     </div>
     <div class="notice">
       <h2>Your game ownership</h2>
@@ -35,6 +50,31 @@ import { AccountApi, type AccountProfile } from '../core/account-api';
 })
 export class OverviewPage {
   readonly api = inject(AccountApi);
+  readonly mfa = signal<{ enabled: boolean } | 'unavailable' | null>(null);
+  readonly sessions = signal<number | 'unavailable' | null>(null);
+  constructor() {
+    void this.loadStatus();
+  }
+  mfaLabel(): string {
+    const status = this.mfa();
+    if (status === null) return 'Checking…';
+    if (status === 'unavailable') return 'Unavailable';
+    return status.enabled ? 'Enabled' : 'Not enabled';
+  }
+  sessionLabel(): string {
+    const count = this.sessions();
+    return count === null ? 'Checking…' : count === 'unavailable' ? 'Unavailable' : String(count);
+  }
+  private async loadStatus(): Promise<void> {
+    const [mfa, security] = await Promise.allSettled([
+      this.api.request<{ enabled: boolean }>('/api/v1/me/mfa'),
+      this.api.request<{ sessions: unknown[] }>('/api/v1/me/security'),
+    ]);
+    this.mfa.set(mfa.status === 'fulfilled' ? mfa.value : 'unavailable');
+    this.sessions.set(
+      security.status === 'fulfilled' ? security.value.sessions.length : 'unavailable',
+    );
+  }
 }
 
 @Component({
@@ -42,7 +82,7 @@ export class OverviewPage {
   imports: [ReactiveFormsModule],
   template: `<span class="eyebrow">Profile</span>
     <h1>A name of your own.</h1>
-    <p>Your display name can change. Your internal account identifier stays the same.</p>
+    <p class="lead">Update the name shown across your Caelora account.</p>
     @if (error()) {
       <div class="alert error" role="alert">{{ error() }}</div>
     }
@@ -57,17 +97,24 @@ export class OverviewPage {
           formControlName="displayName"
           autocomplete="nickname"
           maxlength="40"
+          aria-describedby="profile-name-help profile-name-state"
           [attr.aria-invalid]="
             form.controls.displayName.touched && form.controls.displayName.invalid
           "
         />
+        <span id="profile-name-help" class="field-help"
+          >Use 2–40 characters. Your permanent account identifier does not change.</span
+        >
         @if (form.controls.displayName.touched && form.controls.displayName.invalid) {
-          <span class="field-error">Enter 2–40 characters.</span>
+          <span class="field-error">Enter a display name of 2–40 characters.</span>
         }
       </div>
-      <button class="button" [disabled]="loading()">
+      <button class="button" [disabled]="loading() || form.pristine" [attr.aria-busy]="loading()">
         {{ loading() ? 'Saving…' : 'Save profile' }}
       </button>
+      <span id="profile-name-state" class="form-state" aria-live="polite">{{
+        form.dirty ? 'Unsaved changes' : 'No unsaved changes'
+      }}</span>
     </form>
     <dl class="account-details">
       <dt>Email address</dt>
@@ -102,6 +149,7 @@ export class ProfilePage {
           this.form.getRawValue(),
         ),
       );
+      this.form.markAsPristine();
       this.saved.set(true);
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Profile could not be saved.');

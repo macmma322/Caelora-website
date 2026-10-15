@@ -7,7 +7,7 @@
 <div class="alert error" role="alert">{{error()}}</div>
 } @if(message()){
 <div class="alert success" role="status">{{message()}}</div>
-<p><a routerLink="/sign-in">Return to sign in</a></p>
+<p><a class="button" routerLink="/sign-in">Return to sign in</a></p>
 } @if(!message()){
 <form [formGroup]="form" (ngSubmit)="submit()" novalidate [attr.aria-busy]="loading()">
   @if(kind==='register'){
@@ -46,15 +46,27 @@
   <div class="form-field">
     <label for="password" class="field-label"
       >{{kind==='reset-password'?'New password':'Password'}}</label
-    ><input
-      id="password"
-      type="password"
-      formControlName="password"
-      [autocomplete]="kind==='sign-in'?'current-password':'new-password'"
-      maxlength="128"
-      [attr.aria-invalid]="invalid('password')"
-      [attr.aria-describedby]="invalid('password') ? 'password-help password-error' : 'password-help'"
-    /><span id="password-help" class="field-help"
+    >
+    <div class="password-control">
+      <input
+        id="password"
+        [type]="showPassword()?'text':'password'"
+        formControlName="password"
+        [autocomplete]="kind==='sign-in'?'current-password':'new-password'"
+        maxlength="128"
+        [attr.aria-invalid]="invalid('password')"
+        [attr.aria-describedby]="invalid('password') ? 'password-help password-error' : 'password-help'"
+      /><button
+        type="button"
+        class="password-toggle"
+        (click)="togglePassword('password')"
+        [attr.aria-pressed]="showPassword()"
+        [attr.aria-label]="showPassword()?'Hide password':'Show password'"
+      >
+        {{showPassword()?'Hide':'Show'}}
+      </button>
+    </div>
+    <span id="password-help" class="field-help"
       >{{kind==='sign-in' ? 'Enter the password for your Caelora account.' : 'Use a passphrase of
       12–128 characters, with at least four different characters.'}}</span
     >@if(invalid('password')){<span id="password-error" class="field-error"
@@ -63,23 +75,32 @@
   </div>
   } @if(repeated){
   <div class="form-field">
-    <label for="repeat" class="field-label">Confirm password</label
-    ><input
-      id="repeat"
-      type="password"
-      formControlName="repeat"
-      autocomplete="new-password"
-      maxlength="128"
-      [attr.aria-invalid]="submitted()&&form.hasError('passwordMismatch')"
-      [attr.aria-describedby]="submitted()&&form.hasError('passwordMismatch') ? 'repeat-error' : null"
-    />@if(submitted()&&form.hasError('passwordMismatch')){<span
-      id="repeat-error"
-      class="field-error"
+    <label for="repeat" class="field-label">Confirm password</label>
+    <div class="password-control">
+      <input
+        id="repeat"
+        [type]="showRepeat()?'text':'password'"
+        formControlName="repeat"
+        autocomplete="new-password"
+        maxlength="128"
+        [attr.aria-invalid]="submitted()&&form.hasError('passwordMismatch')"
+        [attr.aria-describedby]="submitted()&&form.hasError('passwordMismatch') ? 'repeat-error' : null"
+      /><button
+        type="button"
+        class="password-toggle"
+        (click)="togglePassword('repeat')"
+        [attr.aria-pressed]="showRepeat()"
+        [attr.aria-label]="showRepeat()?'Hide confirmed password':'Show confirmed password'"
+      >
+        {{showRepeat()?'Hide':'Show'}}
+      </button>
+    </div>
+    @if(submitted()&&form.hasError('passwordMismatch')){<span id="repeat-error" class="field-error"
       >The passwords do not match.</span
     >}
   </div>
   }
-  <button class="button" type="submit" [disabled]="loading()">
+  <button class="button" type="submit" [disabled]="loading()" [attr.aria-busy]="loading()">
     {{loading()?'Please wait…':kind==='verify-email'&&!hasLink()?'Resend verification
     email':text.action}} <span aria-hidden="true">↗</span>
   </button>

@@ -8,7 +8,7 @@ import { AccountApi, type AccountProfile } from '../core/account-api';
   imports: [ReactiveFormsModule, RouterLink],
   template: `
     <span class="eyebrow">Second factor</span>
-    <h1>Confirm it is you.</h1>
+    <h1>Confirm your sign-in.</h1>
     <p>Enter a fresh authenticator code, or use one of your single-use recovery codes.</p>
     @if (error()) {
       <div class="alert error" role="alert">{{ error() }}</div>
@@ -42,7 +42,7 @@ import { AccountApi, type AccountProfile } from '../core/account-api';
           />
           Use a recovery code</label
         >
-        <button class="button" [disabled]="busy() || form.invalid">
+        <button class="button" [disabled]="busy() || form.invalid" [attr.aria-busy]="busy()">
           {{ busy() ? 'Verifying…' : 'Verify and sign in' }}
         </button>
       </form>
@@ -88,8 +88,8 @@ export class MfaChallengePage {
   imports: [ReactiveFormsModule, RouterLink],
   template: `
     <span class="eyebrow">Authenticator setup</span>
-    <h1>A second lock on your account.</h1>
-    <p>
+    <h1>Add an authenticator.</h1>
+    <p class="lead">
       Use an authenticator app that supports TOTP. Setup expires after ten minutes. Activation ends
       all browser sessions.
     </p>
@@ -98,7 +98,9 @@ export class MfaChallengePage {
     }
     @if (secret()) {
       <ol class="setup-steps">
-        <li>Scan this QR code in your authenticator app, or enter the setup key manually.</li>
+        <li>Scan the QR code in your authenticator app, or enter the setup key manually.</li>
+        <li>Enter the first six-digit code from the app.</li>
+        <li>Store the recovery codes shown after activation.</li>
       </ol>
       @if (qr()) {
         <img
@@ -109,7 +111,7 @@ export class MfaChallengePage {
           alt="Authenticator provisioning QR code. Use the setup key below if you cannot scan it."
         />
       }
-      <p class="field-label">Setup key — keep private</p>
+      <p class="field-label">Setup key · Keep private</p>
       <code class="setup-secret" data-sensitive>{{ secret() }}</code>
       <details>
         <summary>Manual provisioning data</summary>
@@ -127,12 +129,12 @@ export class MfaChallengePage {
             required
           />
         </div>
-        <button class="button" [disabled]="busy() || form.invalid">
+        <button class="button" [disabled]="busy() || form.invalid" [attr.aria-busy]="busy()">
           {{ busy() ? 'Confirming…' : 'Confirm and enable authenticator' }}
         </button>
       </form>
     } @else {
-      <button class="button" (click)="prepare()" [disabled]="busy()">
+      <button class="button" (click)="prepare()" [disabled]="busy()" [attr.aria-busy]="busy()">
         {{ busy() ? 'Preparing…' : 'Prepare authenticator' }}
       </button>
     }
@@ -217,9 +219,11 @@ export class MfaSetupPage implements OnDestroy {
           <code>{{ code }}</code>
         }
       </div>
-      <button class="button secondary" (click)="copy()">Copy recovery codes</button>
+      <div class="account-actions">
+        <button class="button secondary" (click)="copy()">Copy recovery codes</button>
+        <a class="button" routerLink="/sign-in">I have stored my codes · Sign in</a>
+      </div>
       <p role="status">{{ message() }}</p>
-      <a class="button" routerLink="/sign-in">I have stored my codes — sign in</a>
     } @else {
       <p>No codes are available to display. Sign in to manage authenticator security.</p>
       <a routerLink="/sign-in">Sign in</a>
