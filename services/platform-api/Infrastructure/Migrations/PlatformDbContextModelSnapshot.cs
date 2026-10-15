@@ -263,7 +263,8 @@ namespace Caelora.Platform.Api.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SecurityEventId");
+                    b.HasIndex("SecurityEventId")
+                        .IsUnique();
 
                     b.HasIndex("UserId", "ReadAt");
 

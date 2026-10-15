@@ -15,6 +15,9 @@ var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.IsDevelopment())
     builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true).AddJsonFile("appsettings.Identity.Local.json", optional: true).AddEnvironmentVariables().AddCommandLine(args);
 builder.Services.AddAccounts(builder.Configuration, builder.Environment);
+builder.Services.AddSingleton<IValidateOptions<TransportOptions>, TransportOptionsValidator>();
+builder.Services.AddOptions<TransportOptions>().BindConfiguration("Transport").ValidateOnStart();
+builder.Services.AddSingleton<IConfigureOptions<Microsoft.AspNetCore.Builder.ForwardedHeadersOptions>, ForwardingConfiguration>();
 builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = 16 * 1024);
 builder.Logging.ClearProviders();
 builder.Logging.AddJsonConsole(x => x.IncludeScopes = true);
@@ -61,6 +64,8 @@ if (args.Contains("--outbox-status", StringComparer.Ordinal) || args.Any(x => x.
         Console.WriteLine("Retried records: " + await scope.ServiceProvider.GetRequiredService<OutboxProcessor>().Retry(id, CancellationToken.None));
     }
     Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(await db.OutboxMessages.GroupBy(x => new { x.State, x.LastFailure }).Select(group => new { group.Key.State, group.Key.LastFailure, Count = group.Count() }).ToListAsync()));
+    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(await db.OutboxMessages.Where(x => x.State == "Dead" || x.State == "Retry").OrderBy(x => x.CreatedAt).Take(20)
+        .Select(x => new { x.Id, x.Type, x.State, x.Attempts, x.NextAttemptAt, x.ExpiresAt, x.LastFailure }).ToListAsync()));
     return;
 }
 // Explicit operator command, never automatic migration at request startup.
@@ -73,11 +78,19 @@ if (args.Contains("--migrate", StringComparer.Ordinal))
     return;
 }
 app.UseExceptionHandler();
+// Empty trusted-proxy lists must NEVER activate middleware (empty framework lists mean trust all).
+var transport = app.Services.GetRequiredService<IOptions<TransportOptions>>().Value;
+if (transport.TrustedProxies.Length > 0) app.UseForwardedHeaders();
 if (!app.Environment.IsDevelopment() && !app.Environment.IsEnvironment("Testing")) app.UseHsts();
 app.Use(async (context, next) =>
 {
     context.Response.Headers.XContentTypeOptions = "nosniff";
+    context.Response.Headers["Referrer-Policy"] = "no-referrer";
+    context.Response.Headers["X-Frame-Options"] = "DENY";
+    context.Response.Headers.ContentSecurityPolicy = "default-src 'none'; frame-ancestors 'none'; base-uri 'none'";
     context.Response.Headers.CacheControl = "no-store";
+    if ((transport.RequireHttps || (!app.Environment.IsDevelopment() && !app.Environment.IsEnvironment("Testing"))) && !context.Request.IsHttps && !context.Request.Path.StartsWithSegments("/health"))
+    { context.Response.StatusCode = 400; await context.Response.WriteAsJsonAsync(new { title = "HTTPS is required." }); return; }
     await next(context);
 });
 app.UseStatusCodePages();

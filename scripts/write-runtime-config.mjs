@@ -25,10 +25,10 @@ for (const target of targets) {
     `/*
   X-Content-Type-Options: nosniff
   Strict-Transport-Security: max-age=31536000
-  Referrer-Policy: strict-origin-when-cross-origin
+  Referrer-Policy: no-referrer
   X-Frame-Options: DENY
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self' ${config.apiBaseUrl}; frame-ancestors 'none'; base-uri 'self'; form-action 'none'; object-src 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' ${config.apiBaseUrl}; frame-ancestors 'none'; base-uri 'self'; form-action 'none'; object-src 'none'
 
 /runtime-config.json
   Cache-Control: no-store

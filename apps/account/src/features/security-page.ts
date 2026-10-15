@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, ViewChild, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -18,6 +18,7 @@ type Action = {
 export class SecurityDashboard {
   readonly api = inject(AccountApi);
   private readonly router = inject(Router);
+  private readonly changeDetector = inject(ChangeDetectorRef);
   readonly data = signal<SecurityOverview | null>(null);
   readonly mfa = signal<{ enabled: boolean; recoveryCodesRemaining: number } | null>(null);
   readonly loading = signal(true);
@@ -94,6 +95,7 @@ export class SecurityDashboard {
                 ];
     this.trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     this.confirmation.set({ kind, id, title: text[0]!, description: text[1]! });
+    this.changeDetector.detectChanges();
     this.dialog.nativeElement.showModal();
   }
   closed(): void {

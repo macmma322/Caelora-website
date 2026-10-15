@@ -67,10 +67,18 @@ public sealed class AccountOperations(PlatformDbContext database, UserManager<Pl
         if (!ValidEmail(request.Email) || !ValidPassword(request.Password)) return InvalidCredentials();
         var user = await users.FindByEmailAsync(request.Email.Trim());
         if (user is null || !user.EmailConfirmed) { dummy.Verify(request.Password); return InvalidCredentials(); }
+        await using var transaction = await database.Database.BeginTransactionAsync(token);
+        await mfa.LockUser(user.Id, token);
+        await database.Entry(user).ReloadAsync(token);
         var result = await signIn.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
         if (!result.Succeeded)
-        { await Audit(user.Id, result.IsLockedOut ? "LoginLocked" : "LoginRejected", token); return InvalidCredentials(); }
-        if (user.TwoFactorEnabled) return await mfa.BeginChallenge(user, context, token);
+        { await Audit(user.Id, result.IsLockedOut ? "LoginLocked" : "LoginRejected", token); await transaction.CommitAsync(token); return InvalidCredentials(); }
+        if (user.TwoFactorEnabled)
+        {
+            var challenge = await mfa.BeginChallenge(user, context, token);
+            await transaction.CommitAsync(token); return challenge;
+        }
+        await transaction.CommitAsync(token);
         return await issuer.Issue(user, context, token);
     }
     public async Task<IResult> Logout(HttpContext context, CancellationToken token)

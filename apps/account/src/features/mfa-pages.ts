@@ -71,9 +71,9 @@ export class MfaChallengePage {
         code: this.form.controls.code.value,
         useRecoveryCode: this.recovery(),
       });
-      this.api.mfaChallenge.set('');
       this.api.user.set(profile);
       await this.router.navigateByUrl('/account');
+      this.api.mfaChallenge.set('');
     } catch (e) {
       this.error.set(e instanceof Error ? e.message : 'Verification failed.');
     } finally {

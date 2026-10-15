@@ -9,8 +9,8 @@ public static class MailTemplates
     {
         var (subject, description, action) = type switch
         {
-            "VerifyEmail" => ("Verify your Caelora email", "Confirm this address to begin using your account. This link expires in 30 minutes.", "Verify email"),
-            "PasswordReset" => ("Reset your Caelora password", "Choose a new password. This link expires in 30 minutes and existing browser sessions will end.", "Reset password"),
+            "VerifyEmail" => ("Verify your Caelora email", "Confirm this address to begin using your account. This link is valid for up to 30 minutes from your request.", "Verify email"),
+            "PasswordReset" => ("Reset your Caelora password", "Choose a new password. This link is valid for up to 30 minutes from your request, and existing browser sessions will end.", "Reset password"),
             "PasswordChanged" => ("Your Caelora password changed", "Your password changed and previous browser sessions ended. If this was unexpected, recover your account immediately.", "Review account"),
             "MfaEnabled" => ("Caelora authenticator enabled", "Authenticator verification was enabled. Keep your recovery codes in a secure place.", "Review security"),
             "MfaDisabled" => ("Caelora authenticator disabled", "Authenticator verification was disabled. If you did not request this, recover your account immediately.", "Review security"),

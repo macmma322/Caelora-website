@@ -55,6 +55,7 @@ public sealed class PlatformDbContext(DbContextOptions<PlatformDbContext> option
             entity.Property(x => x.Summary).HasMaxLength(500);
             entity.HasIndex(x => new { x.UserId, x.CreatedAt, x.Id });
             entity.HasIndex(x => new { x.UserId, x.ReadAt });
+            entity.HasIndex(x => x.SecurityEventId).IsUnique();
             entity.HasOne<PlatformUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
             entity.HasOne<SecurityEvent>().WithMany().HasForeignKey(x => x.SecurityEventId).OnDelete(DeleteBehavior.SetNull);
         });

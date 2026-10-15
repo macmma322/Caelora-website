@@ -30,6 +30,7 @@ public sealed class OutboxProcessor(PlatformDbContext db, IIdentityMailSender se
         try
         {
             var mail = JsonSerializer.Deserialize<IdentityMail>(protection.CreateProtector(NotificationWriter.PayloadPurpose).Unprotect(job.ProtectedPayload)) ?? throw new JsonException();
+            if (!await db.OutboxMessages.AnyAsync(x => x.Id == job.Id && x.ClaimId == claim && x.ClaimUntil > clock.GetUtcNow().AddSeconds(o.SendTimeoutSeconds + 5), cancellationToken)) return true;
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             timeout.CancelAfter(TimeSpan.FromSeconds(o.SendTimeoutSeconds));
             await sender.SendAsync(mail, timeout.Token);

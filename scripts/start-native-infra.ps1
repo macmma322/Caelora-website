@@ -55,4 +55,8 @@ $identityFile=Join-Path $platformRoot 'services/platform-api/appsettings.Identit
 if(-not (Test-Path -LiteralPath $identityFile)){ [System.IO.File]::WriteAllText($identityFile,$localSettings,[System.Text.UTF8Encoding]::new($false)) }
 else { Write-Host 'Preserved existing appsettings.Identity.Local.json.' }
 Write-Host "Native PostgreSQL: 127.0.0.1:$PostgresPort; Mailpit: http://localhost:$MailUiPort. Credentials were not printed. Existing workstation PostgreSQL service untouched."
+. (Join-Path $PSScriptRoot 'protect-local-state.ps1')
+Protect-CaeloraLocalState (Join-Path $stateRoot 'connections.json')
+Protect-CaeloraLocalState $identityFile
+Protect-CaeloraLocalState $keyDirectory
 Write-Host "Persistent local state: $stateRoot. Do not delete it to reset tests; tests create separate databases."

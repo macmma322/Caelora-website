@@ -32,18 +32,38 @@ public sealed class M3SecurityTests(IdentityDatabase database) : IClassFixture<I
         return email;
     }
     private static string Code(string secret, int step = 0) => new Totp(Base32Encoding.ToBytes(secret)).ComputeTotp(DateTime.UtcNow.AddSeconds(step * 30));
-    private static async Task<(string Secret, string[] Recovery)> Enable(IdentityFactory factory, HttpClient client)
+    private static async Task<(string Secret, string[] Recovery, string UsedCode)> Enable(IdentityFactory factory, HttpClient client)
     {
         var enrollment = await Post(client, "me/mfa/enrollment", new { }); Assert.Equal(HttpStatusCode.OK, enrollment.StatusCode);
         var setup = await Json(enrollment); var secret = setup["secret"]!.GetValue<string>(); Assert.StartsWith("otpauth://totp/", setup["provisioningUri"]!.GetValue<string>());
-        var activate = await Post(client, "me/mfa/activate", new CodeRequest(Code(secret))); Assert.Equal(HttpStatusCode.OK, activate.StatusCode);
-        var result = await Json(activate); return (secret, result["recoveryCodes"]!.AsArray().Select(x => x!.GetValue<string>()).ToArray());
+        var usedCode = Code(secret);
+        var activate = await Post(client, "me/mfa/activate", new CodeRequest(usedCode)); Assert.Equal(HttpStatusCode.OK, activate.StatusCode);
+        var result = await Json(activate); return (secret, result["recoveryCodes"]!.AsArray().Select(x => x!.GetValue<string>()).ToArray(), usedCode);
     }
     private static async Task<string> Challenge(HttpClient client, string email)
     {
         var response = await Post(client, "auth/login", new LoginRequest(email, Password)); Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
         Assert.False(response.Headers.Contains("Set-Cookie") && response.Headers.GetValues("Set-Cookie").Any(x => x.StartsWith("__Host-Caelora.Session=", StringComparison.Ordinal) && !x.Contains("expires=Thu, 01 Jan 1970", StringComparison.OrdinalIgnoreCase)));
         return (await Json(response))["challenge"]!.GetValue<string>();
+    }
+    [PostgresFact]
+    public async Task LastSeenUpdatesOnlyAfterFiveMinutes()
+    {
+        using var factory = database.Create(); using var client = factory.Client(); var email = await User(factory, client);
+        Guid sessionId;
+        using (var scope = factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<PlatformDbContext>();
+            sessionId = await db.BrowserSessions.Where(x => x.User.Email == email).Select(x => x.Id).SingleAsync();
+            await db.BrowserSessions.Where(x => x.Id == sessionId).ExecuteUpdateAsync(update => update.SetProperty(x => x.LastSeenAt, DateTimeOffset.UtcNow.AddMinutes(-6)));
+        }
+        Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/v1/me")).StatusCode);
+        DateTimeOffset firstSeen;
+        using (var scope = factory.Services.CreateScope()) firstSeen = await scope.ServiceProvider.GetRequiredService<PlatformDbContext>().BrowserSessions.Where(x => x.Id == sessionId).Select(x => x.LastSeenAt).SingleAsync();
+        Assert.True(firstSeen > DateTimeOffset.UtcNow.AddMinutes(-1));
+        Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/v1/me")).StatusCode);
+        using var verification = factory.Services.CreateScope();
+        Assert.Equal(firstSeen, await verification.ServiceProvider.GetRequiredService<PlatformDbContext>().BrowserSessions.Where(x => x.Id == sessionId).Select(x => x.LastSeenAt).SingleAsync());
     }
     [PostgresFact]
     public async Task EnrollmentRequiresRecentProofAndActivationRequiresValidCode()
@@ -61,7 +81,7 @@ public sealed class M3SecurityTests(IdentityDatabase database) : IClassFixture<I
     public async Task MfaCannotBeBypassedAndSecretsAreEncryptedAtRest()
     {
         using var factory = database.Create(); using var client = factory.Client(); var email = await User(factory, client);
-        var (secret, codes) = await Enable(factory, client); Assert.Equal(10, codes.Length);
+        var (secret, codes, _) = await Enable(factory, client); Assert.Equal(10, codes.Length);
         Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync("/api/v1/me")).StatusCode);
         var challenge = await Challenge(client, email);
         Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync("/api/v1/me")).StatusCode);
@@ -79,9 +99,9 @@ public sealed class M3SecurityTests(IdentityDatabase database) : IClassFixture<I
     [PostgresFact]
     public async Task AuthenticatorReplayAcrossChallengesIsRejected()
     {
-        using var factory = database.Create(); using var client = factory.Client(); var email = await User(factory, client); var (secret, _) = await Enable(factory, client);
+        using var factory = database.Create(); using var client = factory.Client(); var email = await User(factory, client); var (secret, _, usedCode) = await Enable(factory, client);
         var challenge = await Challenge(client, email);
-        Assert.Equal(HttpStatusCode.Unauthorized, (await Post(client, "auth/mfa", new MfaChallengeRequest(challenge, Code(secret)))).StatusCode); // activation already consumed it
+        Assert.Equal(HttpStatusCode.Unauthorized, (await Post(client, "auth/mfa", new MfaChallengeRequest(challenge, usedCode))).StatusCode); // activation already consumed it
         Assert.Equal(HttpStatusCode.OK, (await Post(client, "auth/mfa", new MfaChallengeRequest(challenge, Code(secret, 1)))).StatusCode);
         using var other = factory.Client(); var second = await Challenge(other, email);
         Assert.Equal(HttpStatusCode.Unauthorized, (await Post(other, "auth/mfa", new MfaChallengeRequest(second, Code(secret, 1)))).StatusCode);
@@ -89,7 +109,7 @@ public sealed class M3SecurityTests(IdentityDatabase database) : IClassFixture<I
     [PostgresFact]
     public async Task RecoveryCodesAreOneUseAndRegenerationInvalidatesOldCodesAndSessions()
     {
-        using var factory = database.Create(); using var client = factory.Client(); var email = await User(factory, client); var (_, codes) = await Enable(factory, client);
+        using var factory = database.Create(); using var client = factory.Client(); var email = await User(factory, client); var (_, codes, _) = await Enable(factory, client);
         var challenge = await Challenge(client, email);
         Assert.Equal(HttpStatusCode.OK, (await Post(client, "auth/mfa", new MfaChallengeRequest(challenge, codes[0], true))).StatusCode);
         using var other = factory.Client(); var second = await Challenge(other, email);
@@ -108,7 +128,7 @@ public sealed class M3SecurityTests(IdentityDatabase database) : IClassFixture<I
     [PostgresFact]
     public async Task MfaDisableEndsAllSessionsAndRemovesTheChallengeRequirement()
     {
-        using var factory = database.Create(); using var client = factory.Client(); var email = await User(factory, client); var (_, codes) = await Enable(factory, client);
+        using var factory = database.Create(); using var client = factory.Client(); var email = await User(factory, client); var (_, codes, _) = await Enable(factory, client);
         var challenge = await Challenge(client, email); await Post(client, "auth/mfa", new MfaChallengeRequest(challenge, codes[0], true));
         Assert.Equal(HttpStatusCode.OK, (await Post(client, "me/mfa/disable", new { })).StatusCode);
         Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync("/api/v1/me")).StatusCode);
@@ -171,5 +191,21 @@ public sealed class M3SecurityTests(IdentityDatabase database) : IClassFixture<I
         }
         using var restarted = database.Create();
         Assert.Equal("test-only-state", restarted.Services.GetRequiredService<IDataProtectionProvider>().CreateProtector("rotation-test").Unprotect(value));
+    }
+    [PostgresFact]
+    public async Task MfaFailuresLockTheAccountAndChallengeExpiryIsEnforced()
+    {
+        using var factory = database.Create(); using var initial = factory.Client(); var email = await User(factory, initial); await Enable(factory, initial);
+        using var restarted = database.Create(); using var client = restarted.Client(); var challenge = await Challenge(client, email);
+        for (var i = 0; i < 5; i++) Assert.Equal(HttpStatusCode.Unauthorized, (await Post(client, "auth/mfa", new MfaChallengeRequest(challenge, "invalid"))).StatusCode);
+        using (var scope = restarted.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<PlatformDbContext>();
+            var user = await db.Users.SingleAsync(x => x.Email == email); Assert.True(user.LockoutEnd > DateTimeOffset.UtcNow);
+        }
+        using var otherFactory = database.Create(); using var other = otherFactory.Client(); var otherEmail = await User(otherFactory, other); var (_, codes, _) = await Enable(otherFactory, other);
+        var expired = await Challenge(other, otherEmail);
+        using (var scope = otherFactory.Services.CreateScope()) await scope.ServiceProvider.GetRequiredService<PlatformDbContext>().MfaChallenges.Where(x => x.Id == Guid.ParseExact(expired.Split('.')[0], "N")).ExecuteUpdateAsync(update => update.SetProperty(x => x.ExpiresAt, DateTimeOffset.UtcNow.AddSeconds(-1)));
+        Assert.Equal(HttpStatusCode.Unauthorized, (await Post(other, "auth/mfa", new MfaChallengeRequest(expired, codes[0], true))).StatusCode);
     }
 }

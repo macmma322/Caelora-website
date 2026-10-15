@@ -44,6 +44,7 @@ public static class AccountsRegistration
         services.AddScoped<RetentionCleanup>();
         services.AddSingleton<IValidateOptions<DeliveryOptions>, DeliveryOptionsValidator>();
         services.AddOptions<DeliveryOptions>().BindConfiguration("Delivery").ValidateOnStart();
+        services.AddHostedService<IdentityKeyProbe>();
         services.AddHostedService<DeliveryWorker>();
         services.AddAuthentication(IdentityConstants.ApplicationScheme).AddCookie(IdentityConstants.ApplicationScheme, options =>
         {
@@ -86,6 +87,7 @@ public sealed class AccountKeyConfiguration(IOptions<AccountsOptions> options, I
         if (!environment.IsDevelopment() && !environment.IsEnvironment("Testing"))
         {
             var certificate = X509CertificateLoader.LoadPkcs12FromFile(config.KeyCertificatePath, config.KeyCertificatePassword);
+            if (!certificate.HasPrivateKey) throw new InvalidOperationException("Identity key-at-rest certificate must include its private key.");
             keys.XmlEncryptor = new Microsoft.AspNetCore.DataProtection.XmlEncryption.CertificateXmlEncryptor(certificate, Microsoft.Extensions.Logging.Abstractions.NullLoggerFactory.Instance);
         }
         else if (OperatingSystem.IsWindows()) keys.XmlEncryptor = new Microsoft.AspNetCore.DataProtection.XmlEncryption.DpapiXmlEncryptor(false, Microsoft.Extensions.Logging.Abstractions.NullLoggerFactory.Instance);

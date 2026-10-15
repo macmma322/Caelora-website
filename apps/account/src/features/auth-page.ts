@@ -134,6 +134,7 @@ export class AuthPage {
       if (this.kind === 'sign-in') {
         this.api.notice.set('');
         const complete = await this.api.login(value.email.trim(), value.password);
+        this.submitted.set(false);
         this.form.controls.password.reset();
         await this.router.navigateByUrl(complete ? '/account' : '/mfa-challenge');
       } else if (this.kind === 'register') {
