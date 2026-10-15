@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using System.Text;
+using Caelora.Platform.Api.Notifications;
 using Caelora.Platform.Api.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -10,9 +10,9 @@ using Microsoft.Extensions.Options;
 namespace Caelora.Platform.Api.Accounts;
 
 public sealed class AccountOperations(PlatformDbContext database, UserManager<PlatformUser> users,
-    SignInManager<PlatformUser> signIn, IIdentityMailSender mail, IOptions<AccountsOptions> settings, TimeProvider clock, DummyPasswordCheck dummy)
+    SignInManager<PlatformUser> signIn, NotificationWriter notifications, SessionIssuer issuer, MfaOperations mfa, TimeProvider clock, DummyPasswordCheck dummy)
 {
-    private const string GenericEmailResponse = "If this address is eligible, an email with the next step has been sent.";
+    private const string GenericEmailResponse = "If this address is eligible, an email with the next step will arrive shortly.";
     public async Task<IResult> Register(RegisterRequest request, CancellationToken token)
     {
         if (!ValidEmail(request.Email) || !ValidName(request.DisplayName) || !ValidPassword(request.Password)) return Invalid("Use a valid email, a 2–40 character display name and a password of 12–128 characters.");
@@ -24,6 +24,7 @@ public sealed class AccountOperations(PlatformDbContext database, UserManager<Pl
         var user = new PlatformUser { Id = Guid.NewGuid(), Email = request.Email.Trim(), DisplayName = request.DisplayName.Trim(), CreatedAt = clock.GetUtcNow() };
         // Identity's username is an internal immutable value; email/display name are not ownership identifiers.
         user.UserName = user.Id.ToString("N");
+        await using var transaction = await database.Database.BeginTransactionAsync(token);
         IdentityResult result;
         try { result = await users.CreateAsync(user, request.Password); }
         catch (DbUpdateException exception) when (exception.InnerException is Npgsql.PostgresException { SqlState: "23505" })
@@ -34,7 +35,9 @@ public sealed class AccountOperations(PlatformDbContext database, UserManager<Pl
             return Invalid("The supplied account details could not be accepted.");
         }
         await Audit(user.Id, "AccountRegistered", token);
-        if (!await Send(user, false, token)) return Unavailable();
+        await notifications.AccountLink(user, false, "registration:" + user.Id);
+        await database.SaveChangesAsync(token);
+        await transaction.CommitAsync(token);
         return Results.Accepted(value: new { message = GenericEmailResponse });
     }
 
@@ -42,7 +45,7 @@ public sealed class AccountOperations(PlatformDbContext database, UserManager<Pl
     {
         if (!ValidEmail(request.Email)) return Invalid("Enter a valid email address.");
         var user = await users.FindByEmailAsync(request.Email.Trim());
-        if (user is { EmailConfirmed: false } && !await Send(user, false, token)) return Unavailable();
+        await QueueLink(user is { EmailConfirmed: false } ? user : null, false, token);
         return Results.Accepted(value: new { message = GenericEmailResponse });
     }
 
@@ -67,21 +70,9 @@ public sealed class AccountOperations(PlatformDbContext database, UserManager<Pl
         var result = await signIn.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
         if (!result.Succeeded)
         { await Audit(user.Id, result.IsLockedOut ? "LoginLocked" : "LoginRejected", token); return InvalidCredentials(); }
-        var now = clock.GetUtcNow();
-        var session = new BrowserSession { Id = Guid.NewGuid(), UserId = user.Id, CreatedAt = now, ExpiresAt = now.AddHours(settings.Value.SessionHours) };
-        if (Guid.TryParse(context.User.FindFirstValue(SessionCookieEvents.SessionClaim), out var oldId))
-        {
-            var old = await database.BrowserSessions.FindAsync([oldId], token);
-            if (old is not null) old.RevokedAt = now;
-        }
-        database.BrowserSessions.Add(session);
-        await Audit(user.Id, "BrowserSignedIn", token);
-        var principal = await signIn.CreateUserPrincipalAsync(user);
-        principal.AddIdentity(new ClaimsIdentity([new Claim(SessionCookieEvents.SessionClaim, session.Id.ToString())]));
-        await context.SignInAsync(IdentityConstants.ApplicationScheme, principal, new AuthenticationProperties { IsPersistent = true, IssuedUtc = now, ExpiresUtc = session.ExpiresAt, AllowRefresh = false });
-        return Results.Ok(Profile(user));
+        if (user.TwoFactorEnabled) return await mfa.BeginChallenge(user, context, token);
+        return await issuer.Issue(user, context, token);
     }
-
     public async Task<IResult> Logout(HttpContext context, CancellationToken token)
     {
         if (Guid.TryParse(context.User.FindFirstValue(SessionCookieEvents.SessionClaim), out var id))
@@ -97,7 +88,7 @@ public sealed class AccountOperations(PlatformDbContext database, UserManager<Pl
     {
         if (!ValidEmail(request.Email)) return Invalid("Enter a valid email address.");
         var user = await users.FindByEmailAsync(request.Email.Trim());
-        if (user is { EmailConfirmed: true } && !await Send(user, true, token)) return Unavailable();
+        await QueueLink(user is { EmailConfirmed: true } ? user : null, true, token);
         return Results.Accepted(value: new { message = GenericEmailResponse });
     }
 
@@ -141,26 +132,25 @@ public sealed class AccountOperations(PlatformDbContext database, UserManager<Pl
         var current = Guid.Parse(principal.FindFirstValue(SessionCookieEvents.SessionClaim)!);
         var now = clock.GetUtcNow();
         var sessions = await database.BrowserSessions.AsNoTracking().Where(session => session.UserId == userId && session.RevokedAt == null && session.ExpiresAt > now).OrderByDescending(session => session.CreatedAt)
-            .Select(session => new { session.Id, session.CreatedAt, session.ExpiresAt, IsCurrent = session.Id == current }).ToListAsync(token);
+            .Select(session => new { session.Id, session.CreatedAt, session.ExpiresAt, session.LastSeenAt, session.Descriptor, IsCurrent = session.Id == current }).ToListAsync(token);
         var events = await database.SecurityEvents.AsNoTracking().Where(item => item.UserId == userId).OrderByDescending(item => item.OccurredAt).Take(20)
             .Select(item => new { item.Kind, item.OccurredAt }).ToListAsync(token);
         return Results.Ok(new { sessions, events });
     }
 
-    private async Task<bool> Send(PlatformUser user, bool reset, CancellationToken token)
+    private async Task QueueLink(PlatformUser? user, bool reset, CancellationToken token)
     {
-        var code = reset ? await users.GeneratePasswordResetTokenAsync(user) : await users.GenerateEmailConfirmationTokenAsync(user);
-        var url = settings.Value.AccountOrigin.TrimEnd('/') + (reset ? "/reset-password" : "/verify-email") + "#userId=" + user.Id + "&token=" + WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        try
-        {
-            await mail.SendAsync(new IdentityMail(user.Email!, reset ? "Reset your Caelora password" : "Verify your Caelora email", (reset ? "Reset your password using this link:\n" : "Verify your email using this link:\n") + url + "\n\nThis link expires in 30 minutes. If you did not request it, ignore this email."), token);
-            return true;
-        }
-        catch (Exception) when (!token.IsCancellationRequested) { await Audit(user.Id, "IdentityEmailDeliveryFailed", token); return false; }
+        if (user is null) return;
+        await using var transaction = await database.Database.BeginTransactionAsync(token);
+        await database.Database.ExecuteSqlInterpolatedAsync($"SELECT 1 FROM platform.\"AspNetUsers\" WHERE \"Id\"={user.Id} FOR UPDATE", token);
+        await notifications.AccountLink(user, reset, (reset ? "reset:" : "verify:") + user.Id + ":" + clock.GetUtcNow().ToUnixTimeSeconds() / 60);
+        await database.SaveChangesAsync(token);
+        await transaction.CommitAsync(token);
     }
     private async Task Audit(Guid userId, string kind, CancellationToken token)
     {
-        database.SecurityEvents.Add(new SecurityEvent { Id = Guid.NewGuid(), UserId = userId, Kind = kind, OccurredAt = clock.GetUtcNow() });
+        if (kind == "PasswordReset") notifications.Security((await users.FindByIdAsync(userId.ToString()))!, kind);
+        else database.SecurityEvents.Add(new SecurityEvent { Id = Guid.NewGuid(), UserId = userId, Kind = kind, OccurredAt = clock.GetUtcNow() });
         await database.SaveChangesAsync(token);
     }
     private static AccountProfile Profile(PlatformUser user) => new(user.Id, user.Email!, user.EmailConfirmed, user.DisplayName, user.CreatedAt);
@@ -171,9 +161,8 @@ public sealed class AccountOperations(PlatformDbContext database, UserManager<Pl
     {
         decoded = "";
         if (value is null || value.Length > 4096) return false;
-        try { decoded = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(value)); return true; } catch (FormatException) { return false; }
+        try { decoded = System.Text.Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(value)); return true; } catch (FormatException) { return false; }
     }
     private static IResult Invalid(string message) => Results.Problem(statusCode: 400, title: message);
     private static IResult InvalidCredentials() => Results.Problem(statusCode: 401, title: "Sign-in failed. Check your details and verify your email, or try again later.");
-    private static IResult Unavailable() => Results.Problem(statusCode: 503, title: "Email delivery is unavailable. Please try again later.");
 }

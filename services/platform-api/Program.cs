@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Caelora.Platform.Api.Accounts;
+using Caelora.Platform.Api.Notifications;
 
 var builder = WebApplication.CreateBuilder(args);
 // Local settings can never override environment variables or command-line values.
@@ -48,6 +49,20 @@ builder.Services.AddHealthChecks()
     .AddCheck<PostgresReadiness>("postgres", tags: ["ready"], timeout: TimeSpan.FromSeconds(5))
     .AddCheck<RedisReadiness>("redis", tags: ["ready"], timeout: TimeSpan.FromSeconds(5));
 var app = builder.Build();
+if (args.Contains("--outbox-status", StringComparer.Ordinal) || args.Any(x => x.StartsWith("--outbox-retry=", StringComparison.Ordinal)))
+{
+    if (!app.Services.GetRequiredService<IOptions<AccountsOptions>>().Value.Enabled) throw new InvalidOperationException("Enable Accounts before operating on the outbox.");
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<PlatformDbContext>();
+    var retry = args.SingleOrDefault(x => x.StartsWith("--outbox-retry=", StringComparison.Ordinal));
+    if (retry is not null)
+    {
+        if (!Guid.TryParse(retry.Split('=')[1], out var id)) throw new ArgumentException("Supply an explicit outbox message UUID.");
+        Console.WriteLine("Retried records: " + await scope.ServiceProvider.GetRequiredService<OutboxProcessor>().Retry(id, CancellationToken.None));
+    }
+    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(await db.OutboxMessages.GroupBy(x => new { x.State, x.LastFailure }).Select(group => new { group.Key.State, group.Key.LastFailure, Count = group.Count() }).ToListAsync()));
+    return;
+}
 // Explicit operator command, never automatic migration at request startup.
 if (args.Contains("--migrate", StringComparer.Ordinal))
 {

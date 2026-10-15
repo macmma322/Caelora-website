@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Caelora.Platform.Api.Notifications;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Caelora.Platform.Api.Accounts;
 
@@ -33,6 +35,16 @@ public static class AccountsRegistration
         services.AddScoped<SessionCookieEvents>();
         services.AddScoped<IIdentityMailSender, SmtpIdentityMailSender>();
         services.AddScoped<AccountOperations>();
+        services.Replace(ServiceDescriptor.Scoped<IUserStore<PlatformUser>, ProtectedIdentityStore>());
+        services.AddScoped<SessionIssuer>();
+        services.AddScoped<AccountSecurityOperations>();
+        services.AddScoped<MfaOperations>();
+        services.AddScoped<NotificationWriter>();
+        services.AddScoped<OutboxProcessor>();
+        services.AddScoped<RetentionCleanup>();
+        services.AddSingleton<IValidateOptions<DeliveryOptions>, DeliveryOptionsValidator>();
+        services.AddOptions<DeliveryOptions>().BindConfiguration("Delivery").ValidateOnStart();
+        services.AddHostedService<DeliveryWorker>();
         services.AddAuthentication(IdentityConstants.ApplicationScheme).AddCookie(IdentityConstants.ApplicationScheme, options =>
         {
             options.Cookie.Name = "__Host-Caelora.Session";

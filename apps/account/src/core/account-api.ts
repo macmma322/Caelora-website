@@ -9,7 +9,14 @@ export interface AccountProfile {
   createdAt: string;
 }
 export interface SecurityOverview {
-  sessions: { id: string; createdAt: string; expiresAt: string; isCurrent: boolean }[];
+  sessions: {
+    id: string;
+    createdAt: string;
+    expiresAt: string;
+    lastSeenAt: string;
+    descriptor: string;
+    isCurrent: boolean;
+  }[];
   events: { kind: string; occurredAt: string }[];
 }
 export class AccountApiError extends Error {
@@ -26,6 +33,10 @@ export class AccountApi {
   private readonly config = inject(RUNTIME_CONFIG);
   readonly user = signal<AccountProfile | null>(null);
   readonly pendingEmail = signal('');
+  readonly mfaChallenge = signal('');
+  readonly recoveryCodes = signal<string[]>([]);
+  readonly notice = signal('');
+  readonly unread = signal<number | null>(null);
   async request<T>(path: string, method = 'GET', body?: unknown): Promise<T> {
     try {
       const headers: Record<string, string> = { Accept: 'application/json' };
@@ -52,13 +63,9 @@ export class AccountApi {
           typeof content.title === 'string'
             ? content.title
             : 'The request could not be completed.';
-        if (response.status === 401) this.user.set(null);
+        if (response.status === 401 && method === 'GET') this.user.set(null);
         throw new AccountApiError(
-          response.status === 429
-            ? 'Too many attempts. Wait a minute before trying again.'
-            : response.status === 401
-              ? 'Sign-in failed or your session ended. Verify your details and email, then try again.'
-              : title,
+          response.status === 429 ? 'Too many attempts. Wait a minute before trying again.' : title,
           response.status,
         );
       }
@@ -80,6 +87,7 @@ export class AccountApi {
     try {
       const profile = await this.request<AccountProfile>('/api/v1/me');
       this.user.set(profile);
+      void this.refreshUnread();
       return profile;
     } catch (error) {
       if (error instanceof AccountApiError && error.status === 401) {
@@ -89,13 +97,34 @@ export class AccountApi {
       throw error;
     }
   }
-  async login(email: string, password: string): Promise<void> {
-    this.user.set(
-      await this.request<AccountProfile>('/api/v1/auth/login', 'POST', { email, password }),
+  async login(email: string, password: string): Promise<boolean> {
+    const result = await this.request<AccountProfile | { mfaRequired: true; challenge: string }>(
+      '/api/v1/auth/login',
+      'POST',
+      { email, password },
     );
+    if ('mfaRequired' in result) {
+      this.mfaChallenge.set(result.challenge);
+      this.user.set(null);
+      return false;
+    }
+    this.mfaChallenge.set('');
+    this.user.set(result);
+    void this.refreshUnread();
+    return true;
+  }
+  async refreshUnread(): Promise<void> {
+    try {
+      this.unread.set((await this.request<{ unread: number }>('/api/v1/me/notifications')).unread);
+    } catch {
+      this.unread.set(null);
+    }
   }
   async logout(): Promise<void> {
     await this.request('/api/v1/auth/logout', 'POST', {});
     this.user.set(null);
+    this.unread.set(null);
+    this.mfaChallenge.set('');
+    this.recoveryCodes.set([]);
   }
 }

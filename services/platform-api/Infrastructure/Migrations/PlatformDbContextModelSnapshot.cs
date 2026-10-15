@@ -32,7 +32,21 @@ namespace Caelora.Platform.Api.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Descriptor")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("LastSeenAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("MfaAuthenticated")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("ReauthenticatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset?>("RevokedAt")
@@ -43,9 +57,48 @@ namespace Caelora.Platform.Api.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ExpiresAt");
+
                     b.HasIndex("UserId", "ExpiresAt");
 
                     b.ToTable("BrowserSessions", "platform");
+                });
+
+            modelBuilder.Entity("Caelora.Platform.Api.Accounts.MfaChallenge", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("Consumed")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SecretHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("StampHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpiresAt");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MfaChallenges", "platform");
                 });
 
             modelBuilder.Entity("Caelora.Platform.Api.Accounts.PlatformUser", b =>
@@ -75,6 +128,9 @@ namespace Caelora.Platform.Api.Infrastructure.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("EnrollmentExpiresAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -141,9 +197,151 @@ namespace Caelora.Platform.Api.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OccurredAt");
+
                     b.HasIndex("UserId", "OccurredAt");
 
                     b.ToTable("SecurityEvents", "platform");
+                });
+
+            modelBuilder.Entity("Caelora.Platform.Api.Accounts.TotpRedemption", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Digest")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("UserId", "Digest");
+
+                    b.HasIndex("ExpiresAt");
+
+                    b.ToTable("TotpRedemptions", "platform");
+                });
+
+            modelBuilder.Entity("Caelora.Platform.Api.Notifications.AccountNotification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("ReadAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("SecurityEventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Severity")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SecurityEventId");
+
+                    b.HasIndex("UserId", "ReadAt");
+
+                    b.HasIndex("UserId", "CreatedAt", "Id");
+
+                    b.ToTable("Notifications", "platform");
+                });
+
+            modelBuilder.Entity("Caelora.Platform.Api.Notifications.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Channel")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<Guid?>("ClaimId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("ClaimUntil")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("IdempotencyKey")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("LastFailure")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTimeOffset>("NextAttemptAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ProtectedPayload")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpiresAt");
+
+                    b.HasIndex("IdempotencyKey")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("State", "NextAttemptAt");
+
+                    b.ToTable("OutboxMessages", "platform");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -287,12 +485,53 @@ namespace Caelora.Platform.Api.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Caelora.Platform.Api.Accounts.MfaChallenge", b =>
+                {
+                    b.HasOne("Caelora.Platform.Api.Accounts.PlatformUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Caelora.Platform.Api.Accounts.SecurityEvent", b =>
                 {
                     b.HasOne("Caelora.Platform.Api.Accounts.PlatformUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("Caelora.Platform.Api.Accounts.TotpRedemption", b =>
+                {
+                    b.HasOne("Caelora.Platform.Api.Accounts.PlatformUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Caelora.Platform.Api.Notifications.AccountNotification", b =>
+                {
+                    b.HasOne("Caelora.Platform.Api.Accounts.SecurityEvent", null)
+                        .WithMany()
+                        .HasForeignKey("SecurityEventId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Caelora.Platform.Api.Accounts.PlatformUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Caelora.Platform.Api.Notifications.OutboxMessage", b =>
+                {
+                    b.HasOne("Caelora.Platform.Api.Accounts.PlatformUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

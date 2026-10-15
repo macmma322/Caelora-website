@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AccountApi, type AccountProfile, type SecurityOverview } from '../core/account-api';
+import { AccountApi, type AccountProfile } from '../core/account-api';
 
 @Component({
   standalone: true,
@@ -108,101 +108,6 @@ export class ProfilePage {
     } finally {
       this.loading.set(false);
     }
-  }
-}
-
-@Component({
-  standalone: true,
-  imports: [DatePipe, RouterLink],
-  template: `<span class="eyebrow">Account security</span>
-    <h1>Know your sessions.</h1>
-    <p>These are browser sign-ins, separate from future launcher sessions and gameplay leases.</p>
-    @if (error()) {
-      <div class="alert error" role="alert">{{ error() }}</div>
-      <button class="button secondary" (click)="load()">Try again</button>
-    }
-    @if (loading()) {
-      <div class="loading-block" role="status">Loading security activity…</div>
-    }
-    @if (data(); as overview) {
-      <h2>Active browser sessions</h2>
-      <div class="session-list">
-        @for (session of overview.sessions; track session.id) {
-          <article>
-            <strong>{{
-              session.isCurrent ? 'This browser session' : 'Another browser session'
-            }}</strong>
-            <p>
-              Started {{ session.createdAt | date: 'medium' }}<br />Expires
-              {{ session.expiresAt | date: 'medium' }}
-            </p>
-          </article>
-        } @empty {
-          <p>No active browser sessions were returned.</p>
-        }
-      </div>
-      <h2>Recent security activity</h2>
-      <div class="security-events">
-        @for (event of overview.events; track $index) {
-          <div>
-            <span>{{ label(event.kind) }}</span
-            ><time>{{ event.occurredAt | date: 'medium' }}</time>
-          </div>
-        } @empty {
-          <p>No activity has been recorded yet.</p>
-        }
-      </div>
-    }
-    <div class="notice">
-      <h2>Password recovery</h2>
-      <p>
-        Resetting your password ends all existing browser sessions. Use the email recovery flow to
-        choose a new password.
-      </p>
-      <a routerLink="/forgot-password">Request password reset ↗</a>
-    </div>
-    <p class="field-help">
-      Trusted-device controls and individual remote session termination are not implemented in this
-      milestone. Sign out ends the current browser session on the server.
-    </p>`,
-})
-export class SecurityPage {
-  private readonly api = inject(AccountApi);
-  readonly data = signal<SecurityOverview | null>(null);
-  readonly loading = signal(true);
-  readonly error = signal('');
-  constructor() {
-    void this.load();
-  }
-  async load(): Promise<void> {
-    this.loading.set(true);
-    this.error.set('');
-    try {
-      this.data.set(await this.api.request<SecurityOverview>('/api/v1/me/security'));
-    } catch (error) {
-      this.error.set(
-        error instanceof Error ? error.message : 'Security activity could not be loaded.',
-      );
-    } finally {
-      this.loading.set(false);
-    }
-  }
-  label(kind: string): string {
-    return (
-      (
-        {
-          AccountRegistered: 'Account created',
-          EmailVerified: 'Email verified',
-          BrowserSignedIn: 'Browser signed in',
-          BrowserSignedOut: 'Browser signed out',
-          ProfileUpdated: 'Profile updated',
-          PasswordReset: 'Password reset',
-          LoginRejected: 'Sign-in rejected',
-          LoginLocked: 'Sign-in temporarily locked',
-          IdentityEmailDeliveryFailed: 'Email delivery failed',
-        } as Record<string, string>
-      )[kind] ?? 'Security activity recorded'
-    );
   }
 }
 

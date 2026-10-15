@@ -1,0 +1,146 @@
+<span class="eyebrow">Account security</span>
+<h1>Keep your account yours.</h1>
+<p class="lead">Authenticator protection, browser sessions and recent security activity.</p>
+@if(error()){
+<div class="alert error" role="alert">{{error()}}</div>
+} @if(message()){
+<div class="alert success" role="status">{{message()}}</div>
+} @if(loading()){
+<div class="loading-block" role="status">Loading security details…</div>
+} @if(!loading()&&!data()){<button class="button secondary" (click)="load()">Try again</button>}
+@if(mfa();as status){
+<section class="security-panel" aria-labelledby="authenticator-title">
+  <span class="eyebrow">Second factor</span>
+  <h2 id="authenticator-title">Authenticator {{status.enabled?'enabled':'not enabled'}}</h2>
+  @if(status.enabled){
+  <p>
+    {{status.recoveryCodesRemaining}} unused recovery codes remain. Use a fresh authenticator code
+    when confirming your identity.
+  </p>
+  <div class="account-actions">
+    <button class="button secondary" (click)="ask('regenerate')" [disabled]="busy()">
+      Replace recovery codes</button
+    ><button class="button secondary danger-action" (click)="ask('disable')" [disabled]="busy()">
+      Disable authenticator
+    </button>
+  </div>
+  }@else{
+  <p>Add an authenticator app and keep recovery codes securely. SMS verification is not used.</p>
+  <a class="button" routerLink="/account/security/authenticator">Enable authenticator</a>}
+</section>
+}
+<section class="security-panel" aria-labelledby="reauth-title">
+  <h2 id="reauth-title">Confirm your identity</h2>
+  <p>
+    Security changes require authentication within the last five minutes. Confirm again here if
+    requested.
+  </p>
+  <form [formGroup]="form" (ngSubmit)="reauthenticate()" [attr.aria-busy]="busy()">
+    <div class="form-field">
+      <label for="reauth-password">Current password</label
+      ><input
+        id="reauth-password"
+        type="password"
+        autocomplete="current-password"
+        formControlName="password"
+        maxlength="128"
+        required
+      />
+    </div>
+    @if(mfa()?.enabled){
+    <div class="form-field">
+      <label for="reauth-code">Fresh authenticator code</label
+      ><input
+        id="reauth-code"
+        autocomplete="one-time-code"
+        inputmode="numeric"
+        formControlName="code"
+        maxlength="16"
+      />
+    </div>
+    }
+    <button class="button secondary" [disabled]="busy()||form.invalid">
+      {{busy()?'Working…':'Confirm identity'}}
+    </button>
+  </form>
+</section>
+@if(data();as overview){
+<section class="security-panel" aria-labelledby="sessions-title">
+  <span class="eyebrow">Active sessions</span>
+  <h2 id="sessions-title">Where you are signed in.</h2>
+  <p>
+    These are browser sign-ins. Device descriptions are approximate browser-provided hints, not
+    trusted hardware identities. Last activity updates at most once every five minutes.
+  </p>
+  <div class="session-list">
+    @for(session of overview.sessions;track session.id){
+    <article>
+      <div class="session-heading">
+        <strong
+          >{{session.descriptor||'Browser'}} @if(session.isCurrent){<span class="verified-label"
+            >· This session</span
+          >}</strong
+        ><button class="session-action" (click)="ask('selected',session.id)" [disabled]="busy()">
+          {{session.isCurrent?'Sign out this session':'End session'}}
+        </button>
+      </div>
+      <p>
+        Created {{session.createdAt|date:'medium'}}<br />Last active
+        {{session.lastSeenAt|date:'medium'}}<br />Expires {{session.expiresAt|date:'medium'}}
+      </p>
+    </article>
+    }@empty{
+    <p>No active sessions were returned.</p>
+    }
+  </div>
+  <div class="account-actions">
+    <button class="button secondary" (click)="ask('others')" [disabled]="busy()">
+      Sign out other sessions</button
+    ><button class="button secondary danger-action" (click)="ask('everywhere')" [disabled]="busy()">
+      Sign out everywhere
+    </button>
+  </div>
+  <p class="field-help">
+    Multiple signed-in browsers are allowed. Launcher identity, trusted devices and gameplay leases
+    are separate future features. IP changes alone do not end ownership or trigger bans.
+  </p>
+</section>
+<section aria-labelledby="activity-title">
+  <h2 id="activity-title">Recent security activity</h2>
+  <div class="security-events">
+    @for(event of overview.events;track $index){
+    <div>
+      <span>{{label(event.kind)}}</span
+      ><time [attr.datetime]="event.occurredAt">{{event.occurredAt|date:'medium'}}</time>
+    </div>
+    }@empty{
+    <p>No security activity yet.</p>
+    }
+  </div>
+</section>
+}
+<div class="notice">
+  <h2>Password recovery</h2>
+  <p>
+    Resetting your password ends browser sessions. An enabled authenticator is still required for
+    your next sign-in.
+  </p>
+  <a routerLink="/forgot-password">Request a password reset ↗</a>
+</div>
+<dialog
+  #confirmationDialog
+  class="security-dialog"
+  aria-labelledby="confirmation-title"
+  (close)="closed()"
+>
+  @if(confirmation();as action){
+  <h2 id="confirmation-title">{{action.title}}</h2>
+  <p>{{action.description}}</p>
+  <div class="account-actions">
+    <button class="button secondary" (click)="cancel()" [disabled]="busy()" autofocus>Cancel</button
+    ><button class="button" (click)="confirm()" [disabled]="busy()">
+      {{busy()?'Applying…':'Confirm action'}}
+    </button>
+  </div>
+  }
+</dialog>

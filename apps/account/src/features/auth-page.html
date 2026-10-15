@@ -1,7 +1,9 @@
 <span class="eyebrow">{{ text.label }}</span>
 <h1>{{ text.title }}</h1>
 <p class="lead">{{ text.description }}</p>
-@if(error()){
+@if(api.notice()){
+<div class="alert success" role="status">{{api.notice()}}</div>
+} @if(error()){
 <div class="alert error" role="alert">{{error()}}</div>
 } @if(message()){
 <div class="alert success" role="status">{{message()}}</div>
@@ -90,7 +92,7 @@
 </nav>
 @if(kind==='verify-email'&&!hasLink()){
 <p class="field-help">
-  If you just registered, check your inbox. For local development, messages are captured by the
-  configured Mailpit provider.
+  If you just registered, check your inbox. Delivery may take a few moments. Request another link if
+  yours expires.
 </p>
 }

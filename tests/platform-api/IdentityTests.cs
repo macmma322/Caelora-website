@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql;
 using Xunit;
+using Caelora.Platform.Api.Notifications;
 
 namespace Caelora.Platform.Api.Tests;
 
@@ -91,7 +92,8 @@ public sealed class IdentityFactory(IdentityDatabase database, bool expiredToken
             ["Accounts:SmtpHost"] = "127.0.0.1",
             ["Accounts:SmtpPort"] = "1025",
             ["Accounts:SenderAddress"] = "accounts@caelora.test",
-            ["Accounts:KeyDirectory"] = database.KeyDirectory
+            ["Accounts:KeyDirectory"] = database.KeyDirectory,
+            ["Delivery:WorkerEnabled"] = "false"
         }));
         builder.ConfigureServices(services =>
         {
@@ -100,6 +102,13 @@ public sealed class IdentityFactory(IdentityDatabase database, bool expiredToken
         });
     }
     public HttpClient Client() => CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = new Uri("https://localhost"), AllowAutoRedirect = false });
+    public async Task<ConfirmRequest> Link(string email, bool reset = false)
+    {
+        using var scope = Services.CreateScope();
+        var processor = scope.ServiceProvider.GetRequiredService<OutboxProcessor>();
+        for (var i = 0; i < 100 && await processor.ProcessOne(); i++) { }
+        return Mail.Link(email, reset);
+    }
 }
 
 public sealed class IdentityTests(IdentityDatabase database) : IClassFixture<IdentityDatabase>
@@ -118,7 +127,7 @@ public sealed class IdentityTests(IdentityDatabase database) : IClassFixture<Ide
     {
         var email = Email();
         Assert.Equal(HttpStatusCode.Accepted, (await Mutate(client, "/api/v1/auth/register", new RegisterRequest(email, Password, "Thornepeak Traveller"))).StatusCode);
-        Assert.Equal(HttpStatusCode.OK, (await Mutate(client, "/api/v1/auth/confirm-email", factory.Mail.Link(email))).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await Mutate(client, "/api/v1/auth/confirm-email", await factory.Link(email))).StatusCode);
         return email;
     }
 
@@ -148,7 +157,7 @@ public sealed class IdentityTests(IdentityDatabase database) : IClassFixture<Ide
         using var factory = database.Create(); var client = factory.Client(); var email = Email();
         await Mutate(client, "/api/v1/auth/register", new RegisterRequest(email, Password, "Traveller"));
         Assert.Equal(HttpStatusCode.Unauthorized, (await Mutate(client, "/api/v1/auth/login", new LoginRequest(email, Password))).StatusCode);
-        var link = factory.Mail.Link(email);
+        var link = await factory.Link(email);
         Assert.Equal(HttpStatusCode.OK, (await Mutate(client, "/api/v1/auth/confirm-email", link)).StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, (await Mutate(client, "/api/v1/auth/confirm-email", link)).StatusCode);
     }
@@ -157,7 +166,7 @@ public sealed class IdentityTests(IdentityDatabase database) : IClassFixture<Ide
     {
         using var factory = database.Create(expiredTokens: true); var client = factory.Client(); var email = Email();
         await Mutate(client, "/api/v1/auth/register", new RegisterRequest(email, Password, "Traveller"));
-        Assert.Equal(HttpStatusCode.BadRequest, (await Mutate(client, "/api/v1/auth/confirm-email", factory.Mail.Link(email))).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await Mutate(client, "/api/v1/auth/confirm-email", await factory.Link(email))).StatusCode);
     }
     [PostgresFact]
     public async Task LoginUsesSecureCookieAndProtectsProfileAcrossRequests()
@@ -193,7 +202,7 @@ public sealed class IdentityTests(IdentityDatabase database) : IClassFixture<Ide
         using var factory = database.Create(); var client = factory.Client(); var email = await RegisterAndConfirm(factory, client);
         await Mutate(client, "/api/v1/auth/login", new LoginRequest(email, Password));
         Assert.Equal(HttpStatusCode.Accepted, (await Mutate(client, "/api/v1/auth/forgot-password", new EmailRequest(email))).StatusCode);
-        var link = factory.Mail.Link(email, reset: true); var replacement = "A-new-river-and-home-73";
+        var link = await factory.Link(email, reset: true); var replacement = "A-new-river-and-home-73";
         var reset = new ResetRequest(link.UserId, link.Token, replacement);
         Assert.Equal(HttpStatusCode.OK, (await Mutate(client, "/api/v1/auth/reset-password", reset)).StatusCode);
         Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync("/api/v1/me")).StatusCode);
@@ -272,17 +281,18 @@ public sealed class IdentityTests(IdentityDatabase database) : IClassFixture<Ide
         Assert.Equal(HttpStatusCode.Accepted, (await Mutate(client, "/api/v1/auth/register", new RegisterRequest(Email(), Password, "Local Traveller"))).StatusCode);
     }
     [PostgresFact]
-    public async Task EmailDeliveryFailureReturnsUnavailableAndAllowsLaterResend()
+    public async Task EmailDeliveryFailureDoesNotUndoRegistrationAndAllowsLaterResend()
     {
         using var factory = database.Create();
         using var failing = factory.WithWebHostBuilder(builder => builder.ConfigureServices(services =>
         { services.RemoveAll<IIdentityMailSender>(); services.AddSingleton<IIdentityMailSender, FailingMail>(); }));
         using var client = failing.CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = new Uri("https://localhost") });
         var email = Email();
-        Assert.Equal(HttpStatusCode.ServiceUnavailable, (await Mutate(client, "/api/v1/auth/register", new RegisterRequest(email, Password, "Traveller"))).StatusCode);
+        Assert.Equal(HttpStatusCode.Accepted, (await Mutate(client, "/api/v1/auth/register", new RegisterRequest(email, Password, "Traveller"))).StatusCode);
+        using (var scope = failing.Services.CreateScope()) { await scope.ServiceProvider.GetRequiredService<OutboxProcessor>().ProcessOne(); }
         using var healthy = database.Create(); var retry = healthy.Client();
         Assert.Equal(HttpStatusCode.Accepted, (await Mutate(retry, "/api/v1/auth/resend-verification", new EmailRequest(email))).StatusCode);
-        Assert.Equal(HttpStatusCode.OK, (await Mutate(retry, "/api/v1/auth/confirm-email", healthy.Mail.Link(email))).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await Mutate(retry, "/api/v1/auth/confirm-email", await healthy.Link(email))).StatusCode);
     }
     private sealed class FailingMail : IIdentityMailSender
     {

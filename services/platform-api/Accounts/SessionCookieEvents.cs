@@ -17,9 +17,13 @@ public sealed class SessionCookieEvents(PlatformDbContext database, UserManager<
         if (principal is null || !Guid.TryParse(principal.FindFirstValue(ClaimTypes.NameIdentifier), out var userId) || !Guid.TryParse(principal.FindFirstValue(SessionClaim), out var sessionId))
         { await Reject(context); return; }
         var session = await database.BrowserSessions.AsNoTracking().Include(item => item.User).SingleOrDefaultAsync(item => item.Id == sessionId && item.UserId == userId, context.HttpContext.RequestAborted);
-        if (session is null || session.RevokedAt is not null || session.ExpiresAt <= clock.GetUtcNow() || !session.User.EmailConfirmed ||
+        if (session is null || session.RevokedAt is not null || session.ExpiresAt <= clock.GetUtcNow() || !session.User.EmailConfirmed || (session.User.TwoFactorEnabled && !session.MfaAuthenticated) ||
             principal.FindFirstValue(identity.Value.ClaimsIdentity.SecurityStampClaimType) != await users.GetSecurityStampAsync(session.User))
-            await Reject(context);
+        { await Reject(context); return; }
+        var now = clock.GetUtcNow();
+        if (session.LastSeenAt < now.AddMinutes(-5))
+            await database.BrowserSessions.Where(x => x.Id == sessionId && x.LastSeenAt < now.AddMinutes(-5))
+                .ExecuteUpdateAsync(update => update.SetProperty(x => x.LastSeenAt, now), context.HttpContext.RequestAborted);
     }
     private static async Task Reject(CookieValidatePrincipalContext context)
     {

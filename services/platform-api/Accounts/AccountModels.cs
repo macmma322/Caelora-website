@@ -6,6 +6,7 @@ public sealed class PlatformUser : IdentityUser<Guid>
 {
     public string DisplayName { get; set; } = "";
     public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset? EnrollmentExpiresAt { get; set; }
 }
 
 public sealed class BrowserSession
@@ -16,6 +17,10 @@ public sealed class BrowserSession
     public DateTimeOffset ExpiresAt { get; set; }
     public DateTimeOffset? RevokedAt { get; set; }
     public PlatformUser User { get; set; } = null!;
+    public string Descriptor { get; set; } = "Browser";
+    public DateTimeOffset LastSeenAt { get; set; }
+    public DateTimeOffset? ReauthenticatedAt { get; set; }
+    public bool MfaAuthenticated { get; set; }
 }
 
 public sealed class SecurityEvent
