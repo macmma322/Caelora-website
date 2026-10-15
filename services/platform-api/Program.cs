@@ -7,11 +7,14 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
+using Caelora.Platform.Api.Accounts;
 
 var builder = WebApplication.CreateBuilder(args);
 // Local settings can never override environment variables or command-line values.
 if (builder.Environment.IsDevelopment())
-    builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true).AddEnvironmentVariables().AddCommandLine(args);
+    builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true).AddJsonFile("appsettings.Identity.Local.json", optional: true).AddEnvironmentVariables().AddCommandLine(args);
+builder.Services.AddAccounts(builder.Configuration, builder.Environment);
+builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = 16 * 1024);
 builder.Logging.ClearProviders();
 builder.Logging.AddJsonConsole(x => x.IncludeScopes = true);
 builder.Services.AddSingleton<IValidateOptions<PlatformOptions>, PlatformOptionsValidator>();
@@ -29,6 +32,8 @@ builder.Services.AddCors(options => options.AddPolicy("portals", policy =>
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("auth", context => RateLimitPartition.GetFixedWindowLimiter(context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = 10, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
         RateLimitPartition.GetFixedWindowLimiter(context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
             _ => new FixedWindowRateLimiterOptions { PermitLimit = 120, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
@@ -62,7 +67,10 @@ app.Use(async (context, next) =>
 });
 app.UseStatusCodePages();
 app.UseCors("portals");
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseRateLimiter();
+app.MapAccounts();
 app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false, ResponseWriter = WriteHealth }).DisableRateLimiting();
 app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready"), ResponseWriter = WriteHealth }).DisableRateLimiting();
 app.MapGet("/api/v1/platform", (IPlatformInformation information) => information.Read())

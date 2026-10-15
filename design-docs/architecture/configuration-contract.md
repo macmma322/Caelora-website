@@ -30,6 +30,25 @@ Frontend values are public, including configuration fetched after page load. Nev
 
 Local Astro development and preview can use development-mode values. A production build must explicitly set PUBLIC_DEPLOYMENT_ENV=production and PUBLIC_SITE_URL; it must not ship a local build's localhost sitemap. CI builds a test artifact and does not deploy it. Root bootstrap creates local configuration only, preserves existing files and never creates production values.
 
+## M2 account configuration
+
+Accounts are disabled unless explicitly enabled. `Accounts` binds to typed options and validates at startup; enabling it requires PostgreSQL. Ignored `appsettings.Identity.Local.json` loads after M1 Local JSON in Development only. Environment/command-line values retain final precedence. Nonlocal environments cannot load local files.
+
+| Environment key                                       | Required behavior / visibility                                                                                                                            |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Accounts__Enabled                                     | False default preserves dependency-free foundation; true maps real account routes.                                                                        |
+| Accounts__AccountOrigin                               | Exact public origin without path/query/credentials/wildcard; HTTPS non-loopback outside local environments. Controls CORS, Origin checks and email links. |
+| Accounts__SessionHours                                | Absolute lifetime; default 12 hours, validated 1–168.                                                                                                     |
+| Accounts__EmailProvider                               | Mailpit (local loopback only) or Smtp (authenticated STARTTLS). No success-only provider.                                                                 |
+| Accounts__SmtpHost / SmtpPort / SenderAddress         | Explicit mail endpoint/sender; valid port 1–65535. Native defaults supplied by the local helper only.                                                     |
+| Accounts__SmtpUser / SmtpPassword                     | Required secrets for Smtp; secret-provider/environment injection only.                                                                                    |
+| Accounts__KeyDirectory                                | Required absolute persistent path with restricted access. Cookies/tokens depend on the retained keys.                                                     |
+| Accounts__KeyCertificatePath / KeyCertificatePassword | Required outside Development/Testing; injected PFX path and secret password encrypt stored keys.                                                          |
+| CAELORA_EF_CONNECTION                                 | Explicit secret design-time connection for EF tooling; `dev-api.ps1 -Migrate` uses the API configuration instead.                                         |
+| CAELORA_TEST_POSTGRES                                 | Disposable PostgreSQL administrator connection; tests create/drop internally generated caelora_test_UUID databases. Never production.                     |
+
+The native Windows helper generates credentials under ignored artifacts/local-platform and creates Identity.Local JSON only when absent. It preserves developer configuration. Defaults: PostgreSQL 55432, SMTP 1025, Mailpit UI 8025, all loopback. Do not run native and Compose on the same ports together. Mailpit contains local action secrets; exclude its database and key storage from shared artifacts. Build context and source scan exclude Identity.Local configuration.
+
 ## Angular artifact promotion
 
 Load `/runtime-config.json` before calling bootstrapApplication; validate a strict allowlist of three keys and a JSON content type. Fetch uses no-store and an 8-second timeout. Missing JSON, an HTML SPA fallback or invalid configuration yields a visible retry state and does not start routes. No auth/session data is stored in this manifest. Configure the host to serve JSON with Cache-Control: no-store and to avoid rewriting a missing config file to index.html.

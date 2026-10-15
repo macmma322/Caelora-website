@@ -24,6 +24,28 @@ All dev servers bind loopback. Keep the same hostname as configured API CORS ori
 
 ## Optional real local dependencies
 
+### Verified M2 native identity path
+
+On this workstation Docker's engine fails during startup; PostgreSQL 18 binaries are installed. This creates a separate loopback cluster, leaving the existing PostgreSQL service and its data untouched:
+
+```powershell
+npm run infra:native
+pwsh -NoProfile -File scripts/dev-api.ps1 -Migrate
+npm run test:identity
+```
+
+The helper uses `C:\Program Files\PostgreSQL\18\bin` by default (`-PostgresBin` overrides it) and downloads the pinned official Mailpit v1.31.6 release if absent. It preserves local state/configuration, prints no password, and starts processes hidden. State is anchored under the primary checkout's ignored `artifacts/local-platform`, including from worktrees. This Windows helper is not a production database manager. Migration remains explicit.
+
+Set public `PUBLIC_ACCOUNT_URL=http://localhost:4200` in `apps/web/.env` to enable navigation. Account runtime JSON uses apiBaseUrl `http://localhost:5080` and websiteUrl `http://localhost:4321` from bootstrap examples. Run the four application commands above in separate terminals. Open `http://localhost:8025` for real verification/reset emails. No production mail credentials are needed. Use hostname `localhost` in the browser; servers bind loopback.
+
+Accounts require explicitly enabled identity configuration. The portal shows actual API connection failures. Admin remains the M1 restricted shell; account authentication grants no administrative privileges.
+
+`npm run test:identity` reads the native connection internally unless CAELORA_TEST_POSTGRES is already supplied, then restores the prior environment. It fails without infrastructure/configuration. Normal `npm run verify` explicitly skips PostgreSQL tests without that environment; a skip is not identity validation. Tests create/drop their own generated databases and never reset the developer's caelora database.
+
+### Compose path (syntax verified; runtime blocked locally)
+
+Compose now includes loopback Mailpit alongside PostgreSQL and Redis. Its API profile remains a dependency-readiness foundation; identity must be explicitly configured for the chosen topology. A native API can use Compose's loopback Mailpit SMTP port. Mailpit's local-only configuration does not silently permit a remote SMTP host.
+
 Start Docker Desktop's Linux engine. Then:
 
 ```powershell

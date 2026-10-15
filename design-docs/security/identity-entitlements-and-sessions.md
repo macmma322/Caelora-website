@@ -1,6 +1,6 @@
 # Identity, entitlements and sessions
 
-Status: design for future implementation. No authentication, payment, ownership, gameplay lease or DRM service is implemented in this foundation.
+Status after M2: ASP.NET Core Identity accounts, verified email, browser cookies/sessions, recovery and basic security events are implemented. See [implemented identity decisions](m2-identity.md). Entitlements, external linking, trusted devices, launcher authorization, gameplay leases, payments, notifications and backups below remain future design; see [future contracts](../architecture/future-platform-contracts.md).
 
 ## Distinct concepts
 
