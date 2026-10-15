@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/services/">
+    <Project Path="services/platform-api/Caelora.Platform.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/platform-api/Caelora.Platform.Api.Tests.csproj" />
+  </Folder>
+</Solution>

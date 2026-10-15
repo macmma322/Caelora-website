@@ -1,0 +1,16 @@
+node_modules
+dist
+bin
+obj
+.angular
+.astro
+package-lock.json
+packages.lock.json
+artifacts
+*.woff2
+*.png
+*.webp
+*.cs
+*.csproj
+*.slnx
+packages/shared-assets/licenses

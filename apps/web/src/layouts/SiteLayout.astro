@@ -1,0 +1,121 @@
+---
+import '@caelora/design-tokens/tokens.css';
+import '@caelora/design-tokens/base.css';
+import '../styles/site.css';
+import '@fontsource/manrope/latin-400.css';
+import '@fontsource/manrope/latin-600.css';
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+}
+const {
+  title = 'Caelora — A world to inhabit',
+  description = 'An independent medieval-fantasy voxel sandbox in development. Explore the vision for a world of wild landscapes, building, dragons and player-made stories.',
+  noindex = false,
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const socialImage = new URL('/media/valley-1672.webp', Astro.site);
+const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101c1c" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href="/fonts/cinzel-variable.ttf" as="font" type="font/ttf" crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Caelora" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={socialImage} />
+    <meta
+      property="og:image:alt"
+      content="Caelora concept artwork: a cloaked traveller overlooking a forested valley and castle at sunset."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="wordmark" href="/" aria-label="Caelora home">
+          <span class="sigil" aria-hidden="true">
+            ✧
+          </span>{' '}
+          CAELORA
+        </a>
+        <nav class="desktop-nav" aria-label="Main navigation">
+          <a href="/#world">The world</a>
+          <a href="/#your-path">Your path</a>
+          <a href="/#journal">Journal</a>
+          <a href="/#media">Media</a>
+        </nav>
+        <div class="header-end">
+          {accountUrl ? (
+            <a class="portal-link" href={accountUrl}>
+              Account portal <span aria-hidden="true">↗</span>
+            </a>
+          ) : (
+            <span class="development-tag">In development</span>
+          )}
+          <details class="mobile-nav">
+            <summary aria-label="Toggle navigation">
+              Menu <span aria-hidden="true">☰</span>
+            </summary>
+            <nav aria-label="Mobile navigation">
+              <a href="/#world">The world</a>
+              <a href="/#your-path">Your path</a>
+              <a href="/#journal">Development journal</a>
+              <a href="/#media">Media gallery</a>
+            </nav>
+          </details>
+        </div>
+      </div>
+    </header>
+    <slot />
+    <footer class="site-footer">
+      <div class="container footer-top">
+        <div>
+          <a class="wordmark" href="/">
+            CAELORA
+          </a>
+          <p>A world worth making your own.</p>
+        </div>
+        <nav aria-label="Footer navigation">
+          <a href="/journal/foundation/">Development</a>
+          <a href="/project-information/">Community & support</a>
+          <a href="/project-information/#legal">Legal & privacy</a>
+        </nav>
+      </div>
+      <div class="container footer-bottom">
+        <span>© {new Date().getUTCFullYear()} Caelora. All rights reserved.</span>
+        <span>Independent game · Windows · In development</span>
+      </div>
+    </footer>
+    <script>
+      const menu = document.querySelector<HTMLDetailsElement>('.mobile-nav');
+      menu?.querySelectorAll('a').forEach((link) =>
+        link.addEventListener('click', () => {
+          menu.open = false;
+        }),
+      );
+      menu?.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          menu.open = false;
+          menu.querySelector('summary')?.focus();
+        }
+      });
+    </script>
+  </body>
+</html>

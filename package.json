@@ -1,0 +1,63 @@
+{
+  "name": "caelora-platform",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "packageManager": "npm@12.0.2",
+  "engines": {
+    "node": ">=24.19.0 <25",
+    "npm": ">=12 <13"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=@caelora/web",
+    "dev:account": "ng serve account --host 127.0.0.1 --port 4200",
+    "dev:admin": "ng serve admin --host 127.0.0.1 --port 4300",
+    "dev:api": "pwsh -NoProfile -File scripts/dev-api.ps1",
+    "infra:up": "docker compose --env-file .env -f infrastructure/docker/compose.yml up -d postgres redis",
+    "infra:down": "docker compose --env-file .env -f infrastructure/docker/compose.yml down",
+    "infra:validate": "docker compose --env-file .env.example -f infrastructure/docker/compose.yml config --quiet",
+    "bootstrap": "pwsh -NoProfile -File scripts/bootstrap.ps1",
+    "typecheck": "npm run check --workspace=@caelora/web && tsc -p packages/api-client/tsconfig.json --noEmit",
+    "build": "npm run build --workspace=@caelora/web && ng build account && ng build admin",
+    "build:api": "dotnet build Caelora.Platform.slnx --configuration Release -p:RestoreLockedMode=true",
+    "test": "node --test tests/*.test.mjs",
+    "test:api": "dotnet test Caelora.Platform.slnx --configuration Release --no-build",
+    "test:site": "node scripts/verify-site.mjs",
+    "test:dependencies": "node scripts/verify-dependencies.mjs",
+    "test:repository": "node scripts/verify-repository.mjs",
+    "lint": "eslint apps packages scripts tests --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "security:scan": "node scripts/scan-secrets.mjs",
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build && npm run test:site && npm run test:repository && npm run build:api && npm run test:api && npm run security:scan && npm run infra:validate"
+  },
+  "dependencies": {
+    "@angular/common": "22.2.3",
+    "@angular/compiler": "22.2.3",
+    "@angular/core": "22.2.3",
+    "@angular/forms": "22.2.3",
+    "@angular/platform-browser": "22.2.3",
+    "@angular/router": "22.2.3",
+    "rxjs": "7.8.2",
+    "tslib": "2.8.1"
+  },
+  "devDependencies": {
+    "@angular/build": "22.2.2",
+    "@angular/cli": "22.2.2",
+    "@angular/compiler-cli": "22.2.3",
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.19.2",
+    "eslint": "10.12.0",
+    "globals": "17.13.0",
+    "prettier": "3.9.10",
+    "prettier-plugin-astro": "1.1.1",
+    "sharp": "0.35.5",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.2"
+  }
+}

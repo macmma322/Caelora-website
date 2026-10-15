@@ -1,0 +1,86 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "apps",
+  "cli": { "analytics": false },
+  "projects": {
+    "account": {
+      "projectType": "application",
+      "root": "apps/account",
+      "sourceRoot": "apps/account/src",
+      "prefix": "caelora",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/account",
+            "index": "apps/account/src/index.html",
+            "browser": "apps/account/src/main.ts",
+            "tsConfig": "apps/account/tsconfig.app.json",
+            "assets": [{ "glob": "**/*", "input": "apps/account/public" }],
+            "styles": [
+              "packages/design-tokens/tokens.css",
+              "packages/design-tokens/base.css",
+              "apps/portal.css"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "all",
+              "budgets": [{ "type": "initial", "maximumWarning": "500kB", "maximumError": "700kB" }]
+            },
+            "development": { "optimization": false, "sourceMap": true, "extractLicenses": false }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "development": { "buildTarget": "account:build:development" },
+            "production": { "buildTarget": "account:build:production" }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
+    },
+    "admin": {
+      "projectType": "application",
+      "root": "apps/admin",
+      "sourceRoot": "apps/admin/src",
+      "prefix": "caelora",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/admin",
+            "index": "apps/admin/src/index.html",
+            "browser": "apps/admin/src/main.ts",
+            "tsConfig": "apps/admin/tsconfig.app.json",
+            "assets": [{ "glob": "**/*", "input": "apps/admin/public" }],
+            "styles": [
+              "packages/design-tokens/tokens.css",
+              "packages/design-tokens/base.css",
+              "apps/portal.css"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "all",
+              "budgets": [{ "type": "initial", "maximumWarning": "500kB", "maximumError": "700kB" }]
+            },
+            "development": { "optimization": false, "sourceMap": true, "extractLicenses": false }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "development": { "buildTarget": "admin:build:development" },
+            "production": { "buildTarget": "admin:build:production" }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
+    }
+  }
+}

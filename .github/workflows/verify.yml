@@ -1,0 +1,79 @@
+name: Verify platform
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: platform-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  foundation:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    env:
+      CI: 'true'
+      ASTRO_TELEMETRY_DISABLED: '1'
+      PUBLIC_DEPLOYMENT_ENV: test
+      PUBLIC_SITE_URL: http://localhost:4321
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          global-json-file: global.json
+      - name: Pin package manager
+        run: npm install --global npm@12.0.2
+      - run: npm ci
+      - run: npm run bootstrap
+      - run: dotnet restore Caelora.Platform.slnx --locked-mode
+      - run: npm run verify
+      - run: npm audit --audit-level=high
+      - run: dotnet list Caelora.Platform.slnx package --vulnerable --include-transitive
+  dependencies:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18.4-alpine
+        env:
+          POSTGRES_DB: caelora_test
+          POSTGRES_USER: caelora_test
+          POSTGRES_PASSWORD: ci-disposable-only
+        ports: ['55432:5432']
+        options: >-
+          --health-cmd "pg_isready -U caelora_test -d caelora_test"
+          --health-interval 5s --health-timeout 3s --health-retries 15
+      redis:
+        image: redis:8.2.7-alpine
+        ports: ['56379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 3s --health-retries 15
+    env:
+      CAELORA_TEST_POSTGRES: Host=localhost;Port=55432;Database=caelora_test;Username=caelora_test;Password=ci-disposable-only
+      CAELORA_TEST_REDIS: localhost:56379,abortConnect=false,connectTimeout=2000
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version-file: .node-version
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1
+        with:
+          global-json-file: global.json
+      - run: dotnet build Caelora.Platform.slnx -c Release -p:RestoreLockedMode=true
+      - run: node scripts/verify-dependencies.mjs
+      - name: Build API container
+        run: docker build -f infrastructure/docker/PlatformApi.Dockerfile -t caelora-platform-api:ci .

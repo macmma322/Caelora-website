@@ -1,0 +1,5 @@
+{
+  "environment": "development",
+  "apiBaseUrl": "http://localhost:5080",
+  "websiteUrl": "http://localhost:4321"
+}

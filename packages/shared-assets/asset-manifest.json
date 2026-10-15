@@ -1,0 +1,70 @@
+[
+  {
+    "source": "D:/Caelora/art/main-menu-loop/master/Caelora_MainMenu_Static.png",
+    "sha256": "b1a8941cd0589acb7b056ce37d8fe2ddfa91a0cb4fcc2408cadc3b2b3261e97e",
+    "crop": null,
+    "outputs": [
+      {
+        "filename": "valley-640.webp",
+        "width": 640,
+        "height": 360,
+        "bytes": 87908
+      },
+      {
+        "filename": "valley-960.webp",
+        "width": 960,
+        "height": 540,
+        "bytes": 173798
+      },
+      {
+        "filename": "valley-1672.webp",
+        "width": 1672,
+        "height": 941,
+        "bytes": 375242
+      }
+    ]
+  },
+  {
+    "source": "C:/Users/nikol/Downloads/Voxel Dragon Concept Sheet.png",
+    "sha256": "7cc1295b479ba8236ea033a9ed7cd46b6586cdf1d5eedb9099fdcf6815470abb",
+    "crop": {
+      "left": 0,
+      "top": 0,
+      "width": 1122,
+      "height": 982
+    },
+    "outputs": [
+      {
+        "filename": "dragon-640.webp",
+        "width": 640,
+        "height": 560,
+        "bytes": 70822
+      },
+      {
+        "filename": "dragon-960.webp",
+        "width": 960,
+        "height": 840,
+        "bytes": 130188
+      }
+    ]
+  },
+  {
+    "source": "C:/Users/nikol/Downloads/Caelora Fantasy Atlas Map.png",
+    "sha256": "4d9d207c1fb01ee5f0507130db10d53539faf6b1cb2792c676100daf4cc12a66",
+    "crop": null,
+    "outputs": [
+      {
+        "filename": "atlas-640.webp",
+        "width": 640,
+        "height": 480,
+        "bytes": 123208
+      },
+      {
+        "filename": "atlas-960.webp",
+        "width": 960,
+        "height": 720,
+        "bytes": 259278
+      }
+    ]
+  }
+]
