@@ -5,6 +5,8 @@
 **/.env
 **/.env.*
 **/appsettings.Local.json
+**/appsettings.Identity.Local.json
+**/.local
 **/runtime-config.json
 artifacts
 dist

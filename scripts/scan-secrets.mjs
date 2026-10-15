@@ -17,7 +17,11 @@ const failures = [];
 for (const path of new Set(paths)) {
   if (/(^|\/)\.env($|\.)/.test(path) && !path.endsWith('.env.example'))
     failures.push(`${path}: environment file must be ignored`);
-  if (/(?:appsettings\.Local\.json|\/runtime-config\.json|\.(?:pfx|pem|key))$/.test(path))
+  if (
+    /(?:appsettings\.(?:Identity\.)?Local\.json|\/runtime-config\.json|\.(?:pfx|pem|key))$/.test(
+      path,
+    )
+  )
     failures.push(`${path}: private/local file must be ignored`);
   const bytes = readFileSync(path);
   if (bytes.includes(0)) continue;

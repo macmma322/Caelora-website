@@ -106,8 +106,9 @@ public sealed class FoundationTests(FoundationFactory factory) : IClassFixture<F
     {
         using var db = new PlatformDbContext(new DbContextOptionsBuilder<PlatformDbContext>()
             .UseNpgsql("Host=localhost;Database=test;Username=test;Password=test").Options);
-        Assert.Equal(["202610150001_InitialPlatform"], db.Database.GetMigrations().ToArray());
-        Assert.Empty(db.Model.GetEntityTypes());
+        Assert.Contains("202610150001_InitialPlatform", db.Database.GetMigrations());
+        Assert.Contains(db.Database.GetMigrations(), migration => migration.EndsWith("_IdentityFoundation", StringComparison.Ordinal));
+        Assert.Contains(db.Model.GetEntityTypes(), entity => entity.ClrType == typeof(Caelora.Platform.Api.Accounts.PlatformUser));
     }
 
     private sealed class FailingInformation : IPlatformInformation

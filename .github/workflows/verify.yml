@@ -74,6 +74,8 @@ jobs:
         with:
           global-json-file: global.json
       - run: dotnet build Caelora.Platform.slnx -c Release -p:RestoreLockedMode=true
+      - name: PostgreSQL identity integration tests
+        run: dotnet test Caelora.Platform.slnx -c Release --no-build
       - run: node scripts/verify-dependencies.mjs
       - name: Build API container
         run: docker build -f infrastructure/docker/PlatformApi.Dockerfile -t caelora-platform-api:ci .
