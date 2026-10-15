@@ -1,3 +1,5 @@
+@import '@fontsource/manrope/latin-400.css';
+@import '@fontsource/manrope/latin-600.css';
 *,
 *::before,
 *::after {
@@ -86,15 +88,15 @@ h3 {
   font-weight: 700;
   letter-spacing: 0.05em;
   transition:
-    background var(--duration-fast),
-    transform var(--duration-fast);
+    background var(--duration-fast) ease,
+    transform var(--duration-fast) var(--ease-out);
   cursor: pointer;
 }
 .button:hover {
   background: var(--color-accent-hover);
 }
 .button:active {
-  transform: translateY(1px);
+  transform: scale(0.98);
 }
 .button.secondary {
   background: transparent;
@@ -135,7 +137,7 @@ input[aria-invalid='true'] {
 }
 .alert {
   padding: 1rem 1.25rem;
-  border-left: 2px solid var(--color-accent);
+  border: 1px solid var(--color-bronze-line);
   background: var(--color-surface);
   font-size: var(--text-sm);
 }
@@ -179,4 +181,42 @@ input[aria-invalid='true'] {
     animation: none !important;
     transition: none !important;
   }
+}
+
+body {
+  overflow-wrap: break-word;
+}
+button,
+input,
+summary,
+a {
+  touch-action: manipulation;
+}
+input {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+input:focus-visible {
+  outline-offset: 3px;
+}
+.button:disabled:active {
+  transform: none;
+}
+@media (hover: none) {
+  .button:hover {
+    background: var(--color-accent);
+  }
+  .button.secondary:hover {
+    background: transparent;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+html[data-keyboard] *,
+html[data-keyboard] *::before,
+html[data-keyboard] *::after {
+  transition-duration: 0s !important;
 }
