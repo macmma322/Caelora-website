@@ -1,0 +1,39 @@
+<section class="model-showcase" aria-labelledby="model-showcase-title" data-model-showcase>
+  <div class="container model-showcase-grid">
+    <div class="model-copy">
+      <p class="eyebrow">A thing you can carry</p>
+      <h2 id="model-showcase-title">The road leaves a mark.</h2>
+      <p>
+        The travel cloak is an existing Caelora equipment asset, presented here as a quiet study in
+        material, silhouette and movement. It is a website derivative of the source model, not a
+        promise of a released inventory system.
+      </p>
+      <p class="small-note">Drag to turn the study · WebGL optional · Source asset preserved</p>
+    </div>
+    <div class="model-stage" data-model-stage>
+      <canvas
+        tabindex="0"
+        aria-label="Interactive 3D study of the Caelora travel cloak. Use the turn controls or arrow keys to rotate."
+      ></canvas>
+      <div class="model-controls" aria-label="Model rotation controls">
+        <button type="button" data-model-turn="-1" aria-label="Turn cloak left">
+          ←
+        </button>
+        <button type="button" data-model-turn="1" aria-label="Turn cloak right">
+          →
+        </button>
+      </div>
+      <div class="model-loading" role="status">
+        Preparing the study…
+      </div>
+      <noscript>
+        <p class="model-fallback">
+          Enable JavaScript to inspect the model. The written study remains available.
+        </p>
+      </noscript>
+    </div>
+  </div>
+</section>
+<script>
+  import '../scripts/model-showcase';
+</script>

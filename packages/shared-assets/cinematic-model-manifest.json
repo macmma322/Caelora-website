@@ -1,0 +1,15 @@
+{
+  "assets": [
+    {
+      "id": "travel-cloak",
+      "source": "D:/Caelora/art/equipment/travel_cloak/exports/EQP_Travel_Cloak.glb",
+      "derivative": "apps/web/public/models/caelora-travel-cloak.glb",
+      "sourceMasterReadOnly": true,
+      "static": true,
+      "format": "GLB",
+      "bytes": 175048,
+      "sha256": "AFD265E2A5FC565CC4DC1FC51FAC32C2245859A598A489718CEA0415141C3642",
+      "websiteUse": "Pointer-rotated material and silhouette study; not gameplay inventory proof"
+    }
+  ]
+}

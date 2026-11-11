@@ -46,6 +46,121 @@ h1 span {
   color: var(--color-muted);
   line-height: 1.8;
 }
+.model-showcase {
+  padding-block: clamp(5rem, 10vw, 10rem);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+.model-showcase-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.75fr) minmax(0, 1.25fr);
+  align-items: center;
+  gap: clamp(2rem, 8vw, 9rem);
+}
+.model-copy h2 {
+  max-width: 9ch;
+  margin-block: 1rem 1.5rem;
+  font-size: var(--text-title);
+}
+.model-copy > p:not(.eyebrow):not(.small-note) {
+  max-width: 38ch;
+  color: var(--color-muted);
+}
+.model-stage {
+  position: relative;
+  min-height: min(62vw, 620px);
+  background: var(--color-deep);
+  border: 1px solid var(--color-bronze-line);
+  isolation: isolate;
+}
+.model-stage::before,
+.model-stage::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  border: 1px solid var(--color-bronze-line);
+  opacity: 0.55;
+}
+.model-stage::before {
+  inset: 1.5rem;
+}
+.model-stage::after {
+  inset: auto 18% 12%;
+  height: 1px;
+  background: var(--color-bronze-line);
+}
+.model-stage canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+.model-stage canvas:active {
+  cursor: grabbing;
+}
+.model-stage canvas {
+  touch-action: manipulation;
+  user-select: none;
+}
+.model-controls {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 1.25rem;
+  z-index: 3;
+  display: flex;
+  gap: 0.5rem;
+}
+.model-controls button {
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--color-bronze-line);
+  background: var(--color-deep);
+  color: var(--color-paper);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.model-controls button:hover {
+  background: var(--color-raised);
+}
+.model-loading,
+.model-fallback {
+  position: absolute;
+  inset: 50% 1.5rem auto;
+  transform: translateY(-50%);
+  text-align: center;
+  color: var(--color-muted);
+  z-index: 2;
+}
+.model-stage.model-failed canvas {
+  display: none;
+}
+.model-stage.model-failed .model-fallback {
+  z-index: 1;
+}
+@media (max-width: 60rem) {
+  .model-showcase-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .model-copy h2 {
+    max-width: 12ch;
+  }
+  .model-stage {
+    min-height: min(78vw, 520px);
+  }
+}
+@media (max-width: 45rem) {
+  .model-showcase {
+    padding-block: 5rem;
+  }
+  .model-stage {
+    min-height: 112vw;
+  }
+  .model-stage::before {
+    inset: 1rem;
+  }
+}
 .eyebrow {
   font-size: 0.6875rem;
   letter-spacing: 0.15em;

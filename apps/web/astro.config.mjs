@@ -25,5 +25,11 @@ export default defineConfig({
   build: { inlineStylesheets: 'never' },
   integrations: [sitemap({ filter: (page) => !page.endsWith('/404/') })],
   // Keep scripts/styles external so static hosts can enforce CSP without unsafe-inline.
-  vite: { build: { assetsInlineLimit: 0 }, server: { fs: { allow: ['../..'] } } },
+  vite: {
+    build: { assetsInlineLimit: 0 },
+    // Three's browser module is intentionally served from source in dev. This avoids
+    // stale optimize-deps artefacts after dependency changes while production remains bundled.
+    optimizeDeps: { exclude: ['three'] },
+    server: { fs: { allow: ['../..'] } },
+  },
 });
