@@ -29,6 +29,8 @@ Quality bar: flagship public website
 - Model browser smoke: loaded the real GLB with no console errors.
 - Lab performance: desktop LCP proxy median 352 ms; mobile LCP proxy median 632 ms; CLS remained below 0.024; overflow false at both tested widths.
 
-## Known limitation
+## Repository integration
 
-The website submodule points at `https://github.com/macmma322/Caelora-website.git`, but that GitHub repository does not currently exist. The parent repository contains the correct gitlink and `.gitmodules` entry; a remote repository must be created before clean-room clones can initialize the submodule.
+The public subrepo is now available at `https://github.com/macmma322/Caelora-website` with `main` as its default branch. The parent Caelora repository contains a `.gitmodules` entry at `Caelora-website` pinned to commit `416071ea04531ef9b90d3d9c0957395e15c57a20`.
+
+The parent integration commits are local on `feature/equipment-wave4-audit`; unrelated dirty files in the original checkout were not staged or pushed.
