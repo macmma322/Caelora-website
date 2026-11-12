@@ -27,18 +27,18 @@ Keep the illustrated-expedition identity (Cinzel inscriptions, weathered bronze,
 
 ## Acts (home page)
 
-| Act              | Content                                                                          | Media / treatment                                                               |
-| ---------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| I Arrival        | Wordmark, "A world to call your own.", one-sentence pitch, two CTAs, status line | Full valley, gentle CSS scroll-timeline depth with separate SVG pine foreground |
-| II One valley    | Four systems with status tags and legend                                         | Four small details of the valley + dragon study                                 |
-| III Wilderness   | Exploration                                                                      | Cinematic 2.7:1 band of peaks and mist, pines as a separate foreground layer    |
-| IV First home    | Gather, craft, build, return                                                     | Portrait hearth detail, ember light; travel-cloak 3D study ("things you carry") |
-| V Living world   | Villagers, settlements, wildlife                                                 | Lamplit village detail; wolf and falcon model studies                           |
-| VI Extraordinary | Dragons, wings and gliding                                                       | Dragon study on a dark stage with a radial studio light, one-time reveal        |
-| VII Freedom      | Wander, build, survive, trade, explore, join; nations later                      | Castle detail under a dusk gradient                                             |
-| VIII Studio      | Journal entries from a content collection, status board                          | Entry covers; RSS                                                               |
-| IX Community     | Honest "not open yet" plus how to follow                                         | Typographic                                                                     |
-| X Closing        | "Somewhere in the valley, a fire is waiting."                                    | Ember glow and pine silhouette; no repeated hero copy                           |
+| Act              | Content                                                                          | Media / treatment                                                                                          |
+| ---------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| I Arrival        | Wordmark, "A world to call your own.", one-sentence pitch, two CTAs, status line | Full valley, gentle CSS scroll-timeline depth with separate SVG pine foreground                            |
+| II One valley    | Four systems with status tags and legend                                         | Four small details of the valley + dragon study                                                            |
+| III Wilderness   | Exploration                                                                      | Cinematic 2.7:1 band of peaks and mist, pines as a separate foreground layer                               |
+| IV First home    | Gather, craft, build, return                                                     | Portrait hearth detail, ember light; Crimson Regent cloak 3D study with cloth physics ("things you carry") |
+| V Living world   | Villagers, settlements, wildlife                                                 | Lamplit village detail; wolf and falcon model studies                                                      |
+| VI Extraordinary | Dragons, wings and gliding                                                       | Dragon study on a dark stage with a radial studio light, one-time reveal                                   |
+| VII Freedom      | Wander, build, survive, trade, explore, join; nations later                      | Castle detail under a dusk gradient                                                                        |
+| VIII Studio      | Journal entries from a content collection, status board                          | Entry covers; RSS                                                                                          |
+| IX Community     | Honest "not open yet" plus how to follow                                         | Typographic                                                                                                |
+| X Closing        | "Somewhere in the valley, a fire is waiting."                                    | Ember glow and pine silhouette; no repeated hero copy                                                      |
 
 The full archive moves to `/media/` (all studies, labelled, with the existing accessible viewer). The journal gets `/journal/` and `/journal/<slug>/` from a typed content collection, so new entries need one Markdown file.
 

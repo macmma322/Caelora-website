@@ -1,8 +1,10 @@
 import type * as Three from 'three';
+import type { CloakPhysics } from './cloak-physics';
 
 // Poster-first 3D study. Nothing WebGL-related loads until the visitor presses "Inspect in 3D".
 // Rendering is on demand: frames are scheduled only while the view is still easing toward its
-// target, and never while the stage is off-screen or the tab is hidden.
+// target (or, for a cloak, while its cloth simulation runs), and never while the stage is
+// off-screen or the tab is hidden. Reduced motion keeps the cloth at rest.
 const ZOOM_MIN = 0.7;
 const ZOOM_MAX = 1.45;
 const TURN_STEP = 0.45;
@@ -86,27 +88,37 @@ async function inspect({ stage, canvas, start, controls, message, model }: Parts
     gltf.scene.scale.setScalar(scale);
     gltf.scene.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
     group.add(gltf.scene);
+    let cloth: CloakPhysics | null = null;
+    if (motion.matches) {
+      const { createCloakPhysics } = await import('./cloak-physics');
+      cloth = createCloakPhysics(THREE, gltf.scene);
+    }
 
     const view = { yaw: 0, zoom: 1 };
     const goal = { yaw: 0, zoom: 1 };
     let frame = 0;
     let visible = true;
-    const draw = () => {
+    let last = 0;
+    const draw = (now: number) => {
       frame = 0;
       if (!renderer) return;
+      const seconds = last ? Math.min((now - last) / 1000, 0.1) : 0;
+      last = now;
       const ease = motion.matches ? 0.14 : 1;
       view.yaw += (goal.yaw - view.yaw) * ease;
       view.zoom += (goal.zoom - view.zoom) * ease;
       group.rotation.y = view.yaw;
       camera.position.copy(home).sub(target).divideScalar(view.zoom).add(target);
       camera.lookAt(target);
+      cloth?.update(seconds);
       renderer.render(scene, camera);
       const settling =
         Math.abs(goal.yaw - view.yaw) > 0.0005 || Math.abs(goal.zoom - view.zoom) > 0.0005;
-      if (settling) request();
+      if (settling || cloth) request();
     };
     const request = () => {
-      if (!frame && visible && !document.hidden) frame = requestAnimationFrame(draw);
+      if (frame || !visible || document.hidden) return;
+      frame = requestAnimationFrame(draw);
     };
     const turn = (amount: number) => {
       goal.yaw += amount;

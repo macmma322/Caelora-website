@@ -16,18 +16,20 @@ const page = await browser.newPage({
   deviceScaleFactor: 2,
   bypassCSP: true,
 });
-await page.goto(origin, { waitUntil: 'networkidle' });
+await page.goto(new URL('/hearth/', origin).href, { waitUntil: 'networkidle' });
 const stage = page.locator('[data-model-stage]').first();
 await stage.scrollIntoViewIfNeeded();
 await page.locator('[data-model-start]').first().click();
 await page.waitForSelector('[data-model-stage].is-live', { timeout: 30000 });
 await page.addStyleTag({
-  content: `html, body, .model-showcase, .model-stage { background: transparent !important; }
-    .model-stage { border-color: transparent !important; }
+  content: `html, body, main, .model-showcase, .model-stage, .model-viewport { background: transparent !important; }
+    .embers, .model-showcase::before, .model-showcase::after { display: none !important; }
+    .model-stage, .model-viewport { border-color: transparent !important; box-shadow: none !important; }
     .model-controls, .model-message, .model-stage figcaption, .model-poster { visibility: hidden !important; }`,
 });
-await page.waitForTimeout(800);
-const png = await stage.screenshot({ omitBackground: true });
+// Let the cloth settle into its rest drape before the still is taken.
+await page.waitForTimeout(2500);
+const png = await stage.locator('.model-viewport').screenshot({ omitBackground: true });
 await browser.close();
 for (const size of [640, 960]) {
   await sharp(png)

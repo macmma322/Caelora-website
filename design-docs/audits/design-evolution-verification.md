@@ -83,3 +83,10 @@ Accepted or deferred (minor): on small screens the account scene band is still a
   - Desktop: LCP 204 ms median, CLS 0.000, 1,066 KiB after a full scroll.
   - Mobile: LCP 1,044 ms median, CLS 0.000, 931 KiB.
   - The full-plate hero (1920 px AVIF, 303 KiB) is heavier than the old hero. A smaller mobile derivative is a tuning option if field data ever approaches the 2.5 s target.
+
+## Hearth 3D study: Crimson Regent cloak with cloth physics — tested, browser-verified
+
+- **Asset:** the premium `PREM_Crimson_Regent_Cloak` game asset replaces the travel cloak. `scripts/export-web-cloak.py` (Blender 5.2) decimates 358,398 → 23,995 faces and keeps the Chest/Neck/`Cloak_*` bones; gltfpack 0.25.0 quantises the mesh. Shipped as `apps/web/public/models/crimson-regent/` (glTF + .bin + 3 × 1024px WebP, about 1.33 MB, loaded only after "Inspect in 3D"). Hashes are in `packages/shared-assets/cinematic-model-manifest.json`.
+- **CSP:** a GLB with embedded images (`blob:` fetches) and meshopt (WebAssembly) were both blocked by the site CSP, which was left unchanged; quantisation plus external textures needs neither.
+- **Physics:** `apps/web/src/scripts/cloak-physics.ts` ports the game's `SpringChainSolver` model (Verlet tails, spring toward rest, damping, 55° bend limit) to the 12 `Cloak_*` bones. There is no body under the web study, so gravity is not added (the authored pose already hangs) and the spring and damping are stiffer than the game's (60 and 12 instead of 6 and 3). Reduced motion skips the simulation and keeps render-on-demand.
+- **Evidence:** `node scripts/check-cloak-physics.mjs` runs the chain on the exported skeleton (worst bone deviation from rest: idle 3°; 3 rad/s turn 38° peak; back to 1° within 4 s). Headless Chrome captures (front, mid-turn, side, back, after reset) are in `artifacts/design-evolution/v2/cloak/`. `verify-design` passes 78/78 and `verify-site` passes 12 pages / 819 references. Not tested: Safari, Firefox, physical phones, and frame time on low-end GPUs.

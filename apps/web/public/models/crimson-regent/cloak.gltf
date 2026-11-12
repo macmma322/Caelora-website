@@ -1,0 +1,273 @@
+{
+  "asset": { "version": "2.0", "generator": "gltfpack 0.25" },
+  "extensionsUsed": ["KHR_mesh_quantization", "KHR_texture_transform", "EXT_texture_webp"],
+  "extensionsRequired": ["KHR_mesh_quantization", "EXT_texture_webp"],
+  "buffers": [{ "uri": "cloak.bin", "byteLength": 861652 }],
+  "bufferViews": [
+    { "buffer": 0, "byteOffset": 0, "byteLength": 238736, "byteStride": 8, "target": 34962 },
+    { "buffer": 0, "byteOffset": 238736, "byteLength": 119368, "byteStride": 4, "target": 34962 },
+    { "buffer": 0, "byteOffset": 358104, "byteLength": 119368, "byteStride": 4, "target": 34962 },
+    { "buffer": 0, "byteOffset": 477472, "byteLength": 119368, "byteStride": 4, "target": 34962 },
+    { "buffer": 0, "byteOffset": 596840, "byteLength": 119368, "byteStride": 4, "target": 34962 },
+    { "buffer": 0, "byteOffset": 716208, "byteLength": 143970, "target": 34963 },
+    { "buffer": 0, "byteOffset": 860180, "byteLength": 1472 }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "byteOffset": 0,
+      "componentType": 5123,
+      "count": 29842,
+      "type": "VEC3",
+      "min": [0, 0, 0],
+      "max": [13899, 16383, 5450]
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 0,
+      "componentType": 5120,
+      "count": 29842,
+      "type": "VEC3",
+      "normalized": true
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 0,
+      "componentType": 5123,
+      "count": 29842,
+      "type": "VEC2",
+      "normalized": true
+    },
+    { "bufferView": 3, "byteOffset": 0, "componentType": 5121, "count": 29842, "type": "VEC4" },
+    {
+      "bufferView": 4,
+      "byteOffset": 0,
+      "componentType": 5121,
+      "count": 29842,
+      "type": "VEC4",
+      "normalized": true
+    },
+    { "bufferView": 5, "byteOffset": 0, "componentType": 5123, "count": 71985, "type": "SCALAR" },
+    { "bufferView": 6, "byteOffset": 0, "componentType": 5126, "count": 23, "type": "MAT4" }
+  ],
+  "samplers": [{ "magFilter": 9729, "minFilter": 9987 }],
+  "images": [
+    { "name": "Normal", "uri": "Normal.webp" },
+    { "name": "BaseColor", "uri": "BaseColor.webp" },
+    { "name": "Roughness", "uri": "Roughness.webp" }
+  ],
+  "textures": [
+    { "sampler": 0, "extensions": { "EXT_texture_webp": { "source": 0 } } },
+    { "sampler": 0, "extensions": { "EXT_texture_webp": { "source": 1 } } },
+    { "sampler": 0, "extensions": { "EXT_texture_webp": { "source": 2 } } }
+  ],
+  "materials": [
+    {
+      "name": "CrimsonRegent",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 1,
+          "extensions": {
+            "KHR_texture_transform": {
+              "offset": [0.000112000002, 6.66379929e-5],
+              "scale": [15.9953909, 15.9977951]
+            }
+          }
+        },
+        "metallicFactor": 0,
+        "metallicRoughnessTexture": {
+          "index": 2,
+          "extensions": {
+            "KHR_texture_transform": {
+              "offset": [0.000112000002, 6.66379929e-5],
+              "scale": [15.9953909, 15.9977951]
+            }
+          }
+        }
+      },
+      "normalTexture": {
+        "index": 0,
+        "extensions": {
+          "KHR_texture_transform": {
+            "offset": [0.000112000002, 6.66379929e-5],
+            "scale": [15.9953909, 15.9977951]
+          }
+        }
+      },
+      "doubleSided": true
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2,
+            "JOINTS_0": 3,
+            "WEIGHTS_0": 4
+          },
+          "indices": 5,
+          "material": 0
+        }
+      ]
+    }
+  ],
+  "skins": [
+    {
+      "name": "RIG_Athletic_Male",
+      "joints": [23, 22, 21, 20, 19, 16, 5, 4, 3, 2, 1, 10, 9, 8, 7, 6, 15, 14, 13, 12, 11, 17, 18],
+      "inverseBindMatrices": 6
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "skin": 0,
+      "translation": [-0.551149845, 0.298705757, -0.363784999],
+      "scale": [7.91950879e-5, 7.91950879e-5, 7.91950879e-5]
+    },
+    {
+      "name": "Cloak_C_04_end",
+      "translation": [8.8817842e-15, 0.257690281, -5.58792834e-9],
+      "rotation": [-1.49011736e-8, 1.19209417e-7, -7.54951657e-15, 1]
+    },
+    {
+      "name": "Cloak_C_04",
+      "translation": [-2.84217094e-14, 0.257629901, -4.38061631e-9],
+      "rotation": [-0.0108225495, -1.19212274e-7, -1.31572042e-8, 0.999941468],
+      "children": [1]
+    },
+    {
+      "name": "Cloak_C_03",
+      "translation": [-2.62012634e-14, 0.257629842, -1.88472544e-8],
+      "rotation": [-1.32393518e-9, 2.57810351e-14, 8.64645812e-15, 1],
+      "children": [2]
+    },
+    {
+      "name": "Cloak_C_02",
+      "translation": [3.33066907e-14, 0.259193122, 7.45058415e-9],
+      "rotation": [0.0549256839, 4.84210866e-11, 7.33197965e-8, 0.998490453],
+      "scale": [1, 0.99999994, 1],
+      "children": [3]
+    },
+    {
+      "name": "Cloak_C_01",
+      "translation": [-5.44679413e-9, 4.76911396e-7, -5.91882809e-8],
+      "rotation": [-0.054925561, 1.59129996e-7, -6.00747043e-8, 0.998490453],
+      "scale": [1, 0.99999994, 1],
+      "children": [4]
+    },
+    {
+      "name": "Cloak_L_04_end",
+      "translation": [-1.57012892e-9, 0.25769037, -1.01165085e-8],
+      "rotation": [2.60769966e-8, 2.32384309e-7, 1.15651716e-7, 1]
+    },
+    {
+      "name": "Cloak_L_04",
+      "translation": [8.13854228e-9, 0.257629812, -5.36907407e-10],
+      "rotation": [-0.0108225923, 1.6684821e-7, 2.77812546e-7, 0.999941468],
+      "scale": [1, 0.99999994, 1],
+      "children": [6]
+    },
+    {
+      "name": "Cloak_L_03",
+      "translation": [1.16278045e-8, 0.257629544, 2.10498285e-9],
+      "rotation": [7.22996703e-8, -3.75956517e-7, -3.75956404e-7, 1],
+      "children": [7]
+    },
+    {
+      "name": "Cloak_L_02",
+      "translation": [3.50287621e-9, 0.25919345, -6.59670718e-9],
+      "rotation": [0.0549256541, 1.64319559e-7, 2.64174673e-7, 0.998490453],
+      "children": [8]
+    },
+    {
+      "name": "Cloak_L_01",
+      "translation": [-0.157272279, 4.70127986e-7, -1.48079238e-7],
+      "rotation": [-0.0549255684, 1.35581104e-7, -9.38242337e-8, 0.998490453],
+      "children": [9]
+    },
+    {
+      "name": "Cloak_R_04_end",
+      "translation": [4.70321382e-9, 0.257690251, -3.59602126e-9],
+      "rotation": [-7.26431892e-8, 1.19209659e-7, -7.06101844e-14, 1],
+      "scale": [1, 0.99999994, 1]
+    },
+    {
+      "name": "Cloak_R_04",
+      "translation": [-6.10245365e-9, 0.257629991, -7.91349919e-9],
+      "rotation": [-0.0108225513, -2.6222753e-7, -1.58148495e-7, 0.999941468],
+      "children": [11]
+    },
+    {
+      "name": "Cloak_R_03",
+      "translation": [-1.3175864e-8, 0.25763011, -7.97273003e-9],
+      "rotation": [2.4752957e-8, 1.44598488e-7, 1.44598459e-7, 1],
+      "children": [12]
+    },
+    {
+      "name": "Cloak_R_02",
+      "translation": [-1.13978871e-8, 0.259193033, 1.40473162e-8],
+      "rotation": [0.0549256802, -2.66938365e-8, 5.09232727e-8, 0.998490453],
+      "scale": [1, 0.999999881, 1],
+      "children": [13]
+    },
+    {
+      "name": "Cloak_R_01",
+      "translation": [0.157272279, 4.83694805e-7, 3.71532494e-8],
+      "rotation": [-0.0549255833, 1.35581104e-7, -9.382439e-8, 0.998490453],
+      "children": [14]
+    },
+    {
+      "name": "Cloak_Root",
+      "translation": [0.00255381782, -0.0568952374, -0.193304077],
+      "rotation": [-0.000730420055, 0.0556370057, 0.998364866, 0.0130995447],
+      "scale": [0.99999994, 1, 0.999999046],
+      "children": [5, 10, 15]
+    },
+    {
+      "name": "Cloak_TorsoBack",
+      "translation": [-0.000932875089, -0.0148605919, -0.152435005],
+      "rotation": [-0.745291948, 0.00874658488, -0.00977897085, 0.666609228],
+      "scale": [1, 1, 0.99999994]
+    },
+    {
+      "name": "Neck",
+      "translation": [4.2833932e-9, 0.0785669833, -1.48738764e-8],
+      "rotation": [3.05775757e-7, 2.94290814e-8, 1.32368342e-7, 1],
+      "scale": [1, 0.99999994, 1]
+    },
+    {
+      "name": "Chest",
+      "translation": [9.75189263e-10, 0.121387579, 3.54702934e-11],
+      "rotation": [6.83690314e-6, 0.000832839694, 0.00744974893, 0.999971926],
+      "scale": [0.99999994, 1, 1],
+      "children": [16, 17, 18]
+    },
+    {
+      "name": "Spine_02",
+      "translation": [-1.38004641e-9, 0.117818333, -1.0454869e-8],
+      "rotation": [3.26062263e-7, 1.45916328e-8, 6.46175558e-9, 1],
+      "children": [19]
+    },
+    {
+      "name": "Spine_01",
+      "translation": [1.58883873e-9, 0.117817737, -1.1325028e-8],
+      "rotation": [9.30890565e-9, -8.93794705e-10, 7.5611295e-10, 1],
+      "children": [20]
+    },
+    {
+      "name": "Pelvis",
+      "translation": [0.000517904758, 1.04712915, 0.0839507431],
+      "rotation": [0.055633869, 0.000312890159, 0.00561527256, 0.998435378],
+      "children": [21]
+    },
+    { "name": "Root", "children": [22] },
+    { "name": "PREM_CrimsonRegent", "children": [0] },
+    { "name": "RIG_Athletic_Male", "children": [24, 23] }
+  ],
+  "scenes": [{ "name": "Scene", "nodes": [25] }],
+  "scene": 0
+}
