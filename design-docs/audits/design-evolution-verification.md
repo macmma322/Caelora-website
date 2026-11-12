@@ -73,3 +73,13 @@ Accepted or deferred (minor): on small screens the account scene band is still a
 - Any flow requiring the platform API (none is deployed).
 - Commercial rights for the concept art remain unconfirmed (see [shared-assets README](../../packages/shared-assets/README.md)).
 - Development-status tags on the home page (what is "In development" vs "Planned") come from the project's milestone record, not from a public build; confirm them before release.
+
+## Revision 2 (valley navigation and place pages) — tested, browser-verified, measured
+
+- `scripts/verify-design.mjs`: **78 checks pass**. These cover 11 pages × 7 viewports (no overflow, broken images or page errors), five map pins, the mobile menu, the viewer, lazy WebGL on `/hearth/`, and reduced motion and no-JS visibility.
+- axe 4.14: **0 violations** on `/`, `/wilds/`, `/hearth/`, `/village/`, `/bestiary/`, `/kingdoms/` and `/community/` at 1440×900 and 390×844.
+- View transitions (Chrome 157, headless): clicking the Village and Kingdoms pins produced `::view-transition-group(place-village)` and `::view-transition-group(place-kingdoms)` animations on the arriving page. In captured mid-flight frames, the chosen region lights in place and expands into the hero. Safari and Firefox were not tested (Firefox lacks cross-document view transitions and navigates normally).
+- Home performance (same lab profile as above):
+  - Desktop: LCP 204 ms median, CLS 0.000, 1,066 KiB after a full scroll.
+  - Mobile: LCP 1,044 ms median, CLS 0.000, 931 KiB.
+  - The full-plate hero (1920 px AVIF, 303 KiB) is heavier than the old hero. A smaller mobile derivative is a tuning option if field data ever approaches the 2.5 s target.

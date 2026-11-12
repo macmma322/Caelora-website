@@ -1,194 +1,50 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import PineVeil from '../components/PineVeil.astro';
-import ModelShowcase from '../components/ModelShowcase.astro';
+import ValleyMap from '../components/ValleyMap.astro';
 import ArtPicture from '../components/ArtPicture.astro';
-import ArtViewer from '../components/ArtViewer.astro';
 import StatusTag from '../components/StatusTag.astro';
-import { media, largest, statusLabel, statusMeaning, type Art, type Status } from '../data/media';
+import { media, statusMeaning, type Status } from '../data/media';
+import { places } from '../data/places';
 import { journalEntries, entryUrl, formatDate, isoDate } from '../lib/journal';
 
-const entries = (await journalEntries()).slice(0, 3);
-
-// The four things a player does. Status tags describe the Unity prototype, not a public build.
-const systems: {
-  id: string;
-  title: string;
-  body: string;
-  art: Art;
-  link: { href: string; label: string };
-  parts: [string, Status][];
-}[] = [
-  {
-    id: 'build',
-    title: 'Build your place',
-    body: 'Gather timber and stone, craft the tools you need, and raise a shelter that can become a home.',
-    art: media.hearth,
-    link: { href: '#home', label: 'The first home' },
-    parts: [
-      ['Gathering and building', 'development'],
-      ['Crafting and tools', 'development'],
-      ['Survival needs', 'development'],
-    ],
-  },
-  {
-    id: 'path',
-    title: 'Find your path',
-    body: 'Cross forests and high passes, follow the river, look for ruins and caves. The valley is meant to be read on foot.',
-    art: media.wilds,
-    link: { href: '#explore', label: 'Into the wilderness' },
-    parts: [
-      ['Terrain and world generation', 'development'],
-      ['Ruins and caves', 'development'],
-      ['Day, night and weather', 'development'],
-    ],
-  },
-  {
-    id: 'life',
-    title: 'A world with its own life',
-    body: 'Animals graze, wander and flee on their own terms. Villages with daily routines and people to trade with are part of the plan.',
-    art: media.village,
-    link: { href: '#life', label: 'A living world' },
-    parts: [
-      ['Wildlife and livestock', 'development'],
-      ['Villagers and settlements', 'planned'],
-      ['Trade and guilds', 'planned'],
-    ],
-  },
-  {
-    id: 'beyond',
-    title: 'Beyond the ordinary',
-    body: 'Dragons that were here before anyone, creatures from older stories, and wings you can actually use to leave the ground.',
-    art: media.dragon,
-    link: { href: '#beyond', label: 'The extraordinary' },
-    parts: [
-      ['Wings and gliding', 'development'],
-      ['Dragons', 'development'],
-      ['Other mythical creatures', 'planned'],
-    ],
-  },
-];
-const viewerLink = (item: Art) => ({
-  href: largest(item),
-  'data-artwork': '',
-  'data-title': item.title,
-  'data-status': statusLabel[item.status],
-  'data-source': item.source,
-  'data-alt': item.alt,
-});
+const entries = (await journalEntries()).slice(0, 2);
 ---
 
 <SiteLayout>
   <main id="main">
-    <!-- I · Arrival -->
-    <section class="hero" aria-labelledby="hero-title" data-opening data-depth-scene>
-      <picture class="hero-art" data-depth="0.12">
-        <source
-          media="(max-width:45rem)"
-          type="image/avif"
-          srcset="/media/valley-mobile-600.avif"
-        />
-        <source
-          media="(max-width:45rem)"
-          type="image/webp"
-          srcset="/media/valley-mobile-600.webp"
-        />
-        <source
-          type="image/avif"
-          srcset="/media/valley-640.avif 640w, /media/valley-960.avif 960w, /media/valley-1672.avif 1672w"
-          sizes="100vw"
-        />
-        <img
-          src="/media/valley-1672.webp"
-          srcset="/media/valley-640.webp 640w, /media/valley-960.webp 960w, /media/valley-1672.webp 1672w"
-          sizes="100vw"
-          width="1672"
-          height="941"
-          alt={media.valley.alt}
-          fetchpriority="high"
-        />
-      </picture>
-      <div class="hero-shade" aria-hidden="true"></div>
-      <div class="hero-trees" data-depth="-0.2" aria-hidden="true">
-        <PineVeil />
-      </div>
-      <div class="container hero-content">
-        <img
-          class="hero-wordmark"
-          src="/brand/caelora-hero-640.webp"
-          srcset="/brand/caelora-hero-480.webp 480w, /brand/caelora-hero-640.webp 640w, /brand/caelora-hero-1000.webp 1000w"
-          sizes="(max-width:45rem) 78vw, 440px"
-          width="1000"
-          height="353"
-          alt="Caelora — Build. Explore. Belong."
-          fetchpriority="high"
-        />
-        <p class="eyebrow hero-genre">Medieval-fantasy voxel sandbox · Windows</p>
-        <h1 id="hero-title">A world to call your own.</h1>
-        <p class="hero-description">
-          Explore one wild valley, build a home with your own hands, meet the creatures that live
-          there — and decide for yourself what kind of life to make.
-        </p>
-        <div class="hero-actions">
-          <a class="button" href="#world">
-            Explore the world <span aria-hidden="true">↓</span>
-          </a>
-          <a class="button secondary" href="/journal/">
-            See development progress
-          </a>
-        </div>
-      </div>
-      <div class="container hero-foot">
-        <span>
-          <span class="status-dot" aria-hidden="true"></span>In development · No release date
-          announced
-        </span>
-        <span>
-          {media.valley.source} · {statusLabel.concept}, not gameplay
-        </span>
-      </div>
-    </section>
+    <ValleyMap />
 
-    <!-- II · One valley: what you do -->
-    <section class="systems section-space" id="world" aria-labelledby="world-title">
+    <section class="overview section-space" id="overview" aria-labelledby="overview-title">
       <div class="container">
         <header class="systems-head" data-reveal>
           <span class="eyebrow">What you do in Caelora</span>
-          <h2 id="world-title">
+          <h2 id="overview-title">
             One valley. <em>Endless beginnings.</em>
           </h2>
           <p class="lede">
-            There is no chosen one and no required ending. There is a valley — and four ways to make
-            a life in it.
+            There is no chosen one and no required ending. There is a valley, and five places to
+            begin — each its own way of making a life.
           </p>
         </header>
-        <ol class="systems-list">
-          {systems.map((system, index) => (
-            <li class="system" id={`system-${system.id}`} data-reveal>
-              <ArtPicture
-                class="system-art"
-                item={system.art}
-                sizes="(max-width:45rem) 92vw, (max-width:75rem) 44vw, 300px"
-                alt=""
-              />
-              <div class="system-copy">
-                <span class="system-number" aria-hidden="true">
-                  {String(index + 1).padStart(2, '0')}
+        <ol class="places-index">
+          {places.map((place) => (
+            <li data-reveal>
+              <a class:list={['place-card', `place-card-${place.id}`]} href={place.href}>
+                <ArtPicture
+                  class="place-card-art"
+                  item={place.art}
+                  sizes="(max-width:45rem) 92vw, (max-width:75rem) 46vw, 25vw"
+                  alt=""
+                />
+                <span class="place-card-numeral" aria-hidden="true">
+                  {place.numeral}
                 </span>
-                <h3>{system.title}</h3>
-                <p>{system.body}</p>
-                <ul class="system-parts" aria-label={`${system.title}: development status`}>
-                  {system.parts.map(([part, status]) => (
-                    <li>
-                      <span>{part}</span>
-                      <StatusTag status={status} />
-                    </li>
-                  ))}
-                </ul>
-                <a class="text-link" href={system.link.href}>
-                  {system.link.label} <span aria-hidden="true">↓</span>
-                </a>
-              </div>
+                <span class="place-card-copy">
+                  <span class="journal-meta">{place.verb}</span>
+                  <span class="place-card-name">{place.name}</span>
+                  <span class="place-card-summary">{place.summary}</span>
+                </span>
+              </a>
             </li>
           ))}
         </ol>
@@ -205,236 +61,6 @@ const viewerLink = (item: Art) => ({
       </div>
     </section>
 
-    <!-- III · The wilderness -->
-    <section class="wilds" id="explore" aria-labelledby="explore-title" data-depth-scene>
-      <figure class="wilds-plate">
-        <ArtPicture class="wilds-art" item={media.wilds} sizes="100vw" />
-        <figcaption class="container plate-caption">
-          <StatusTag status="concept" />
-          <span>{media.wilds.source}</span>
-        </figcaption>
-      </figure>
-      <div class="wilds-mist" aria-hidden="true"></div>
-      <div class="wilds-trees" data-depth="-0.16" aria-hidden="true">
-        <PineVeil />
-      </div>
-      <div class="container wilds-copy" data-reveal>
-        <span class="eyebrow">Into the wilderness</span>
-        <h2 id="explore-title">
-          Take the long way <em>home.</em>
-        </h2>
-        <p>
-          A light beyond the pines. Snow on the high passes. Ruins across the river. Somewhere the
-          road gives way to a question only you can answer.
-        </p>
-      </div>
-    </section>
-
-    <!-- IV · The first home -->
-    <section class="hearth" id="home" aria-labelledby="home-title">
-      <div class="container hearth-grid">
-        <figure class="hearth-plate" data-ambient>
-          <ArtPicture
-            item={media.hearth}
-            sizes="(max-width:45rem) 92vw, (max-width:60rem) 50vw, 520px"
-          />
-          <span class="hearth-glow" aria-hidden="true"></span>
-          <figcaption>
-            <StatusTag status="concept" />
-            <span>{media.hearth.source}</span>
-          </figcaption>
-        </figure>
-        <div class="hearth-copy" data-reveal>
-          <span class="eyebrow">The first home</span>
-          <h2 id="home-title">
-            Start with <em>a little fire.</em>
-          </h2>
-          <p class="lede">
-            Cold wilderness, then warmth. Learn what the land offers, what it takes to get through
-            the night, and build somewhere worth coming back to.
-          </p>
-          <ol class="ledger">
-            <li>
-              <span class="ledger-numeral" aria-hidden="true">
-                I
-              </span>
-              <h3>Gather</h3>
-              <p>Timber, stone and what the land provides, each found where it belongs.</p>
-            </li>
-            <li>
-              <span class="ledger-numeral" aria-hidden="true">
-                II
-              </span>
-              <h3>Craft</h3>
-              <p>Tools first, then better tools. Every improvement is something you made.</p>
-            </li>
-            <li>
-              <span class="ledger-numeral" aria-hidden="true">
-                III
-              </span>
-              <h3>Build</h3>
-              <p>Block by block: a shelter, a workshop, a cottage by the water.</p>
-            </li>
-          </ol>
-          <p class="note">
-            <StatusTag status="development" /> Gathering, crafting, building and survival are being
-            built in the Unity prototype.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <ModelShowcase
-      id="cloak"
-      model="/models/caelora-travel-cloak.glb"
-      subject="travel cloak"
-      poster={{
-        src: '/media/cloak-poster-960.webp',
-        srcset: '/media/cloak-poster-640.webp 640w, /media/cloak-poster-960.webp 960w',
-        width: 960,
-        height: 960,
-        alt: 'The Caelora travel cloak: a long moss-green cloak with a wrapped shoulder cape.',
-      }}
-      caption="Travel cloak · existing equipment asset · web derivative of the source model"
-    >
-      <span class="eyebrow" slot="eyebrow">
-        Things you carry
-      </span>
-      <Fragment slot="title">
-        The road leaves <em>a mark.</em>
-      </Fragment>
-      <p>
-        The travel cloak is a real Caelora equipment asset, shown here as a study in material and
-        silhouette. Turn it, look closer, put it back. It is not a promise of a finished inventory.
-      </p>
-    </ModelShowcase>
-
-    <!-- V · A living world -->
-    <section class="life section-space" id="life" aria-labelledby="life-title">
-      <div class="container life-grid">
-        <div class="life-copy" data-reveal>
-          <span class="eyebrow">A living world</span>
-          <h2 id="life-title">
-            It goes on <em>without you.</em>
-          </h2>
-          <p class="lede">
-            Wolves keep to the tree line. Falcons ride the evening air. Lights come on in the
-            village whether or not you are there to see them.
-          </p>
-          <p>
-            That is the aim: a valley with business of its own, and room for you to become part of
-            it.
-          </p>
-          <ul class="status-list">
-            <li>
-              <StatusTag status="development" /> Wildlife and livestock
-            </li>
-            <li>
-              <StatusTag status="planned" /> Villagers with daily lives, settlements, trade
-            </li>
-          </ul>
-        </div>
-        <figure class="life-village" data-reveal>
-          <a {...viewerLink(media.village)} aria-label={`Open ${media.village.title}`}>
-            <ArtPicture item={media.village} sizes="(max-width:60rem) 92vw, 60vw" />
-          </a>
-          <figcaption>
-            <StatusTag status="concept" />
-            <span>
-              {media.village.title} · {media.village.source}
-            </span>
-          </figcaption>
-        </figure>
-        <figure class="life-study life-wolf" data-reveal>
-          <a {...viewerLink(media.wolf)} aria-label={`Open ${media.wolf.title}`}>
-            <ArtPicture item={media.wolf} sizes="(max-width:45rem) 92vw, 30vw" />
-          </a>
-          <figcaption>
-            <StatusTag status="model" />
-            <span>{media.wolf.title}</span>
-          </figcaption>
-        </figure>
-        <figure class="life-study life-falcon" data-reveal>
-          <a {...viewerLink(media.falcon)} aria-label={`Open ${media.falcon.title}`}>
-            <ArtPicture item={media.falcon} sizes="(max-width:45rem) 60vw, 18vw" />
-          </a>
-          <figcaption>
-            <StatusTag status="model" />
-            <span>{media.falcon.title}</span>
-          </figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <!-- VI · The extraordinary -->
-    <section class="beyond" id="beyond" aria-labelledby="beyond-title">
-      <div class="container beyond-grid">
-        <div class="beyond-copy" data-reveal>
-          <span class="eyebrow">Beyond the ordinary</span>
-          <h2 id="beyond-title">
-            Some things were here <em>before us.</em>
-          </h2>
-          <p class="lede">
-            Dragons older than any kingdom. Creatures from the edges of old maps. And wings — real
-            ones — that let you leave the ground and glide across the valley.
-          </p>
-          <ul class="status-list">
-            <li>
-              <StatusTag status="development" /> Dragons
-            </li>
-            <li>
-              <StatusTag status="development" /> Wings and gliding
-            </li>
-            <li>
-              <StatusTag status="planned" /> Other mythical creatures
-            </li>
-          </ul>
-          <a class="text-link" {...viewerLink(media.dragon)}>
-            Open the creature study <span aria-hidden="true">↗</span>
-          </a>
-        </div>
-        <figure class="beyond-stage" data-reveal>
-          <ArtPicture item={media.dragon} sizes="(max-width:60rem) 100vw, 62vw" />
-          <figcaption>
-            <StatusTag status="concept" />
-            <span>
-              {media.dragon.title} · {media.dragon.source}
-            </span>
-          </figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <!-- VII · Player freedom -->
-    <section class="freedom" id="freedom" aria-labelledby="freedom-title">
-      <ArtPicture class="freedom-art" item={media.castle} sizes="100vw" alt="" />
-      <div class="container freedom-copy" data-reveal>
-        <span class="eyebrow">Your story</span>
-        <h2 id="freedom-title">
-          No destiny <em>is required.</em>
-        </h2>
-        <p class="freedom-verbs">
-          <span>Wander.</span> <span>Build.</span> <span>Survive.</span> <span>Trade.</span>
-          <span>Explore.</span> <span>Find your people.</span>
-        </p>
-        <p class="lede">
-          Follow the lore, or just follow the river. Join a guild, or keep to yourself. One day,
-          perhaps, raise a banner of your own and found a nation.
-        </p>
-        <p class="note">
-          <StatusTag status="planned" /> Guilds, kingdoms and player-founded nations are long-term
-          intentions, not current features.
-        </p>
-      </div>
-      <p class="container plate-caption freedom-caption">
-        <StatusTag status="concept" />
-        <span>
-          {media.castle.title} · {media.castle.source}
-        </span>
-      </p>
-    </section>
-
-    <!-- VIII · From the development studio -->
     <section class="studio section-space" id="journal" aria-labelledby="journal-title">
       <div class="container studio-grid">
         <div class="studio-head" data-reveal>
@@ -512,60 +138,7 @@ const viewerLink = (item: Art) => ({
         </aside>
       </div>
     </section>
-
-    <!-- IX · Community -->
-    <section class="community section-space" id="community" aria-labelledby="community-title">
-      <div class="container community-grid" data-reveal>
-        <div>
-          <span class="eyebrow">Community</span>
-          <h2 id="community-title">
-            The fire is lit. <em>The gate opens later.</em>
-          </h2>
-        </div>
-        <div class="community-copy">
-          <p class="lede">
-            There are no official Caelora community channels yet. When there are, they will be
-            announced in the journal and linked here — never before they exist.
-          </p>
-          <p>
-            No sign-ups, waitlists or testing programmes are open, and nothing on this site collects
-            your details. To follow along today, use the journal or its RSS feed.
-          </p>
-          <div class="community-actions">
-            <a class="button" href="/rss.xml">
-              Follow development
-            </a>
-            <a class="text-link" href="/journal/">
-              Read the journal <span aria-hidden="true">↗</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- X · Closing -->
-    <section class="closing" aria-labelledby="closing-title">
-      <div class="closing-glow" aria-hidden="true"></div>
-      <div class="closing-trees" aria-hidden="true">
-        <PineVeil />
-      </div>
-      <div class="container closing-copy" data-reveal>
-        <span class="eyebrow">Build. Explore. Belong.</span>
-        <h2 id="closing-title">
-          Somewhere in the valley, <em>a fire is waiting to be lit.</em>
-        </h2>
-        <div class="closing-actions">
-          <a class="button" href="/journal/">
-            See development progress
-          </a>
-          <a class="button secondary" href="/media/">
-            Browse the visual archive
-          </a>
-        </div>
-      </div>
-    </section>
   </main>
-  <ArtViewer />
   <script>
     import '../scripts/experience';
   </script>

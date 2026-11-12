@@ -57,3 +57,24 @@ CSS first. Scroll-timeline depth on the hero and wilderness band (desktop, motio
 ## Account and admin
 
 The account portal reads the existing `/api/v1/platform` contract before showing forms. If the platform is unreachable or `accountsAvailable` is false, the auth pages explain that account services are not open yet and disable submission; nothing is faked. Desktop auth pages become a split layout with a restrained hearth detail; mobile is form-first. The admin app is renamed Caelora Studio on its restricted screen and gains shared page-header, status and empty-state primitives. Future Studio navigation is documented in [caelora-studio-architecture.md](caelora-studio-architecture.md), not rendered as tools.
+
+## Revision 2 (2026-11-12): the valley is the navigation
+
+Feedback on revision 1: competent but "nothing special", and the story should be pages, not sections. Revision 2 keeps the identity, the status vocabulary and the honesty rules, and changes the structure and the signature interaction.
+
+- **Home is the painting.** The full 3840×2160 plate fills the screen under a dusk veil. On fine pointers a pool of lantern light follows the cursor (CSS `@property` transition on two custom properties, rAF-throttled). Five lit markers sit on real places: the peaks, the fire, the village, the castle and the falcon. On phones the plate becomes a swipeable panorama that opens on the traveller, with the intro above it.
+- **Choosing a place zooms into it.** Four places' heroes are exact crops of the plate. The home map carries a hidden copy of each crop at its true position with a matching `view-transition-name`, so a cross-document view transition (CSS-only `@view-transition`) morphs that region of the painting into the next page's hero. Browsers without support navigate normally; reduced motion disables the transition.
+- **Five place pages**, each with its own temperature and centrepiece:
+
+  | Page         | Temperature | Centrepiece                                                     |
+  | ------------ | ----------- | --------------------------------------------------------------- |
+  | `/wilds/`    | mist        | field notes and a numbered atlas key linked to marks on the map |
+  | `/hearth/`   | ember       | rising embers, a gather–craft–build–return ritual, the 3D cloak |
+  | `/village/`  | evergreen   | a daybook coloured by the hour                                  |
+  | `/bestiary/` | charcoal    | the dragon stage, specimen plates and "Wings. Real ones."       |
+  | `/kingdoms/` | dusk        | a wall of verbs and a heraldic guild → kingdom → nation ladder  |
+
+  Every place page ends with a status ledger and a mini map of the valley (current place lit) with previous/next.
+
+- **Navigation:** The valley · Places ▾ · Journal · Media · Community. `/community/` is its own page.
+- Map geometry (pins and crop zones) lives in `styles/valley.css` because the CSP forbids inline styles; place content lives in `src/data/places.ts`.

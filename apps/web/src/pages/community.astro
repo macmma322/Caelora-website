@@ -1,0 +1,66 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PineVeil from '../components/PineVeil.astro';
+---
+
+<SiteLayout
+  title="Community — Caelora"
+  description="How to follow the development of Caelora. Official community channels are not open yet."
+>
+  <main id="main" class="community-page">
+    <section class="community-hero" aria-labelledby="community-title">
+      <div class="closing-glow" aria-hidden="true"></div>
+      <div class="closing-trees" aria-hidden="true">
+        <PineVeil />
+      </div>
+      <div class="container community-hero-copy">
+        <span class="eyebrow">Community</span>
+        <h1 id="community-title">
+          The fire is lit. <em>The gate opens later.</em>
+        </h1>
+        <p class="lede">
+          There are no official Caelora community channels yet. When there are, they will be
+          announced in the journal and linked here — never before they exist.
+        </p>
+      </div>
+    </section>
+    <section class="section-space">
+      <div class="container follow-grid">
+        <article class="follow-item">
+          <span class="follow-numeral" aria-hidden="true">
+            I
+          </span>
+          <h2>Follow the journal</h2>
+          <p>Development notes that report only what can be shown.</p>
+          <a class="button" href="/journal/">
+            Read the journal
+          </a>
+        </article>
+        <article class="follow-item">
+          <span class="follow-numeral" aria-hidden="true">
+            II
+          </span>
+          <h2>Subscribe with RSS</h2>
+          <p>New entries arrive in your reader. No account, no email, nothing collected.</p>
+          <a class="button secondary" href="/rss.xml">
+            RSS feed
+          </a>
+        </article>
+        <article class="follow-item">
+          <span class="follow-numeral" aria-hidden="true">
+            III
+          </span>
+          <h2>Look closer</h2>
+          <p>Every concept and model study shown so far, labelled for what it is.</p>
+          <a class="button secondary" href="/media/">
+            Visual archive
+          </a>
+        </article>
+      </div>
+      <p class="container community-note">
+        No sign-ups, waitlists or testing programmes are open, and nothing on this site collects
+        your details.
+      </p>
+    </section>
+  </main>
+</SiteLayout>

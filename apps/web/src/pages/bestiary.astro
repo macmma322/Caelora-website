@@ -1,0 +1,144 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PlaceTravel from '../components/PlaceTravel.astro';
+import ArtPicture from '../components/ArtPicture.astro';
+import ArtViewer from '../components/ArtViewer.astro';
+import StatusTag from '../components/StatusTag.astro';
+import { media, largest, statusLabel, type Art } from '../data/media';
+import { placeById } from '../data/places';
+const place = placeById('bestiary');
+const specimens: { art: Art; numeral: string; name: string; note: string; kind: string }[] = [
+  {
+    art: media.wolf,
+    numeral: 'I',
+    name: 'The wolf',
+    kind: 'Wildlife',
+    note: 'Keeps to the tree line. Not every encounter has to be a battle.',
+  },
+  {
+    art: media.falcon,
+    numeral: 'II',
+    name: 'The falcon',
+    kind: 'Wildlife',
+    note: 'Rides the evening air above the valley and sees everything first.',
+  },
+  {
+    art: media.dragon,
+    numeral: 'III',
+    name: 'The dragon',
+    kind: 'Mythical',
+    note: 'Older than any kingdom. The valley was theirs first.',
+  },
+];
+const viewerLink = (item: Art) => ({
+  href: largest(item),
+  'data-artwork': '',
+  'data-title': item.title,
+  'data-status': statusLabel[item.status],
+  'data-source': item.source,
+  'data-alt': item.alt,
+});
+---
+
+<SiteLayout
+  title="The Bestiary — Caelora"
+  description="Wolves, falcons, dragons and wings: the creatures of Caelora, an independent medieval-fantasy voxel sandbox in development."
+>
+  <main id="main" class="place place-bestiary-page">
+    <header class="bestiary-hero" data-opening>
+      <div class="container bestiary-hero-grid">
+        <div class="bestiary-hero-copy">
+          <a class="place-back" href="/">
+            <span aria-hidden="true">←</span> The valley
+          </a>
+          <span class="eyebrow">
+            Place {place.numeral} · {place.verb}
+          </span>
+          <h1>
+            Some things were here <em>before us.</em>
+          </h1>
+          <p class="place-hero-summary">{place.summary}</p>
+        </div>
+        <figure class="beyond-stage bestiary-dragon" data-reveal>
+          <ArtPicture item={media.dragon} sizes="(max-width:60rem) 100vw, 60vw" eager />
+          <figcaption>
+            <StatusTag status="concept" />
+            <span>
+              {media.dragon.title} · {media.dragon.source}
+            </span>
+          </figcaption>
+        </figure>
+      </div>
+    </header>
+
+    <section class="specimens section-space" aria-labelledby="specimens-title">
+      <div class="container">
+        <header class="specimens-head" data-reveal>
+          <span class="eyebrow">From the bestiary</span>
+          <h2 id="specimens-title">
+            Three pages <em>of many.</em>
+          </h2>
+          <p>
+            Studies of creatures in development. The wolf and falcon are renders of real 3D source
+            models; the dragon is a concept. Open any plate for the full study.
+          </p>
+        </header>
+        <ol class="specimen-list">
+          {specimens.map((specimen) => (
+            <li class="specimen" data-reveal>
+              <a
+                class="specimen-plate"
+                {...viewerLink(specimen.art)}
+                aria-label={`Open ${specimen.name} (${statusLabel[specimen.art.status]})`}
+              >
+                <ArtPicture item={specimen.art} sizes="(max-width:45rem) 92vw, 30vw" />
+              </a>
+              <div class="specimen-copy">
+                <span class="specimen-numeral" aria-hidden="true">
+                  {specimen.numeral}
+                </span>
+                <h3>{specimen.name}</h3>
+                <p>{specimen.note}</p>
+                <dl>
+                  <div>
+                    <dt>Kind</dt>
+                    <dd>{specimen.kind}</dd>
+                  </div>
+                  <div>
+                    <dt>Study</dt>
+                    <dd>
+                      <StatusTag status={specimen.art.status} />
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="wings section-space" aria-labelledby="wings-title">
+      <div class="container wings-grid" data-reveal>
+        <span class="wings-mark" aria-hidden="true"></span>
+        <div>
+          <span class="eyebrow">And one more thing</span>
+          <h2 id="wings-title">
+            Wings. <em>Real ones.</em>
+          </h2>
+          <p class="lede">
+            Not a mount, not a cutscene: wings you wear, that let you leave the ground and glide
+            across the valley.
+          </p>
+          <StatusTag status="development" label="Wings and gliding in development" />
+        </div>
+      </div>
+    </section>
+
+    <PlaceTravel place={place} />
+  </main>
+  <ArtViewer />
+  <script>
+    import '../scripts/experience';
+  </script>
+</SiteLayout>

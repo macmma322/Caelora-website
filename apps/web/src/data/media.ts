@@ -43,6 +43,17 @@ export const media = {
     widths: [640, 960, 1672],
     avif: true,
   }),
+  plate: art({
+    id: 'plate',
+    title: 'The valley at dusk',
+    status: 'concept',
+    source: 'Valley environment concept (main-menu version)',
+    alt: 'A cloaked traveller and a falcon on a ruined tower overlook a forested valley: snowy peaks, a lamplit riverside village, stone bridges and a castle above waterfalls at sunset.',
+    width: 3840,
+    height: 2160,
+    widths: [1280, 1920, 2560],
+    avif: true,
+  }),
   wilds: art({
     id: 'wilds',
     title: 'The high wilds',

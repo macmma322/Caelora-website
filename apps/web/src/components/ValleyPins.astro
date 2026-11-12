@@ -1,0 +1,31 @@
+---
+import { places, type Place } from '../data/places';
+interface Props {
+  /** Highlight the place the visitor is on (mini map). */
+  current?: Place['id'];
+  label: string;
+}
+const { current, label } = Astro.props;
+---
+
+<ol class="valley-pins" aria-label={label}>
+  {places.map((place) => (
+    <li class:list={['pin', `place-${place.id}`, { 'is-current': place.id === current }]}>
+      <a
+        class="pin-link"
+        href={place.href}
+        data-place={place.id}
+        aria-current={place.id === current ? 'page' : undefined}
+      >
+        <span class="pin-mark" aria-hidden="true" />
+        <span class="pin-label">
+          <span class="pin-numeral" aria-hidden="true">
+            {place.numeral}
+          </span>
+          <span class="pin-name">{place.name}</span>
+          <span class="pin-verb">{place.verb}</span>
+        </span>
+      </a>
+    </li>
+  ))}
+</ol>

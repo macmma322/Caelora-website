@@ -217,92 +217,9 @@ figcaption {
 }
 
 /* ── I · Arrival ─────────────────────────────────────────────────────────── */
-.hero {
-  position: relative;
-  isolation: isolate;
-  overflow: clip;
-  min-height: max(760px, 100svh);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-.hero-art {
-  position: absolute;
-  inset: -2% -2% -10%;
-  z-index: -4;
-  display: block;
-}
-.hero-art img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 58% 45%;
-}
-.hero-shade {
-  position: absolute;
-  inset: 0;
-  z-index: -3;
-  background:
-    linear-gradient(0deg, var(--color-ink) 2%, var(--color-scrim) 30%, var(--color-clear) 62%),
-    linear-gradient(90deg, var(--color-overlay) 0%, var(--color-scrim) 34%, var(--color-clear) 62%);
-}
-.hero-trees {
-  position: absolute;
-  inset: auto -5% -6%;
-  z-index: -1;
-  color: var(--color-ink);
-  opacity: 0.85;
-  pointer-events: none;
-}
-.hero-trees svg {
-  width: 100%;
-  height: 240px;
-}
-.hero-content {
-  padding-block: 9rem 6.5rem;
-}
-.hero-wordmark {
-  width: min(440px, 78vw);
-  margin-left: -0.5rem;
-}
-.hero-genre {
-  margin: 1.5rem 0 1rem;
-  color: var(--color-paper);
-}
-.hero h1 {
-  font-size: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
-  line-height: 1.08;
-  letter-spacing: -0.01em;
-  max-width: 13ch;
-  margin-bottom: 1.5rem;
-}
-.hero-description {
-  max-width: 44ch;
-  font-size: clamp(1.125rem, 1rem + 0.35vw, 1.3125rem);
-  line-height: 1.6;
-  margin-bottom: 2.25rem;
-}
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-.hero-foot {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem 2rem;
-  flex-wrap: wrap;
-  padding-block: 1.25rem 1.5rem;
-  border-top: 1px solid var(--color-bronze-line);
-  font-family: var(--font-ui);
-  font-size: var(--text-caption);
-  color: var(--color-muted);
-}
 
 /* ── II · One valley: systems ledger ─────────────────────────────────────── */
-.systems {
-  background: var(--color-ink);
-}
+
 .systems-head {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
@@ -321,52 +238,7 @@ figcaption {
   margin: 0;
   color: var(--color-muted);
 }
-.systems-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--color-bronze-line);
-}
-.system {
-  display: grid;
-  grid-template-columns: 15rem minmax(0, 1fr);
-  gap: 2rem 3.5rem;
-  padding-block: 2.5rem;
-  border-bottom: 1px solid var(--color-line);
-}
-.system-copy {
-  display: grid;
-  grid-template-columns: 4.5rem minmax(0, 1.15fr) minmax(0, 1fr);
-  grid-template-areas:
-    'number title parts'
-    'number body parts'
-    'number link parts';
-  column-gap: 2.5rem;
-  align-content: start;
-}
-.system-number {
-  grid-area: number;
-  font-family: var(--font-display);
-  font-size: 2rem;
-  line-height: 1;
-  color: var(--color-accent);
-  padding-top: 0.2rem;
-}
-.system h3 {
-  grid-area: title;
-  font-size: clamp(1.5rem, 1.2rem + 0.9vw, 2.125rem);
-  margin-bottom: 0.75rem;
-}
-.system-copy > p {
-  grid-area: body;
-  color: var(--color-muted);
-  max-width: 42ch;
-  margin-bottom: 0.5rem;
-}
-.system-copy > .text-link {
-  grid-area: link;
-  justify-self: start;
-}
+
 .system-parts {
   grid-area: parts;
   align-self: start;
@@ -387,199 +259,15 @@ figcaption {
 .system-parts li:first-child {
   border-top: 1px solid var(--color-line);
 }
-.system-art {
-  display: block;
-  overflow: clip;
-  border-radius: var(--radius-card);
-  border: 1px solid var(--color-bronze-line);
-}
-.system-art img {
-  width: 100%;
-  aspect-ratio: 5 / 4;
-  object-fit: cover;
-}
-#system-build .system-art img {
-  object-position: 55% 80%;
-}
-#system-beyond .system-art img {
-  object-position: 30% 20%;
-}
+
 .systems-legend {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 3rem;
 }
 
 /* ── III · Wilderness ────────────────────────────────────────────────────── */
-.wilds {
-  position: relative;
-  isolation: isolate;
-  overflow: clip;
-  background: var(--color-mist-deep);
-  min-height: clamp(34rem, 52vw, 52rem);
-  display: flex;
-  align-items: flex-end;
-}
-.wilds-plate {
-  position: absolute;
-  inset: 0;
-  margin: 0;
-  z-index: -3;
-}
-.wilds-art {
-  position: absolute;
-  inset: -6% 0;
-  display: block;
-}
-.wilds-art img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 58% 35%;
-}
-.wilds-plate .plate-caption {
-  position: absolute;
-  inset: auto 0 1.25rem;
-  justify-content: flex-end;
-  color: var(--color-paper);
-  z-index: 2;
-}
-.wilds-mist {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  background:
-    linear-gradient(0deg, var(--color-mist-deep) 4%, var(--color-clear) 52%),
-    linear-gradient(
-      90deg,
-      color-mix(in oklch, var(--color-mist-deep) 88%, transparent) 0%,
-      var(--color-clear) 58%
-    ),
-    linear-gradient(180deg, var(--color-ink) 0%, var(--color-clear) 16%);
-}
-.wilds-trees {
-  position: absolute;
-  inset: auto -5% -8%;
-  z-index: -1;
-  color: var(--color-mist-deep);
-  pointer-events: none;
-}
-.wilds-trees svg {
-  width: 100%;
-  height: 220px;
-}
-.wilds-copy {
-  padding-block: 10rem 6.5rem;
-}
-.wilds-copy h2 {
-  font-size: var(--text-scene);
-  max-width: 11ch;
-  margin-block: 1.25rem 1.5rem;
-}
-.wilds-copy em {
-  color: var(--color-mist);
-}
-.wilds-copy .eyebrow {
-  color: var(--color-mist);
-}
-.wilds-copy p {
-  max-width: 38ch;
-  font-size: clamp(1.125rem, 1rem + 0.3vw, 1.25rem);
-  line-height: 1.65;
-}
 
 /* ── IV · First home ─────────────────────────────────────────────────────── */
-.hearth {
-  /* The cold-to-warm transition is carried by the section itself. */
-  background: linear-gradient(
-    180deg,
-    var(--color-mist-deep) 0%,
-    var(--color-ember-deep) 30%,
-    var(--color-ember-deep) 100%
-  );
-  padding-block: clamp(4rem, 8vw, 8rem) var(--space-section);
-}
-.hearth-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  gap: clamp(2.5rem, 7vw, 7rem);
-  align-items: center;
-}
-.hearth-plate {
-  position: relative;
-  margin: 0;
-  max-width: 520px;
-}
-.hearth-plate picture {
-  display: block;
-  overflow: clip;
-  border-radius: var(--radius-card);
-  border: 1px solid var(--color-bronze-line);
-}
-.hearth-plate img {
-  width: 100%;
-}
-.hearth-glow {
-  position: absolute;
-  left: 66%;
-  top: 77%;
-  width: 70%;
-  aspect-ratio: 1;
-  translate: -50% -50%;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in oklch, var(--color-ember) 46%, transparent) 0%,
-    color-mix(in oklch, var(--color-ember) 16%, transparent) 34%,
-    transparent 66%
-  );
-  mix-blend-mode: screen;
-  pointer-events: none;
-  opacity: 0.75;
-}
-.hearth-plate figcaption {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 0.75rem;
-  margin-top: 1rem;
-}
-.hearth-copy .eyebrow {
-  color: var(--color-ember);
-}
-.hearth-copy h2 {
-  margin-block: 1.25rem 1.5rem;
-  max-width: 12ch;
-}
-.hearth-copy em {
-  color: var(--color-ember);
-}
-.ledger {
-  margin: 2.5rem 0 2rem;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--color-bronze-line);
-}
-.ledger li {
-  display: grid;
-  grid-template-columns: 3rem minmax(0, 0.45fr) minmax(0, 1fr);
-  gap: 1.25rem;
-  align-items: baseline;
-  padding-block: 1.25rem;
-  border-bottom: 1px solid var(--color-line);
-}
-.ledger-numeral {
-  font-family: var(--font-display);
-  color: var(--color-ember);
-}
-.ledger h3 {
-  font-size: 1.375rem;
-  margin: 0;
-}
-.ledger p {
-  margin: 0;
-  color: var(--color-muted);
-  max-width: 38ch;
-}
 
 /* ── Model showcase ──────────────────────────────────────────────────────── */
 .model-showcase {
@@ -689,90 +377,9 @@ figcaption {
 }
 
 /* ── V · Living world ────────────────────────────────────────────────────── */
-.life {
-  background: var(--color-surface);
-}
-.life-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr) minmax(0, 0.62fr);
-  grid-template-areas:
-    'copy village village'
-    'copy wolf falcon';
-  gap: 2rem clamp(1.5rem, 3vw, 2.5rem);
-  align-items: start;
-}
-.life-copy {
-  grid-area: copy;
-  align-self: center;
-  padding-right: 2rem;
-}
-.life-copy h2 {
-  margin-block: 1.25rem 1.5rem;
-  max-width: 12ch;
-}
-.life-copy > p:not(.lede) {
-  color: var(--color-muted);
-  max-width: 40ch;
-}
-.life-village {
-  grid-area: village;
-}
-.life-wolf {
-  grid-area: wolf;
-}
-.life-falcon {
-  grid-area: falcon;
-}
-.life figure {
-  margin: 0;
-}
-.life figure a {
-  display: block;
-  overflow: clip;
-  border-radius: var(--radius-card);
-  border: 1px solid var(--color-bronze-line);
-  background: var(--color-deep);
-}
-.life figure img {
-  width: 100%;
-  transition: transform var(--duration-normal) var(--ease-out);
-}
-.life figcaption {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 0.75rem;
-  margin-top: 0.85rem;
-}
 
 /* ── VI · The extraordinary ──────────────────────────────────────────────── */
-.beyond {
-  position: relative;
-  overflow: clip;
-  background:
-    radial-gradient(
-      ellipse 60% 70% at 68% 48%,
-      color-mix(in oklch, var(--color-dusk) 85%, transparent),
-      transparent 70%
-    ),
-    var(--color-charcoal);
-  padding-block: clamp(5rem, 9vw, 9rem);
-}
-.beyond-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  gap: clamp(2rem, 5vw, 5rem);
-  align-items: center;
-}
-.beyond-copy h2 {
-  font-size: var(--text-scene);
-  margin-block: 1.25rem 1.5rem;
-  max-width: 10ch;
-}
-.beyond-copy .eyebrow,
-.beyond-copy em {
-  color: var(--color-ember);
-}
+
 .beyond-stage {
   margin: 0;
 }
@@ -795,79 +402,6 @@ figcaption {
 }
 
 /* ── VII · Player freedom ────────────────────────────────────────────────── */
-.freedom {
-  position: relative;
-  isolation: isolate;
-  overflow: clip;
-  min-height: clamp(40rem, 62vw, 56rem);
-  display: grid;
-  align-content: center;
-  background: var(--color-dusk);
-  text-align: center;
-}
-.freedom-art {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  display: block;
-}
-.freedom-art img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 30%;
-  opacity: 0.55;
-}
-.freedom::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(
-      ellipse 62% 58% at 50% 52%,
-      color-mix(in oklch, var(--color-charcoal) 82%, transparent),
-      transparent 100%
-    ),
-    linear-gradient(
-      180deg,
-      var(--color-charcoal) 0%,
-      var(--color-clear) 22%,
-      var(--color-clear) 70%,
-      var(--color-deep) 100%
-    );
-}
-.freedom-copy {
-  padding-block: 7rem 3rem;
-  display: grid;
-  justify-items: center;
-}
-.freedom-copy h2 {
-  font-size: clamp(3rem, 1.8rem + 4.6vw, 6.5rem);
-  margin-block: 1.25rem 2rem;
-}
-.freedom-verbs {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.25rem 1.5rem;
-  margin-bottom: 2rem;
-  font-family: var(--font-display);
-  font-size: clamp(1.125rem, 0.95rem + 0.6vw, 1.5rem);
-  color: var(--color-accent-hover);
-}
-.freedom-copy .lede {
-  max-width: 46ch;
-  margin-inline: auto;
-}
-.freedom-copy .note {
-  justify-content: center;
-  margin-top: 1rem;
-}
-.freedom-caption {
-  justify-content: center;
-  padding-bottom: 1.5rem;
-}
 
 /* ── VIII · Development studio ───────────────────────────────────────────── */
 .studio {
@@ -965,25 +499,7 @@ figcaption {
 }
 
 /* ── IX · Community ──────────────────────────────────────────────────────── */
-.community {
-  background: var(--color-ink);
-}
-.community-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 2rem clamp(3rem, 7vw, 7rem);
-  align-items: start;
-  padding-top: 3rem;
-  border-top: 1px solid var(--color-bronze-line);
-}
-.community-grid h2 {
-  margin-block: 1.25rem 0;
-  font-size: clamp(2.25rem, 1.6rem + 2vw, 3.5rem);
-}
-.community-copy > p:not(.lede) {
-  color: var(--color-muted);
-  max-width: 46ch;
-}
+
 .community-actions,
 .closing-actions,
 .page-actions {
@@ -995,14 +511,7 @@ figcaption {
 }
 
 /* ── X · Closing ─────────────────────────────────────────────────────────── */
-.closing {
-  position: relative;
-  isolation: isolate;
-  overflow: clip;
-  background: var(--color-charcoal);
-  padding-block: clamp(7rem, 12vw, 11rem) clamp(9rem, 14vw, 13rem);
-  text-align: center;
-}
+
 .closing-glow {
   position: absolute;
   left: 50%;
@@ -1029,18 +538,7 @@ figcaption {
   width: 100%;
   height: 200px;
 }
-.closing-copy {
-  display: grid;
-  justify-items: center;
-}
-.closing-copy .eyebrow {
-  color: var(--color-ember);
-}
-.closing-copy h2 {
-  font-size: clamp(2.4rem, 1.6rem + 3vw, 4.5rem);
-  max-width: 18ch;
-  margin-block: 1.25rem 0;
-}
+
 .closing-actions {
   justify-content: center;
 }
@@ -1526,37 +1024,16 @@ body:has(.art-viewer[open]) {
   }
 }
 @media (max-width: 60rem) {
-  .hero-content {
-    padding-bottom: 5rem;
-  }
   .systems-head {
     grid-template-columns: 1fr;
   }
   .systems-legend {
     grid-template-columns: 1fr;
   }
-  .hearth-grid,
-  .model-showcase-grid,
-  .beyond-grid,
-  .community-grid {
+  .model-showcase-grid {
     grid-template-columns: 1fr;
   }
-  .hearth-plate {
-    max-width: 30rem;
-  }
-  .life-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 0.62fr);
-    grid-template-areas:
-      'copy copy'
-      'village village'
-      'wolf falcon';
-  }
-  .life-copy {
-    padding-right: 0;
-  }
-  .beyond-copy h2 {
-    max-width: 14ch;
-  }
+
   .footer-top {
     grid-template-columns: 1fr;
   }
@@ -1617,88 +1094,18 @@ body:has(.art-viewer[open]) {
     font-family: var(--font-ui);
     text-decoration: none;
   }
-  .hero {
-    min-height: max(700px, 100svh);
-  }
-  .hero-art {
-    inset: 0;
-  }
-  .hero-art img {
-    object-position: 60% 30%;
-  }
-  .hero-shade {
-    background: linear-gradient(
-      0deg,
-      var(--color-ink) 4%,
-      var(--color-overlay) 40%,
-      var(--color-clear) 72%,
-      var(--color-scrim)
-    );
-  }
-  .hero-content {
-    padding-block: 8rem 3rem;
-  }
-  .hero-trees svg {
-    height: 140px;
-  }
-  .hero-actions .button {
-    flex: 1 1 100%;
-  }
-  .hero-foot {
-    flex-direction: column;
-  }
-  .system {
-    grid-template-columns: 1fr;
-    padding-block: 2rem;
-  }
-  .system-art img {
-    aspect-ratio: 16 / 9;
-  }
-  .system-copy {
-    grid-template-columns: 1fr;
-    grid-template-areas: 'number' 'title' 'body' 'parts' 'link';
-  }
-  .system-number {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
+
   .system-parts li {
     flex-wrap: wrap;
     gap: 0.25rem 1rem;
   }
-  .wilds {
-    min-height: 40rem;
-  }
-  .wilds-copy {
-    padding-block: 12rem 5rem;
-  }
-  .wilds-plate .plate-caption {
-    justify-content: flex-start;
-    top: 5.5rem;
-    bottom: auto;
-  }
-  .wilds-mist {
-    background:
-      linear-gradient(0deg, var(--color-mist-deep) 18%, var(--color-clear) 70%),
-      linear-gradient(180deg, var(--color-ink) 0%, var(--color-clear) 20%);
-  }
-  .ledger li {
-    grid-template-columns: 2.25rem minmax(0, 1fr);
-  }
-  .ledger p {
-    grid-column: 2;
-  }
+
   .model-controls {
     left: 0.75rem;
     right: 0.75rem;
     bottom: 0.75rem;
   }
-  .life-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
-  .freedom-copy {
-    padding-block: 6rem 2rem;
-  }
+
   .studio-grid {
     grid-template-columns: 1fr;
   }

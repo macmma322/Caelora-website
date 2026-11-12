@@ -1,5 +1,55 @@
 [
   {
+    "name": "plate",
+    "source": "D:/Caelora/game-client/Assets/Caelora/Client/FrontEnd/Presentation/Resources/FrontEnd/MenuPlate.png",
+    "sha256": "d735f630f7884eea862a532a454beb084686f2abd230eee920c1dd4d25d809f5",
+    "crop": {
+      "left": 0,
+      "top": 0,
+      "width": 3840,
+      "height": 2160
+    },
+    "operation": "crop, resize and compress only; no painting, compositing or generation",
+    "outputs": [
+      {
+        "filename": "plate-1280.avif",
+        "width": 1280,
+        "height": 720,
+        "bytes": 175356
+      },
+      {
+        "filename": "plate-1280.webp",
+        "width": 1280,
+        "height": 720,
+        "bytes": 229596
+      },
+      {
+        "filename": "plate-1920.avif",
+        "width": 1920,
+        "height": 1080,
+        "bytes": 303560
+      },
+      {
+        "filename": "plate-1920.webp",
+        "width": 1920,
+        "height": 1080,
+        "bytes": 403918
+      },
+      {
+        "filename": "plate-2560.avif",
+        "width": 2560,
+        "height": 1440,
+        "bytes": 429561
+      },
+      {
+        "filename": "plate-2560.webp",
+        "width": 2560,
+        "height": 1440,
+        "bytes": 564868
+      }
+    ]
+  },
+  {
     "name": "wilds",
     "source": "D:/Caelora/game-client/Assets/Caelora/Client/FrontEnd/Presentation/Resources/FrontEnd/MenuPlate.png",
     "sha256": "d735f630f7884eea862a532a454beb084686f2abd230eee920c1dd4d25d809f5",

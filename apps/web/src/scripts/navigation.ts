@@ -1,20 +1,26 @@
 // Site-wide navigation behaviour. Every link works without this script.
 const header = document.querySelector<HTMLElement>('.site-header');
-const menu = document.querySelector<HTMLDetailsElement>('.mobile-nav');
 const chapterLinks = [...document.querySelectorAll<HTMLAnchorElement>('a[data-chapter]')];
 
-menu?.querySelectorAll('a').forEach((link) =>
-  link.addEventListener('click', () => {
-    menu.open = false;
-  }),
-);
-menu?.addEventListener('keydown', (event) => {
-  if (event.key !== 'Escape') return;
-  menu.open = false;
-  menu.querySelector('summary')?.focus();
-});
+// Disclosure menus (mobile menu, Places): links close them, Escape returns to the toggle,
+// clicking elsewhere dismisses them.
+const menus = [...document.querySelectorAll<HTMLDetailsElement>('.mobile-nav, .places-menu')];
+for (const disclosure of menus) {
+  disclosure.querySelectorAll('a').forEach((link) =>
+    link.addEventListener('click', () => {
+      disclosure.open = false;
+    }),
+  );
+  disclosure.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !disclosure.open) return;
+    disclosure.open = false;
+    disclosure.querySelector('summary')?.focus();
+  });
+}
 document.addEventListener('click', (event) => {
-  if (menu?.open && event.target instanceof Node && !menu.contains(event.target)) menu.open = false;
+  for (const disclosure of menus)
+    if (disclosure.open && event.target instanceof Node && !disclosure.contains(event.target))
+      disclosure.open = false;
 });
 
 // Header becomes solid once the opening scene has scrolled away (pages without one start solid).

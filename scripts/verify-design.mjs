@@ -44,7 +44,19 @@ async function layout(page) {
 
 try {
   // 1. Every page at every target viewport: no overflow, no broken images, no page errors.
-  for (const path of ['/', '/journal/', '/journal/foundation/', '/media/', '/project-information/'])
+  for (const path of [
+    '/',
+    '/wilds/',
+    '/hearth/',
+    '/village/',
+    '/bestiary/',
+    '/kingdoms/',
+    '/community/',
+    '/journal/',
+    '/journal/foundation/',
+    '/media/',
+    '/project-information/',
+  ])
     for (const [width, height] of [
       [1920, 1080],
       [1440, 900],
@@ -83,7 +95,7 @@ try {
     true,
   );
   await menu.locator('summary').click();
-  await menu.getByRole('link', { name: 'The game', exact: true }).click();
+  await menu.getByRole('link', { name: 'The valley', exact: true }).click();
   assert.equal(await menu.evaluate((element) => element.open), false);
 
   // 3. Viewer: opens on an archive link, arrows move, Escape returns focus to the trigger.
@@ -105,6 +117,8 @@ try {
     (request) => request.resourceType() === 'script' && scripts.push(request.url()),
   );
   await desktop.goto(origin);
+  assert.equal(await desktop.locator('.valley .pin-link').count(), 5, 'Five places on the map');
+  await desktop.goto(`${origin}/hearth/`);
   await walk(desktop);
   const threeBefore = scripts.filter((url) => /three|GLTFLoader/i.test(url)).length;
   await desktop.locator('[data-model-start]').click();

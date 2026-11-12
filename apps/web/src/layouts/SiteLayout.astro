@@ -2,6 +2,8 @@
 import '@caelora/design-tokens/tokens.css';
 import '@caelora/design-tokens/base.css';
 import '../styles/site.css';
+import '../styles/valley.css';
+import { places } from '../data/places';
 interface Props {
   title?: string;
   description?: string;
@@ -17,13 +19,12 @@ const socialImage = new URL('/media/social-card-1200.jpg', Astro.site);
 const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
 const path = Astro.url.pathname;
 const navigation = [
-  { href: '/#world', label: 'The game', chapter: 'world' },
-  { href: '/journal/', label: 'Development', section: '/journal/' },
-  { href: '/media/', label: 'Media', section: '/media/' },
-  { href: '/#community', label: 'Community', chapter: 'community' },
+  { href: '/journal/', label: 'Journal' },
+  { href: '/media/', label: 'Media' },
+  { href: '/community/', label: 'Community' },
 ];
-const current = (item: (typeof navigation)[number]) =>
-  item.section && path.startsWith(item.section) ? 'page' : undefined;
+const current = (href: string) => (path.startsWith(href) ? 'page' : undefined);
+const inPlace = places.some((place) => path.startsWith(place.href));
 ---
 
 <!doctype html>
@@ -81,8 +82,31 @@ const current = (item: (typeof navigation)[number]) =>
           />
         </a>
         <nav class="desktop-nav" aria-label="Main navigation">
+          <a href="/" aria-current={path === '/' ? 'page' : undefined}>
+            The valley
+          </a>
+          <details class="places-menu">
+            <summary aria-current={inPlace ? 'true' : undefined}>
+              Places <span aria-hidden="true">▾</span>
+            </summary>
+            <ul>
+              {places.map((place) => (
+                <li>
+                  <a href={place.href} aria-current={current(place.href)}>
+                    <span class="places-menu-numeral" aria-hidden="true">
+                      {place.numeral}
+                    </span>
+                    <span>
+                      <span class="places-menu-name">{place.name}</span>
+                      <span class="places-menu-verb">{place.verb}</span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
           {navigation.map((item) => (
-            <a href={item.href} data-chapter={item.chapter} aria-current={current(item)}>
+            <a href={item.href} aria-current={current(item.href)}>
               {item.label}
             </a>
           ))}
@@ -101,8 +125,17 @@ const current = (item: (typeof navigation)[number]) =>
               Menu <span aria-hidden="true">☰</span>
             </summary>
             <nav aria-label="Mobile navigation">
+              <a href="/" aria-current={path === '/' ? 'page' : undefined}>
+                The valley
+              </a>
+              <span class="mobile-nav-heading">Places</span>
+              {places.map((place) => (
+                <a href={place.href} class="mobile-nav-place" aria-current={current(place.href)}>
+                  <span aria-hidden="true">{place.numeral}</span> {place.name}
+                </a>
+              ))}
               {navigation.map((item) => (
-                <a href={item.href} aria-current={current(item)}>
+                <a href={item.href} aria-current={current(item.href)}>
                   {item.label}
                 </a>
               ))}
@@ -131,14 +164,17 @@ const current = (item: (typeof navigation)[number]) =>
         </div>
         <nav aria-label="Footer navigation" class="footer-nav">
           <div>
-            <span class="footer-heading">Explore</span>
-            <a href="/#world">The game</a>
-            <a href="/media/">Visual archive</a>
+            <span class="footer-heading">The valley</span>
+            {places.map((place) => (
+              <a href={place.href}>{place.name}</a>
+            ))}
           </div>
           <div>
             <span class="footer-heading">Follow</span>
             <a href="/journal/">Development journal</a>
             <a href="/rss.xml">RSS feed</a>
+            <a href="/media/">Visual archive</a>
+            <a href="/community/">Community</a>
           </div>
           <div>
             <span class="footer-heading">Project</span>

@@ -1,0 +1,77 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PlaceHero from '../components/PlaceHero.astro';
+import PlaceTravel from '../components/PlaceTravel.astro';
+import StatusTag from '../components/StatusTag.astro';
+import { placeById } from '../data/places';
+const place = placeById('kingdoms');
+const verbs = ['Wander', 'Build', 'Survive', 'Trade', 'Explore', 'Belong'];
+const ladder = [
+  ['A guild', 'People who share a craft or a road. Join one, or found one.'],
+  ['A kingdom', 'Old powers with their own lore, banners and borders.'],
+  ['A nation', 'One day, perhaps, a banner of your own and people who follow it.'],
+];
+---
+
+<SiteLayout
+  title="The Kingdoms — Caelora"
+  description="Guilds, kingdoms and player-founded nations as long-term intentions in Caelora. No destiny is required."
+>
+  <main id="main" class="place place-kingdoms-page">
+    <PlaceHero place={place} title="No destiny <em>is required.</em>" />
+
+    <section class="verbs section-space" aria-labelledby="verbs-title">
+      <div class="container">
+        <h2 id="verbs-title" class="verbs-title" data-reveal>
+          Follow the lore. <em>Or just follow the river.</em>
+        </h2>
+        <ul class="verb-wall" aria-label="Ways to play">
+          {verbs.map((verb, index) => (
+            <li data-reveal>
+              <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+              {verb}
+            </li>
+          ))}
+        </ul>
+        <p class="lede verbs-lede" data-reveal>
+          Players are not forced to become heroes, rulers or adventurers. There is no one right way
+          to belong.
+        </p>
+      </div>
+    </section>
+
+    <section class="ladder section-space" aria-labelledby="ladder-title">
+      <div class="container ladder-grid">
+        <header data-reveal>
+          <span class="eyebrow">The long view</span>
+          <h2 id="ladder-title">
+            From a guild <em>to a nation.</em>
+          </h2>
+          <p>
+            These are long-term intentions, not features. They are here so you know where the valley
+            is meant to lead, if you want it to.
+          </p>
+        </header>
+        <ol class="ladder-steps">
+          {ladder.map(([title, text], index) => (
+            <li data-reveal>
+              <span class="ladder-banner" aria-hidden="true">
+                {['I', 'II', 'III'][index]}
+              </span>
+              <div>
+                <h3>{title}</h3>
+                <p>{text}</p>
+                <StatusTag status="planned" />
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <PlaceTravel place={place} />
+  </main>
+  <script>
+    import '../scripts/experience';
+  </script>
+</SiteLayout>

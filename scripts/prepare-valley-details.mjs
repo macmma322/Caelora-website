@@ -14,6 +14,8 @@ const sources = {
 };
 // Each detail is a crop of the one 3840x2160 valley master: distinct places inside one painting.
 const crops = [
+  // The whole plate: the explorable home painting. Place crops below are regions of it.
+  { name: 'plate', source: 'valley', crop: [0, 0, 3840, 2160], widths: [1280, 1920, 2560] },
   { name: 'wilds', source: 'valley', crop: [420, 0, 2240, 820], widths: [800, 1440, 2240] },
   { name: 'hearth', source: 'valley', crop: [0, 330, 1130, 1830], widths: [480, 760, 1130] },
   { name: 'village', source: 'valley', crop: [2240, 880, 1600, 900], widths: [800, 1600] },
