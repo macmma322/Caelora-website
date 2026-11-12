@@ -25,8 +25,26 @@
   --color-scrim: oklch(15% 0.014 173 / 56%);
   --color-clear: oklch(15% 0.014 173 / 0%);
   --color-bronze-line: oklch(77% 0.092 77 / 30%);
+  /* Temperature roles: cool wilderness mist, warm hearth ember, dusk gold, dragon charcoal. */
+  --color-mist: oklch(80% 0.035 205);
+  --color-mist-deep: oklch(21% 0.026 215);
+  --color-ember: oklch(74% 0.135 58);
+  --color-ember-deep: oklch(20% 0.03 50);
+  --color-charcoal: oklch(13% 0.008 60);
+  --color-dusk: oklch(24% 0.03 40);
+  /* Development-status roles (content integrity labels). */
+  --status-concept: var(--color-accent);
+  --status-model: var(--color-mist);
+  --status-development: var(--color-ember);
+  --status-planned: var(--color-muted);
   --font-display: 'Caelora Cinzel', 'Palatino Linotype', Georgia, serif;
   --font-body: 'EB Garamond', Georgia, serif;
+  /* Labels, captions, controls and dense operational text: legible, zero-download. */
+  --font-ui:
+    'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --text-caption: 0.8125rem;
+  --text-prose: clamp(1.0625rem, 0.98rem + 0.25vw, 1.1875rem);
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
