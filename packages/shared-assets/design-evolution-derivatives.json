@@ -1,0 +1,236 @@
+[
+  {
+    "name": "wilds",
+    "source": "D:/Caelora/game-client/Assets/Caelora/Client/FrontEnd/Presentation/Resources/FrontEnd/MenuPlate.png",
+    "sha256": "d735f630f7884eea862a532a454beb084686f2abd230eee920c1dd4d25d809f5",
+    "crop": {
+      "left": 420,
+      "top": 0,
+      "width": 2240,
+      "height": 820
+    },
+    "operation": "crop, resize and compress only; no painting, compositing or generation",
+    "outputs": [
+      {
+        "filename": "wilds-800.avif",
+        "width": 800,
+        "height": 293,
+        "bytes": 35298
+      },
+      {
+        "filename": "wilds-800.webp",
+        "width": 800,
+        "height": 293,
+        "bytes": 43066
+      },
+      {
+        "filename": "wilds-1440.avif",
+        "width": 1440,
+        "height": 527,
+        "bytes": 74504
+      },
+      {
+        "filename": "wilds-1440.webp",
+        "width": 1440,
+        "height": 527,
+        "bytes": 91316
+      },
+      {
+        "filename": "wilds-2240.avif",
+        "width": 2240,
+        "height": 820,
+        "bytes": 121759
+      },
+      {
+        "filename": "wilds-2240.webp",
+        "width": 2240,
+        "height": 820,
+        "bytes": 144818
+      }
+    ]
+  },
+  {
+    "name": "hearth",
+    "source": "D:/Caelora/game-client/Assets/Caelora/Client/FrontEnd/Presentation/Resources/FrontEnd/MenuPlate.png",
+    "sha256": "d735f630f7884eea862a532a454beb084686f2abd230eee920c1dd4d25d809f5",
+    "crop": {
+      "left": 0,
+      "top": 330,
+      "width": 1130,
+      "height": 1830
+    },
+    "operation": "crop, resize and compress only; no painting, compositing or generation",
+    "outputs": [
+      {
+        "filename": "hearth-480.avif",
+        "width": 480,
+        "height": 777,
+        "bytes": 64937
+      },
+      {
+        "filename": "hearth-480.webp",
+        "width": 480,
+        "height": 777,
+        "bytes": 86972
+      },
+      {
+        "filename": "hearth-760.avif",
+        "width": 760,
+        "height": 1231,
+        "bytes": 114727
+      },
+      {
+        "filename": "hearth-760.webp",
+        "width": 760,
+        "height": 1231,
+        "bytes": 153978
+      },
+      {
+        "filename": "hearth-1130.avif",
+        "width": 1130,
+        "height": 1830,
+        "bytes": 178714
+      },
+      {
+        "filename": "hearth-1130.webp",
+        "width": 1130,
+        "height": 1830,
+        "bytes": 235744
+      }
+    ]
+  },
+  {
+    "name": "village",
+    "source": "D:/Caelora/game-client/Assets/Caelora/Client/FrontEnd/Presentation/Resources/FrontEnd/MenuPlate.png",
+    "sha256": "d735f630f7884eea862a532a454beb084686f2abd230eee920c1dd4d25d809f5",
+    "crop": {
+      "left": 2240,
+      "top": 880,
+      "width": 1600,
+      "height": 900
+    },
+    "operation": "crop, resize and compress only; no painting, compositing or generation",
+    "outputs": [
+      {
+        "filename": "village-800.avif",
+        "width": 800,
+        "height": 450,
+        "bytes": 63068
+      },
+      {
+        "filename": "village-800.webp",
+        "width": 800,
+        "height": 450,
+        "bytes": 80064
+      },
+      {
+        "filename": "village-1600.avif",
+        "width": 1600,
+        "height": 900,
+        "bytes": 138090
+      },
+      {
+        "filename": "village-1600.webp",
+        "width": 1600,
+        "height": 900,
+        "bytes": 173936
+      }
+    ]
+  },
+  {
+    "name": "castle",
+    "source": "D:/Caelora/game-client/Assets/Caelora/Client/FrontEnd/Presentation/Resources/FrontEnd/MenuPlate.png",
+    "sha256": "d735f630f7884eea862a532a454beb084686f2abd230eee920c1dd4d25d809f5",
+    "crop": {
+      "left": 2260,
+      "top": 40,
+      "width": 1580,
+      "height": 900
+    },
+    "operation": "crop, resize and compress only; no painting, compositing or generation",
+    "outputs": [
+      {
+        "filename": "castle-800.avif",
+        "width": 800,
+        "height": 456,
+        "bytes": 44280
+      },
+      {
+        "filename": "castle-800.webp",
+        "width": 800,
+        "height": 456,
+        "bytes": 52342
+      },
+      {
+        "filename": "castle-1580.avif",
+        "width": 1580,
+        "height": 900,
+        "bytes": 95582
+      },
+      {
+        "filename": "castle-1580.webp",
+        "width": 1580,
+        "height": 900,
+        "bytes": 108526
+      }
+    ]
+  },
+  {
+    "name": "atlas-folio",
+    "source": "C:/Users/nikol/Downloads/Caelora Fantasy Atlas Map.png",
+    "sha256": "4d9d207c1fb01ee5f0507130db10d53539faf6b1cb2792c676100daf4cc12a66",
+    "crop": {
+      "left": 0,
+      "top": 146,
+      "width": 1448,
+      "height": 940
+    },
+    "operation": "crop, resize and compress only; no painting, compositing or generation",
+    "outputs": [
+      {
+        "filename": "atlas-folio-720.avif",
+        "width": 720,
+        "height": 467,
+        "bytes": 86671
+      },
+      {
+        "filename": "atlas-folio-720.webp",
+        "width": 720,
+        "height": 467,
+        "bytes": 122088
+      },
+      {
+        "filename": "atlas-folio-1440.avif",
+        "width": 1440,
+        "height": 935,
+        "bytes": 243135
+      },
+      {
+        "filename": "atlas-folio-1440.webp",
+        "width": 1440,
+        "height": 935,
+        "bytes": 364228
+      }
+    ]
+  },
+  {
+    "name": "social-card",
+    "source": "D:/Caelora/game-client/Assets/Caelora/Client/FrontEnd/Presentation/Resources/FrontEnd/MenuPlate.png",
+    "sha256": "d735f630f7884eea862a532a454beb084686f2abd230eee920c1dd4d25d809f5",
+    "crop": {
+      "left": 0,
+      "top": 136,
+      "width": 3840,
+      "height": 2016
+    },
+    "operation": "crop to 1.905:1, resize and compress only",
+    "outputs": [
+      {
+        "filename": "social-card-1200.jpg",
+        "width": 1200,
+        "height": 630,
+        "bytes": 212638
+      }
+    ]
+  }
+]

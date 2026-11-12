@@ -1,0 +1,61 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import ArtPicture from '../components/ArtPicture.astro';
+import ArtViewer from '../components/ArtViewer.astro';
+import StatusTag from '../components/StatusTag.astro';
+import { archive, largest, statusLabel, statusMeaning, type Status } from '../data/media';
+const legend: Status[] = ['concept', 'model'];
+---
+
+<SiteLayout
+  title="Visual archive — Caelora"
+  description="Concept art and 3D model studies from the development of Caelora. Every image is labelled; none of it is gameplay footage."
+>
+  <main id="main" class="media-page">
+    <header class="container page-intro">
+      <span class="eyebrow">The visual archive</span>
+      <h1>Glimpses of Caelora</h1>
+      <p class="page-lede">
+        Every image on this site, labelled for what it is. Several plates are details of the valley
+        painting's main-menu version: one world, seen place by place.
+      </p>
+      <dl class="status-legend">
+        {legend.map((status) => (
+          <div>
+            <dt>
+              <StatusTag status={status} />
+            </dt>
+            <dd>{statusMeaning[status]}</dd>
+          </div>
+        ))}
+      </dl>
+    </header>
+    <ul class="container archive-grid">
+      {archive.map((item, index) => (
+        <li class:list={['archive-item', `archive-${item.id}`]}>
+          <a
+            href={largest(item)}
+            data-artwork={index}
+            data-title={item.title}
+            data-status={statusLabel[item.status]}
+            data-source={item.source}
+            data-alt={item.alt}
+            aria-label={`Open ${item.title} (${statusLabel[item.status]})`}
+          >
+            <ArtPicture item={item} sizes="(max-width:45rem) 92vw, (max-width:75rem) 46vw, 640px" />
+          </a>
+          <div class="archive-caption">
+            <h2>{item.title}</h2>
+            <StatusTag status={item.status} />
+            <p>{item.source}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+    <p class="container archive-note">
+      Gameplay captures will join the archive when they can be shown honestly, with the build they
+      came from.
+    </p>
+  </main>
+  <ArtViewer />
+</SiteLayout>

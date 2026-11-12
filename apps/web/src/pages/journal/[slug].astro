@@ -1,0 +1,55 @@
+---
+import { render } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import ArtPicture from '../../components/ArtPicture.astro';
+import StatusTag from '../../components/StatusTag.astro';
+import { media } from '../../data/media';
+import { journalEntries, formatDate, isoDate, type JournalEntry } from '../../lib/journal';
+
+export async function getStaticPaths() {
+  return (await journalEntries()).map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+const { entry } = Astro.props as { entry: JournalEntry };
+const { Content } = await render(entry);
+const cover = media[entry.data.cover];
+---
+
+<SiteLayout title={`${entry.data.title} — Caelora Journal`} description={entry.data.description}>
+  <main id="main" class="article">
+    <header class="container article-header">
+      <a class="text-link back-link" href="/journal/">
+        <span aria-hidden="true">←</span> Journal
+      </a>
+      <span class="journal-meta">
+        {entry.data.category} ·{' '}
+        <time datetime={isoDate(entry.data.date)}>{formatDate(entry.data.date)}</time>
+      </span>
+      <h1>{entry.data.title}</h1>
+      <p class="page-lede">{entry.data.description}</p>
+      <StatusTag status={entry.data.status} />
+    </header>
+    <figure class="container article-cover">
+      <ArtPicture item={cover} sizes="(max-width:60rem) 92vw, 1100px" eager />
+      <figcaption>
+        <StatusTag status={cover.status} />
+        <span>
+          {cover.title} · {cover.source}
+        </span>
+      </figcaption>
+    </figure>
+    <div class="container article-body">
+      <Content />
+    </div>
+    <nav class="container article-foot" aria-label="Journal navigation">
+      <a class="button secondary" href="/journal/">
+        All journal entries
+      </a>
+      <a class="text-link" href="/rss.xml">
+        Follow with RSS <span aria-hidden="true">↗</span>
+      </a>
+    </nav>
+  </main>
+</SiteLayout>
