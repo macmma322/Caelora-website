@@ -10,7 +10,7 @@
     >
     @if(api.user();as user){
     <details #accountMenu class="account-menu">
-      <summary aria-label="Open account menu">
+      <summary [attr.aria-label]="user.displayName + ', account menu'">
         <span>{{user.displayName}}</span><span aria-hidden="true">▾</span>
       </summary>
       <nav aria-label="Account menu">
@@ -28,8 +28,44 @@
     }
   </div>
 </header>
-<div class="portal-layout" [class.portal-guest]="!api.user()">
-  @if(api.user()){
+<div class="portal-layout" [class.portal-guest]="!api.user()" [class.auth-split]="showScene()">
+  @if(showScene()){
+  <aside class="auth-scene" aria-label="Concept art">
+    <figure>
+      <picture>
+        <source
+          type="image/avif"
+          srcset="
+            /media/hearth-480.avif   480w,
+            /media/hearth-760.avif   760w,
+            /media/hearth-1130.avif 1130w
+          "
+          sizes="(min-width: 60rem) 44vw, 480px"
+        />
+        <source
+          type="image/webp"
+          srcset="
+            /media/hearth-480.webp   480w,
+            /media/hearth-760.webp   760w,
+            /media/hearth-1130.webp 1130w
+          "
+          sizes="(min-width: 60rem) 44vw, 480px"
+        />
+        <img
+          src="/media/hearth-760.webp"
+          width="1130"
+          height="1830"
+          decoding="async"
+          alt="Detail of the Caelora valley concept: a brazier burning among timber crates beneath a tree-banner."
+        />
+      </picture>
+      <figcaption>
+        <span class="status-tag" data-status="concept">Concept art</span>
+        <span class="auth-scene-note">Detail of the valley environment concept</span>
+      </figcaption>
+    </figure>
+  </aside>
+  } @if(api.user()){
   <nav class="portal-nav" aria-label="Account navigation">
     <span class="eyebrow nav-label">Your place in Caelora</span>
     <a
@@ -77,7 +113,7 @@
     @if(error()){
     <div class="alert error" role="alert">{{error()}}</div>
     }
-    <router-outlet />
+    <router-outlet (activate)="routed.set(true)" (deactivate)="routed.set(false)" />
   </main>
 </div>
 <footer class="portal-footer">

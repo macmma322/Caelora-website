@@ -1,0 +1,27 @@
+---
+import { srcset, smallest, type Art } from '../data/media';
+interface Props {
+  item: Art;
+  sizes: string;
+  class?: string;
+  eager?: boolean;
+  /** Decorative duplicates (the same art already described nearby) pass an empty alt. */
+  alt?: string;
+}
+const { item, sizes, class: className, eager = false, alt = item.alt } = Astro.props;
+---
+
+<picture class={className}>
+  {item.avif && <source type="image/avif" srcset={srcset(item, 'avif')} sizes={sizes} />}
+  <img
+    src={smallest(item)}
+    srcset={srcset(item, 'webp')}
+    sizes={sizes}
+    width={item.width}
+    height={item.height}
+    alt={alt}
+    loading={eager ? 'eager' : 'lazy'}
+    decoding={eager ? 'auto' : 'async'}
+    fetchpriority={eager ? 'high' : undefined}
+  />
+</picture>

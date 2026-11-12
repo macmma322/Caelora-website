@@ -2,19 +2,29 @@
 import '@caelora/design-tokens/tokens.css';
 import '@caelora/design-tokens/base.css';
 import '../styles/site.css';
+import '../styles/valley.css';
+import { places } from '../data/places';
 interface Props {
   title?: string;
   description?: string;
   noindex?: boolean;
 }
 const {
-  title = 'Caelora · A world to inhabit',
-  description = 'An independent medieval-fantasy voxel sandbox in development. Explore the vision for a world of wild landscapes, building, dragons and player-made stories.',
+  title = 'Caelora · A world to call your own',
+  description = 'Caelora is an independent medieval-fantasy voxel sandbox for Windows, in development: explore one wild valley, build a home, meet its creatures and choose your own way to belong.',
   noindex = false,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const socialImage = new URL('/media/valley-1672.webp', Astro.site);
+const socialImage = new URL('/media/social-card-1200.jpg', Astro.site);
 const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
+const path = Astro.url.pathname;
+const navigation = [
+  { href: '/journal/', label: 'Journal' },
+  { href: '/media/', label: 'Media' },
+  { href: '/community/', label: 'Community' },
+];
+const current = (href: string) => (path.startsWith(href) ? 'page' : undefined);
+const inPlace = places.some((place) => path.startsWith(place.href));
 ---
 
 <!doctype html>
@@ -29,6 +39,12 @@ const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Caelora development journal"
+      href="/rss.xml"
+    />
+    <link
       rel="preload"
       href="/fonts/cinzel-latin-variable.woff2"
       as="font"
@@ -41,9 +57,11 @@ const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={socialImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Caelora concept artwork: a cloaked traveller overlooking a forested valley and castle at sunset."
+      content="Caelora concept artwork: a cloaked traveller and a falcon overlooking a forested valley and castle at sunset."
     />
     <meta name="twitter:card" content="summary_large_image" />
   </head>
@@ -57,35 +75,71 @@ const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
           <img
             src="/brand/caelora-nav-360.webp"
             srcset="/brand/caelora-nav-240.webp 240w, /brand/caelora-nav-360.webp 360w, /brand/caelora-nav-480.webp 480w"
-            sizes="(max-width:45rem) 145px, 230px"
+            sizes="(max-width:45rem) 138px, 170px"
             width="480"
             height="146"
             alt="Caelora"
           />
         </a>
         <nav class="desktop-nav" aria-label="Main navigation">
-          <a href="/#world">The world</a>
-          <a href="/#your-path">Your path</a>
-          <a href="/#journal">Development</a>
-          <a href="/#media">Media</a>
+          <a href="/" aria-current={path === '/' ? 'page' : undefined}>
+            The valley
+          </a>
+          <details class="places-menu">
+            <summary aria-current={inPlace ? 'true' : undefined}>
+              Places <span aria-hidden="true">▾</span>
+            </summary>
+            <ul>
+              {places.map((place) => (
+                <li>
+                  <a href={place.href} aria-current={current(place.href)}>
+                    <span class="places-menu-numeral" aria-hidden="true">
+                      {place.numeral}
+                    </span>
+                    <span>
+                      <span class="places-menu-name">{place.name}</span>
+                      <span class="places-menu-verb">{place.verb}</span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
+          {navigation.map((item) => (
+            <a href={item.href} aria-current={current(item.href)}>
+              {item.label}
+            </a>
+          ))}
         </nav>
         <div class="header-end">
-          {accountUrl ? (
+          <span class="development-tag">
+            <span class="status-dot" aria-hidden="true"></span>In development
+          </span>
+          {accountUrl && (
             <a class="portal-link" href={accountUrl}>
-              Sign in <span aria-hidden="true">↗</span>
+              Account
             </a>
-          ) : (
-            <span class="development-tag">In development</span>
           )}
           <details class="mobile-nav">
             <summary aria-label="Menu">
               Menu <span aria-hidden="true">☰</span>
             </summary>
             <nav aria-label="Mobile navigation">
-              <a href="/#world">The world</a>
-              <a href="/#your-path">Your path</a>
-              <a href="/#journal">Development journal</a>
-              <a href="/#media">Media gallery</a>
+              <a href="/" aria-current={path === '/' ? 'page' : undefined}>
+                The valley
+              </a>
+              <span class="mobile-nav-heading">Places</span>
+              {places.map((place) => (
+                <a href={place.href} class="mobile-nav-place" aria-current={current(place.href)}>
+                  <span aria-hidden="true">{place.numeral}</span> {place.name}
+                </a>
+              ))}
+              {navigation.map((item) => (
+                <a href={item.href} aria-current={current(item.href)}>
+                  {item.label}
+                </a>
+              ))}
+              {accountUrl && <a href={accountUrl}>Account</a>}
             </nav>
           </details>
         </div>
@@ -94,47 +148,51 @@ const accountUrl = import.meta.env.PUBLIC_ACCOUNT_URL;
     <slot />
     <footer class="site-footer">
       <div class="container footer-top">
-        <div>
-          <a class="wordmark" href="/">
+        <div class="footer-brand">
+          <a class="wordmark" href="/" aria-label="Caelora home">
             <img
               src="/brand/caelora-nav-360.webp"
               srcset="/brand/caelora-nav-240.webp 240w, /brand/caelora-nav-360.webp 360w, /brand/caelora-nav-480.webp 480w"
-              sizes="(max-width:45rem) 145px, 230px"
+              sizes="(max-width:45rem) 180px, 220px"
               width="480"
               height="146"
               alt="Caelora"
               loading="lazy"
             />
           </a>
-          <p>A world worth making your own.</p>
+          <p>An independent medieval-fantasy voxel sandbox for Windows. In development.</p>
         </div>
-        <nav aria-label="Footer navigation">
-          <a href="/journal/foundation/">Development</a>
-          <a href="/#world">The world</a>
-          {accountUrl && <a href={accountUrl}>Account</a>}
-          <a href="/project-information/">Community & support</a>
-          <a href="/project-information/#legal">Legal & privacy</a>
+        <nav aria-label="Footer navigation" class="footer-nav">
+          <div>
+            <span class="footer-heading">The valley</span>
+            {places.map((place) => (
+              <a href={place.href}>{place.name}</a>
+            ))}
+          </div>
+          <div>
+            <span class="footer-heading">Follow</span>
+            <a href="/journal/">Development journal</a>
+            <a href="/rss.xml">RSS feed</a>
+            <a href="/media/">Visual archive</a>
+            <a href="/community/">Community</a>
+          </div>
+          <div>
+            <span class="footer-heading">Project</span>
+            <a href="/project-information/">Project information</a>
+            <a href="/project-information/#legal">Legal & privacy</a>
+            {accountUrl && <a href={accountUrl}>Account</a>}
+          </div>
         </nav>
       </div>
       <div class="container footer-bottom">
         <span>© {new Date().getUTCFullYear()} Caelora. All rights reserved.</span>
-        <span>Independent game · Windows · In development</span>
+        <span>
+          Images are concept art and model studies, not gameplay. No release date announced.
+        </span>
       </div>
     </footer>
     <script>
       import '../scripts/navigation';
-      const menu = document.querySelector<HTMLDetailsElement>('.mobile-nav');
-      menu?.querySelectorAll('a').forEach((link) =>
-        link.addEventListener('click', () => {
-          menu.open = false;
-        }),
-      );
-      menu?.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-          menu.open = false;
-          menu.querySelector('summary')?.focus();
-        }
-      });
     </script>
   </body>
 </html>

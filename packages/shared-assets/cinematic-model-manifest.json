@@ -10,6 +10,40 @@
       "bytes": 175048,
       "sha256": "AFD265E2A5FC565CC4DC1FC51FAC32C2245859A598A489718CEA0415141C3642",
       "websiteUse": "Pointer-rotated material and silhouette study; not gameplay inventory proof"
+    },
+    {
+      "id": "crimson-regent-cloak",
+      "source": "D:/Caelora/game-client/Assets/Caelora/Equipment/Premium/Meshes/PREM_Crimson_Regent_Cloak.fbx",
+      "sourceSha256": "B73555ED4703ACD005EE5761B4D22DE5A33194FDBA411713575B0D440F603EC8",
+      "textures": "D:/Caelora/game-client/Assets/Caelora/Equipment/Premium/Textures/CrimsonRegent/{BaseColor,Normal,Roughness}.png (2048px, downsized to 1024px WebP)",
+      "sourceMasterReadOnly": true,
+      "static": true,
+      "format": "glTF (separate .bin + WebP textures; KHR_mesh_quantization, no WebAssembly decoder)",
+      "recipe": "scripts/export-web-cloak.py (Blender 5.2: 358,398 -> 23,995 faces, Chest/Neck/Cloak_* bones kept, OverPack shape key dropped) + gltfpack 0.25.0 -kn -tr",
+      "derivative": "apps/web/public/models/crimson-regent/",
+      "files": {
+        "BaseColor.webp": {
+          "bytes": 185022,
+          "sha256": "671F2254C99E3F7883A1373E622C583F97E689C81B7BA40665CFCD07058401D9"
+        },
+        "Normal.webp": {
+          "bytes": 119730,
+          "sha256": "EC8AE79446956DB25651878FCB1376AAF4701AAD6F1444F4A1944D443550D68A"
+        },
+        "Roughness.webp": {
+          "bytes": 160404,
+          "sha256": "050DC67BA141F620068BD1D9C0824335F2D7166F3BAD69C84F760B67EA1AF906"
+        },
+        "cloak.bin": {
+          "bytes": 861652,
+          "sha256": "0637AF50CD75E39AF1C92FF64A242E27B98DA8C3C19B3450C9625B9BF953D843"
+        },
+        "cloak.gltf": {
+          "bytes": 8974,
+          "sha256": "CA5A4B7C31794CB5202435688BC68BEC2CFCDC560D5F80BB0D65BB6D5C4434B3"
+        }
+      },
+      "websiteUse": "Hearth page 3D study with a spring-bone cloth simulation on the Cloak_* chain; not gameplay inventory proof"
     }
   ]
 }

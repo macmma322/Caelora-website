@@ -4,11 +4,11 @@
 
 Railway project `ca01b42b-625e-4c01-8e83-7ce0f6502d47`, environment `production` (`2ff1d63e-4fc0-40f6-adcb-bb7c17616614`) had failed deployments for all three frontend services. The affected services were:
 
-| Service | Railway service ID | Initial deployment | Initial status |
-| --- | --- | --- | --- |
-| `@caelora/web` | `3c8dd4cf-7849-46a7-abc3-8528c2f67f50` | `543ff895-c775-4dd9-b67d-e5b5cd3a721b` | `FAILED` |
-| `@caelora/admin` | `bf9c17d2-3b4b-43ce-bc03-77eee156b0de` | `9d112ab6-1940-41e8-84f4-1c2fb3af2522` | `FAILED` |
-| `@caelora/account` | `0cb7e2b9-9217-4791-866d-51f59209cf95` | `5bdd974c-413d-403c-9be0-198209b01c65` | `FAILED` |
+| Service            | Railway service ID                     | Initial deployment                     | Initial status |
+| ------------------ | -------------------------------------- | -------------------------------------- | -------------- |
+| `@caelora/web`     | `3c8dd4cf-7849-46a7-abc3-8528c2f67f50` | `543ff895-c775-4dd9-b67d-e5b5cd3a721b` | `FAILED`       |
+| `@caelora/admin`   | `bf9c17d2-3b4b-43ce-bc03-77eee156b0de` | `9d112ab6-1940-41e8-84f4-1c2fb3af2522` | `FAILED`       |
+| `@caelora/account` | `0cb7e2b9-9217-4791-866d-51f59209cf95` | `5bdd974c-413d-403c-9be0-198209b01c65` | `FAILED`       |
 
 ## Confirmed root causes
 

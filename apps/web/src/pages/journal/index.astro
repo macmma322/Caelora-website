@@ -1,0 +1,59 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import ArtPicture from '../../components/ArtPicture.astro';
+import StatusTag from '../../components/StatusTag.astro';
+import { media } from '../../data/media';
+import { journalEntries, entryUrl, formatDate, isoDate } from '../../lib/journal';
+const entries = await journalEntries();
+---
+
+<SiteLayout
+  title="Development journal — Caelora"
+  description="Notes from the development of Caelora, an independent medieval-fantasy voxel sandbox for Windows. Only work that can be demonstrated is reported."
+>
+  <main id="main" class="journal-page">
+    <header class="container page-intro">
+      <span class="eyebrow">From the development studio</span>
+      <h1>Development journal</h1>
+      <p class="page-lede">
+        Caelora is built in the open, one honest step at a time. Entries report direction and work
+        that can be demonstrated. Nothing here is a release promise.
+      </p>
+      <div class="page-actions">
+        <a class="text-link" href="/rss.xml">
+          Follow with RSS <span aria-hidden="true">↗</span>
+        </a>
+        <a class="text-link" href="/#overview">
+          What Caelora is <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </header>
+    <ol class="container journal-list" reversed>
+      {entries.map((entry) => (
+        <li>
+          <a class="journal-card" href={entryUrl(entry)}>
+            <ArtPicture
+              class="journal-card-art"
+              item={media[entry.data.cover]}
+              sizes="(max-width:45rem) 92vw, 40vw"
+              alt=""
+            />
+            <div class="journal-card-copy">
+              <span class="journal-meta">
+                {entry.data.category} ·{' '}
+                <time datetime={isoDate(entry.data.date)}>{formatDate(entry.data.date)}</time>
+              </span>
+              <h2>{entry.data.title}</h2>
+              <p>{entry.data.description}</p>
+              <StatusTag status={entry.data.status} />
+            </div>
+          </a>
+        </li>
+      ))}
+    </ol>
+    <p class="container journal-empty-note">
+      More entries will follow as work can be shown: the first valley, building, creatures, wings
+      and sound among them.
+    </p>
+  </main>
+</SiteLayout>

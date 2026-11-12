@@ -1,0 +1,83 @@
+---
+import ValleyPins from './ValleyPins.astro';
+import StatusTag from './StatusTag.astro';
+import { media, srcset } from '../data/media';
+import { places } from '../data/places';
+// The home page is the painting. Pins sit on the real places; choosing one zooms into that exact
+// region, which is the next page's hero (cross-document view transition, CSS-only). Without
+// JavaScript or view-transition support the pins are ordinary links.
+const plate = media.plate;
+---
+
+<section class="valley" aria-labelledby="valley-title" data-valley data-opening>
+  <div class="valley-scroller" data-valley-scroller>
+    <div class="valley-canvas" data-valley-canvas>
+      <picture class="valley-plate">
+        <source
+          type="image/avif"
+          srcset={srcset(plate, 'avif')}
+          sizes="(max-width:45rem) 960px, 100vw"
+        />
+        <img
+          src="/media/plate-1920.webp"
+          srcset={srcset(plate, 'webp')}
+          sizes="(max-width:45rem) 960px, 100vw"
+          width={plate.width}
+          height={plate.height}
+          alt={plate.alt}
+          fetchpriority="high"
+        />
+      </picture>
+      {places
+        .filter((place) => place.zone)
+        .map((place) => (
+          <img
+            class={`valley-zone place-${place.id} vt-${place.id}`}
+            data-zone={place.id}
+            src={`/media/${place.art.id}-${place.art.widths[0]}.webp`}
+            width={place.art.width}
+            height={place.art.height}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        ))}
+      <div class="valley-lantern" aria-hidden="true"></div>
+      <ValleyPins label="Places in the valley" />
+    </div>
+  </div>
+  <div class="valley-intro">
+    <img
+      class="valley-wordmark"
+      src="/brand/caelora-hero-640.webp"
+      srcset="/brand/caelora-hero-480.webp 480w, /brand/caelora-hero-640.webp 640w, /brand/caelora-hero-1000.webp 1000w"
+      sizes="(max-width:45rem) 70vw, 380px"
+      width="1000"
+      height="353"
+      alt="Caelora — Build. Explore. Belong."
+    />
+    <h1 id="valley-title">
+      A world to call <em>your own.</em>
+    </h1>
+    <p>
+      A medieval-fantasy voxel sandbox for Windows, in development. One wild valley — choose a place
+      and step into it.
+    </p>
+    <p class="valley-hint">
+      <span class="valley-hint-mark" aria-hidden="true"></span>
+      <span class="hint-fine">Move your light across the valley. Every marker is a place.</span>
+      <span class="hint-coarse">Swipe across the valley. Every marker is a place.</span>
+    </p>
+  </div>
+  <p class="valley-caption">
+    <StatusTag status="concept" />
+    <span>{plate.source}, not gameplay</span>
+  </p>
+  <a class="valley-down" href="#overview">
+    <span>What is Caelora?</span>
+    <span aria-hidden="true">↓</span>
+  </a>
+</section>
+<script>
+  import '../scripts/valley';
+</script>

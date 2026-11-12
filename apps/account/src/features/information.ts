@@ -3,14 +3,26 @@ import { RouterLink } from '@angular/router';
 @Component({
   standalone: true,
   imports: [RouterLink],
-  template:
-    '<span class="eyebrow">Still to come</span><h1>This part of the journey<br />is not open yet.</h1><p>Game ownership and trusted-device controls are not implemented. Your browser sessions and security activity are available in your account.</p><a class="button secondary" routerLink="/account/security">Account security</a>',
+  template: `<header class="page-header">
+      <span class="eyebrow">Still to come</span>
+      <h1>This part of the journey is not open yet.</h1>
+      <p class="page-meta"><span class="status-tag" data-status="planned">Planned</span></p>
+    </header>
+    <p>
+      Game ownership and trusted-device controls are not implemented. Your browser sessions and
+      security activity are available in your account.
+    </p>
+    <a class="button secondary" routerLink="/account/security">Account security</a>`,
 })
 export class AccountUnavailable {}
 @Component({
   standalone: true,
   imports: [RouterLink],
-  template:
-    '<span class="eyebrow">404 / Beyond the map</span><h1>This path has not<br />been charted.</h1><p>The requested page could not be found.</p><a class="button" routerLink="/account">Your account</a>',
+  template: `<header class="page-header">
+      <span class="eyebrow">404 / Beyond the map</span>
+      <h1>This path has not been charted.</h1>
+    </header>
+    <p>The requested page could not be found.</p>
+    <a class="button" routerLink="/account">Your account</a>`,
 })
 export class AccountNotFound {}

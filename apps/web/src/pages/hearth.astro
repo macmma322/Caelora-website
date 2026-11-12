@@ -1,0 +1,99 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PlaceHero from '../components/PlaceHero.astro';
+import PlaceTravel from '../components/PlaceTravel.astro';
+import ModelShowcase from '../components/ModelShowcase.astro';
+import StatusTag from '../components/StatusTag.astro';
+import { placeById } from '../data/places';
+const place = placeById('hearth');
+const steps = [
+  ['Gather', 'Timber, stone and what the land provides, each found where it belongs.'],
+  ['Craft', 'Tools first, then better tools. Every improvement is something you made.'],
+  ['Build', 'Block by block: a shelter, a workshop, a cottage by the water.'],
+  ['Return', 'Somewhere to come back to after the long way round.'],
+];
+---
+
+<SiteLayout
+  title="The Hearth — Caelora"
+  description="Gathering, crafting, building and survival in Caelora, an independent medieval-fantasy voxel sandbox in development."
+>
+  <main id="main" class="place place-hearth-page">
+    <div class="embers" data-ambient aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <PlaceHero place={place} title="Start with <em>a little fire.</em>" />
+
+    <section class="ritual section-space" aria-labelledby="ritual-title">
+      <div class="container">
+        <header class="ritual-head" data-reveal>
+          <span class="eyebrow">The first home</span>
+          <h2 id="ritual-title">
+            Cold wilderness, <em>then warmth.</em>
+          </h2>
+          <p class="lede">
+            Learn what the land offers and what it takes to get through the night. Then build
+            somewhere worth coming back to.
+          </p>
+        </header>
+        <ol class="ritual-steps">
+          {steps.map(([title, text], index) => (
+            <li data-reveal>
+              <span class="ritual-index" aria-hidden="true">
+                {['I', 'II', 'III', 'IV'][index]}
+              </span>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </li>
+          ))}
+        </ol>
+        <p class="note" data-reveal>
+          <StatusTag status="development" /> Gathering, crafting, building and survival are being
+          built in the Unity prototype. Nothing is publicly playable yet.
+        </p>
+      </div>
+    </section>
+
+    <ModelShowcase
+      id="cloak"
+      model="/models/crimson-regent/cloak.gltf"
+      subject="Crimson Regent cloak"
+      poster={{
+        src: '/media/cloak-poster-960.webp',
+        srcset: '/media/cloak-poster-640.webp 640w, /media/cloak-poster-960.webp 960w',
+        width: 960,
+        height: 960,
+        alt: 'The Crimson Regent cloak seen from behind: a long crimson cloak falling from the shoulders.',
+      }}
+      caption="Crimson Regent cloak · premium equipment asset · web derivative with a simplified cloth simulation"
+    >
+      <span class="eyebrow" slot="eyebrow">
+        Things you carry
+      </span>
+      <Fragment slot="title">
+        The road leaves <em>a mark.</em>
+      </Fragment>
+      <p>
+        The Crimson Regent cloak is a premium Caelora equipment asset, hung on the same bone chain
+        the game swings when you run. Turn it and the cloth follows. It is not a promise of a
+        finished inventory.
+      </p>
+    </ModelShowcase>
+
+    <PlaceTravel place={place} />
+  </main>
+  <script>
+    import '../scripts/experience';
+  </script>
+</SiteLayout>

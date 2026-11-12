@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { getPlatformInfo } from '../packages/api-client/src/index.ts';
+import { getPlatformInfo, PlatformInfoError } from '../packages/api-client/src/index.ts';
 
 const contract = {
   contractVersion: '1',
@@ -30,5 +30,26 @@ test('client rejects an unsuccessful response or an unsupported contract', async
     getPlatformInfo('https://api.example.com', async () =>
       Response.json({ ...contract, accountsAvailable: 'true' }),
     ),
+  );
+});
+test('client distinguishes an absent platform from an unreachable one', async () => {
+  const reason = (fetcher) =>
+    getPlatformInfo('https://api.example.com', fetcher).then(
+      () => 'resolved',
+      (error) => (error instanceof PlatformInfoError ? error.reason : 'other'),
+    );
+  assert.equal(await reason(async () => new Response('<html>', { status: 404 })), 'absent');
+  assert.equal(await reason(async () => new Response('<html>', { status: 200 })), 'absent');
+  assert.equal(
+    await reason(async () => Response.json({ ...contract, contractVersion: '2' })),
+    'absent',
+  );
+  assert.equal(await reason(async () => new Response('', { status: 503 })), 'unreachable');
+  assert.equal(await reason(async () => new Response('', { status: 429 })), 'unreachable');
+  assert.equal(
+    await reason(async () => {
+      throw new TypeError('Failed to fetch');
+    }),
+    'unreachable',
   );
 });

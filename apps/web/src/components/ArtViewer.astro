@@ -1,0 +1,36 @@
+---
+// One accessible viewer for every [data-artwork] link on the page (native <dialog>).
+---
+
+<dialog class="art-viewer" aria-labelledby="viewer-title">
+  <div class="viewer-toolbar">
+    <span class="eyebrow">Caelora / Visual archive</span>
+    <button type="button" class="viewer-close" aria-label="Close artwork">
+      Close <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="viewer-image">
+    <img id="viewer-image" alt="" width="1672" height="941" />
+    <p class="viewer-error" role="status" hidden>
+      Artwork could not be loaded. Close the viewer and try again.
+    </p>
+  </div>
+  <div class="viewer-caption">
+    <div>
+      <h2 id="viewer-title">Study</h2>
+      <p class="viewer-status"></p>
+    </div>
+    <div class="viewer-controls">
+      <button type="button" data-direction="-1" aria-label="Previous artwork">
+        ←
+      </button>
+      <span class="viewer-position" aria-live="polite"></span>
+      <button type="button" data-direction="1" aria-label="Next artwork">
+        →
+      </button>
+    </div>
+  </div>
+</dialog>
+<script>
+  import '../scripts/viewer';
+</script>

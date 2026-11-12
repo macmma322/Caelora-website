@@ -8,7 +8,7 @@ const directory = new URL('../apps/web/public/media/', import.meta.url);
 const inputs = [
   { name: 'valley', source: 'valley-1672.webp', widths: [640, 960, 1672] },
   { name: 'dragon', source: 'dragon-960.webp', widths: [640, 960] },
-  { name: 'atlas', source: 'atlas-960.webp', widths: [640, 960] },
+  // The original atlas (with interface tabs) was replaced by atlas-folio; see prepare-valley-details.mjs.
 ];
 const manifest = [];
 for (const input of inputs) {

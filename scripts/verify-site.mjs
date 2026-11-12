@@ -34,7 +34,9 @@ for (const file of htmlFiles) {
     }
   }
   for (const match of html.matchAll(/<(?:img)\b[^>]*>/g)) {
-    if (!/\balt=/.test(match[0]) || !/\bwidth=/.test(match[0]) || !/\bheight=/.test(match[0]))
+    // A bare `alt` is how Astro serialises alt="" (a decorative image); it still counts as present.
+    const tag = match[0];
+    if (!/\salt(?:=|\s|\/?>)/.test(tag) || !/\bwidth=/.test(tag) || !/\bheight=/.test(tag))
       throw new Error(`Missing image attributes: ${file}`);
   }
   for (const match of html.matchAll(/\b(?:href|src)="([^"<>]+)"/g)) {

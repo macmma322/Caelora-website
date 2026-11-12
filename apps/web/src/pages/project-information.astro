@@ -6,34 +6,42 @@ import SiteLayout from '../layouts/SiteLayout.astro';
   <main id="main" class="container document">
     <span class="eyebrow">Project information</span>
     <h1>A world in development.</h1>
-    <p>
-      Caelora is an independent native Windows game in development. This website currently presents
-      the project vision and concept artwork.
+    <p class="lede">
+      Caelora is an independent native Windows game in development. This website presents the
+      project's direction, concept art and 3D model studies, and the development journal.
     </p>
-    <h2>Community & support</h2>
+    <h2>Status as of 12 November 2026</h2>
+    <ul>
+      <li>No public build, release date or price has been announced.</li>
+      <li>Purchases, game ownership and launcher downloads are not available.</li>
+      <li>
+        Account services are not open yet: registration and sign-in cannot be completed until the
+        platform service is deployed.
+      </li>
+    </ul>
+    <h2 id="community">Community & support</h2>
     <p>
-      Official community channels and a support contact have not been published on this site yet.
-      Purchases and launcher downloads are not available. Account registration is available only
-      when the account service has been explicitly configured.
+      Official community channels and a support contact have not been published yet. They will be
+      announced in the <a href="/journal/">development journal</a> when they exist. Until then you
+      can follow development with the <a href="/rss.xml">RSS feed</a>.
     </p>
     <h2 id="legal">Legal & privacy</h2>
     <p>
-      The public website does not offer payments, analytics, advertising or newsletter collection.
-      The separate account service uses essential authentication and CSRF cookies, and stores an
-      email address, display name, password hash, browser sessions and security events. This
-      milestone is verified locally and has not been publicly deployed.
+      The public website does not offer payments, analytics, advertising, newsletters or sign-up
+      forms, and sets no cookies. When account services open, they will use essential authentication
+      and CSRF cookies and store an email address, display name, password hash, browser sessions and
+      security events.
     </p>
     <p>
       Publisher details, contact information, terms of sale, refund policy and a deployment-specific
-      privacy notice must be reviewed and published before public account registration or commerce
-      becomes available.
+      privacy notice will be published before account registration or commerce becomes available.
     </p>
     <p>
-      Concept imagery is not gameplay footage. All images may change during development. Third-party
-      font licenses are distributed with the project source.
+      Images are concept art and 3D model studies, not gameplay footage, and may change during
+      development. Third-party font licences are distributed with the project source.
     </p>
     <a class="text-link" href="/">
-      ← Back to Caelora
+      <span aria-hidden="true">←</span> Back to Caelora
     </a>
   </main>
 </SiteLayout>

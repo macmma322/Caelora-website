@@ -1,0 +1,33 @@
+---
+import ArtPicture from './ArtPicture.astro';
+import StatusTag from './StatusTag.astro';
+import type { Place } from '../data/places';
+// A place page opens on its own region of the valley. The picture carries the same
+// view-transition name as the home map's zone, so arriving from the map is a zoom, not a cut.
+interface Props {
+  place: Place;
+  title: string;
+}
+const { place, title } = Astro.props;
+---
+
+<header class:list={['place-hero', `place-hero-${place.id}`]} data-opening data-depth-scene>
+  <ArtPicture class={`place-hero-art vt-${place.id}`} item={place.art} sizes="100vw" eager />
+  <div class="place-hero-shade" aria-hidden="true"></div>
+  <div class="container place-hero-copy">
+    <a class="place-back" href="/">
+      <span aria-hidden="true">←</span> The valley
+    </a>
+    <span class="eyebrow">
+      Place {place.numeral} · {place.verb}
+    </span>
+    <h1 set:html={title} />
+    <p class="place-hero-summary">{place.summary}</p>
+  </div>
+  <p class="container place-hero-caption">
+    <StatusTag status={place.art.status} />
+    <span>
+      {place.art.title} · {place.art.source}
+    </span>
+  </p>
+</header>

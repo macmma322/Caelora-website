@@ -1,4 +1,5 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { getPlatformInfo, PlatformInfoError } from '../../../../packages/api-client/src/index';
 import { RUNTIME_CONFIG } from '../../../../packages/api-client/src/portal-bootstrap';
 
 export interface AccountProfile {
@@ -19,6 +20,13 @@ export interface SecurityOverview {
   }[];
   events: { kind: string; occurredAt: string }[];
 }
+/**
+ * `checking`: forms stay usable while the answer is pending (the server remains authoritative).
+ * `closed`: no platform API at the configured origin, or it reports accounts as not open.
+ * `unreachable`: no usable answer after one retry (network, CORS, timeout, 5xx, 429). Forms are
+ * paused because a submission cannot succeed either; the wording does not claim a cause.
+ */
+export type PlatformStatus = 'checking' | 'available' | 'closed' | 'unreachable';
 export class AccountApiError extends Error {
   constructor(
     message: string,
@@ -37,6 +45,35 @@ export class AccountApi {
   readonly recoveryCodes = signal<string[]>([]);
   readonly notice = signal('');
   readonly unread = signal<number | null>(null);
+  /** Whether the platform API answers its public contract and reports accounts as open. */
+  readonly platform = signal<PlatformStatus>('checking');
+  readonly platformRechecking = signal(false);
+  readonly accountsOpen = computed(() => ['checking', 'available'].includes(this.platform()));
+  private platformCheck: Promise<void> | null = null;
+  /** Checks once and caches; pass `force` to ask again. A transient failure is retried once. */
+  checkPlatform(force = false): Promise<void> {
+    if (this.platformCheck && !force) return this.platformCheck;
+    this.platformRechecking.set(true);
+    const read = (): Promise<PlatformStatus> =>
+      getPlatformInfo(this.config.apiBaseUrl, fetch).then(
+        (info) => (info.accountsAvailable ? 'available' : 'closed'),
+        (error: unknown) =>
+          error instanceof PlatformInfoError && error.reason === 'absent'
+            ? 'closed'
+            : 'unreachable',
+      );
+    this.platformCheck = read()
+      .then((status) =>
+        status === 'unreachable'
+          ? new Promise<PlatformStatus>((resolve) => setTimeout(() => resolve(read()), 1500))
+          : status,
+      )
+      .then((status) => {
+        this.platform.set(status);
+        this.platformRechecking.set(false);
+      });
+    return this.platformCheck;
+  }
   async request<T>(path: string, method = 'GET', body?: unknown): Promise<T> {
     try {
       const headers: Record<string, string> = { Accept: 'application/json' };

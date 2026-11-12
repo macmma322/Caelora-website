@@ -1,0 +1,58 @@
+---
+import ArtPicture from './ArtPicture.astro';
+import ValleyPins from './ValleyPins.astro';
+import StatusTag from './StatusTag.astro';
+import { media } from '../data/media';
+import { neighbours, type Place } from '../data/places';
+// End of every place page: where things stand here, and a small map of the valley to travel on.
+interface Props {
+  place: Place;
+}
+const { place } = Astro.props;
+const { previous, next } = neighbours(place.id);
+---
+
+<section class="travel" aria-labelledby="travel-title">
+  <div class="container travel-grid">
+    <div class="travel-status">
+      <span class="eyebrow">Where this stands</span>
+      <ul class="system-parts" aria-label={`${place.name}: development status`}>
+        {place.parts.map(([part, status]) => (
+          <li>
+            <span>{part}</span>
+            <StatusTag status={status} />
+          </li>
+        ))}
+      </ul>
+      <p class="note">
+        In development means it is being built in the Unity prototype; nothing is publicly playable
+        yet. Planned means a long-term intention.
+      </p>
+    </div>
+    <div class="travel-map">
+      <h2 id="travel-title" class="travel-title">
+        Travel on through the valley
+      </h2>
+      <div class="minimap">
+        <div class="valley-canvas minimap-canvas">
+          <ArtPicture item={media.plate} sizes="(max-width:60rem) 92vw, 640px" alt="" />
+          <ValleyPins current={place.id} label="Places in the valley" />
+        </div>
+      </div>
+      <nav class="travel-next" aria-label="Neighbouring places">
+        <a href={previous.href} class="travel-link">
+          <span class="journal-meta">
+            <span aria-hidden="true">←</span> Place {previous.numeral}
+          </span>
+          <span class="travel-name">{previous.name}</span>
+        </a>
+        <a href={next.href} class="travel-link travel-link-next">
+          <span class="journal-meta">
+            Place {next.numeral} <span aria-hidden="true">→</span>
+          </span>
+          <span class="travel-name">{next.name}</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+</section>

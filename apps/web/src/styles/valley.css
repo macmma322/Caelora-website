@@ -1,0 +1,1558 @@
+/* One valley: the explorable map, its five places, and the pages they open onto.
+   Loaded after site.css. Colours, type and timing come from packages/design-tokens. */
+
+/* ── Cross-document zoom: a place's region on the map becomes that page's hero ── */
+@view-transition {
+  navigation: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
+.site-header {
+  view-transition-name: site-header;
+}
+.vt-wilds {
+  view-transition-name: place-wilds;
+}
+.vt-hearth {
+  view-transition-name: place-hearth;
+}
+.vt-village {
+  view-transition-name: place-village;
+}
+.vt-kingdoms {
+  view-transition-name: place-kingdoms;
+}
+::view-transition-group(*) {
+  animation-duration: 650ms;
+  animation-timing-function: var(--ease-scene);
+}
+
+/* Place geometry on the 3840×2160 plate (percent). Pins: --px/--py. Zones: exact hero crops
+   (scripts/prepare-valley-details.mjs). Keep in step with src/data/places.ts ids. */
+.place-wilds {
+  --px: 44%;
+  --py: 19%;
+  --zl: 10.94%;
+  --zt: 0%;
+  --zw: 58.33%;
+  --zh: 37.96%;
+}
+.place-hearth {
+  --px: 19.4%;
+  --py: 79%;
+  --zl: 0%;
+  --zt: 15.28%;
+  --zw: 29.43%;
+  --zh: 84.72%;
+}
+.place-village {
+  --px: 74%;
+  --py: 55%;
+  --zl: 58.33%;
+  --zt: 40.74%;
+  --zw: 41.67%;
+  --zh: 41.67%;
+}
+.place-bestiary {
+  --px: 48%;
+  --py: 57%;
+}
+.place-kingdoms {
+  --px: 78.5%;
+  --py: 19%;
+  --zl: 58.85%;
+  --zt: 1.85%;
+  --zw: 41.15%;
+  --zh: 41.67%;
+}
+
+/* ── The valley (home) ───────────────────────────────────────────────────── */
+@property --lx {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 44%;
+}
+@property --ly {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 46%;
+}
+.valley {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  height: 100svh;
+  min-height: 600px;
+  background: var(--color-charcoal);
+  container-type: size;
+}
+.valley-scroller {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.valley-canvas {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100cqw, 177.78cqh);
+  aspect-ratio: 16 / 9;
+  translate: -50% -50%;
+  transition:
+    --lx 520ms var(--ease-out),
+    --ly 520ms var(--ease-out);
+}
+.valley-plate,
+.valley-plate img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.valley-zone {
+  position: absolute;
+  left: var(--zl);
+  top: var(--zt);
+  width: var(--zw);
+  height: var(--zh);
+  opacity: 0;
+  pointer-events: none;
+}
+.valley-zone.is-leaving {
+  opacity: 1;
+}
+/* Dusk veil with a travelling pool of lantern light (fine pointers only). */
+.valley-lantern {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 34cqw at var(--lx) var(--ly),
+    transparent 0%,
+    transparent 26%,
+    color-mix(in oklch, var(--color-charcoal) 48%, transparent) 100%
+  );
+  opacity: 0;
+  transition: opacity 900ms var(--ease-out);
+}
+.lantern-on .valley-lantern {
+  opacity: 1;
+}
+.valley::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in oklch, var(--color-charcoal) 82%, transparent) 0%,
+      color-mix(in oklch, var(--color-charcoal) 40%, transparent) 30%,
+      transparent 52%
+    ),
+    linear-gradient(0deg, var(--color-charcoal) 0%, transparent 16%),
+    linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--color-charcoal) 70%, transparent),
+      transparent 18%
+    );
+}
+
+/* Pins: a lit diamond, the place name, and on hover/focus what you do there. */
+.valley-pins {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+.pin {
+  position: absolute;
+  left: var(--px);
+  top: var(--py);
+}
+.pin-link {
+  pointer-events: auto;
+  position: absolute;
+  left: 0;
+  top: 0;
+  translate: -22px -22px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-paper);
+  text-decoration: none;
+}
+.pin-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+}
+.pin-mark::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  rotate: 45deg;
+  border: 1.5px solid var(--color-accent-hover);
+  background: color-mix(in oklch, var(--color-ember) 75%, transparent);
+  box-shadow:
+    0 0 0 5px color-mix(in oklch, var(--color-ember) 16%, transparent),
+    0 0 22px 6px color-mix(in oklch, var(--color-ember) 42%, transparent);
+  transition:
+    scale var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) ease;
+}
+.pin-mark::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  rotate: 45deg;
+  border: 1px solid var(--color-accent-hover);
+  opacity: 0;
+}
+.pin-label {
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 0.5rem;
+  align-items: baseline;
+  padding: 0.35rem 0.8rem 0.4rem 0.65rem;
+  border-left: 1px solid var(--color-accent);
+  background: color-mix(in oklch, var(--color-charcoal) 66%, transparent);
+}
+.pin-numeral {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  color: var(--color-accent);
+}
+.pin-name {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.pin-verb {
+  grid-column: 2;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  color: var(--color-accent-hover);
+  white-space: nowrap;
+  transition:
+    max-height var(--duration-normal) var(--ease-out),
+    opacity var(--duration-normal) var(--ease-out);
+}
+.pin-link:hover .pin-verb,
+.pin-link:focus-visible .pin-verb,
+.pin.is-current .pin-verb {
+  max-height: 1.6em;
+  opacity: 1;
+}
+.pin-link:hover .pin-mark::before,
+.pin-link:focus-visible .pin-mark::before {
+  scale: 1.25;
+  background: var(--color-accent-hover);
+}
+.pin-link:focus-visible {
+  outline: none;
+}
+.pin-link:focus-visible .pin-label {
+  outline: 2px solid var(--color-accent-hover);
+  outline-offset: 3px;
+}
+
+.valley-intro {
+  position: absolute;
+  z-index: 3;
+  left: max(1.5rem, calc((100% - var(--content-width)) / 2));
+  top: clamp(6.5rem, 15cqh, 10rem);
+  width: min(30rem, 38cqw);
+  pointer-events: none;
+}
+.valley-wordmark {
+  width: min(360px, 100%);
+  margin-left: -0.4rem;
+}
+.valley-intro h1 {
+  margin: 1.25rem 0 1rem;
+  font-size: clamp(2.4rem, 1.3rem + 2.7vw, 4.25rem);
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+}
+.valley-intro h1 em {
+  color: var(--color-accent);
+  font-style: normal;
+}
+.valley-intro p {
+  max-width: 34ch;
+  font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.25rem);
+  line-height: 1.55;
+  text-shadow: 0 1px 12px var(--color-charcoal);
+}
+.valley-intro .valley-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  color: var(--color-accent-hover);
+}
+.valley-hint-mark {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  rotate: 45deg;
+  border: 1px solid var(--color-accent-hover);
+  background: color-mix(in oklch, var(--color-ember) 70%, transparent);
+}
+.hint-coarse {
+  display: none;
+}
+@media (hover: none) {
+  .hint-fine {
+    display: none;
+  }
+  .hint-coarse {
+    display: inline;
+  }
+}
+.valley-caption {
+  position: absolute;
+  z-index: 3;
+  right: max(1.5rem, calc((100% - var(--content-width)) / 2));
+  bottom: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  color: var(--color-muted);
+}
+.valley-down {
+  position: absolute;
+  z-index: 3;
+  left: max(1.5rem, calc((100% - var(--content-width)) / 2));
+  bottom: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  color: var(--color-paper);
+  text-decoration: none;
+}
+
+/* ── Home: the five places as doors ──────────────────────────────────────── */
+.overview {
+  background: var(--color-ink);
+}
+.places-index {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.place-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  min-height: 30rem;
+  padding: 1.5rem 1.25rem;
+  overflow: clip;
+  border: 1px solid var(--color-bronze-line);
+  border-radius: var(--radius-card);
+  color: var(--color-paper);
+  text-decoration: none;
+}
+.place-card-art {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+.place-card-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.85) brightness(0.8);
+  transition:
+    scale var(--duration-reveal) var(--ease-out),
+    filter var(--duration-normal) ease;
+}
+.place-card-hearth .place-card-art img {
+  object-position: 55% 80%;
+}
+.place-card-bestiary .place-card-art img {
+  object-position: 30% 15%;
+}
+.place-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(0deg, var(--color-charcoal) 8%, transparent 62%);
+}
+.place-card-numeral {
+  position: absolute;
+  top: 1.1rem;
+  left: 1.25rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--color-accent);
+}
+.place-card-copy {
+  display: grid;
+  gap: 0.4rem;
+}
+.place-card-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 1.1rem + 0.6vw, 1.75rem);
+  line-height: 1.15;
+}
+.place-card-summary {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* ── Places menu (header) ────────────────────────────────────────────────── */
+.places-menu {
+  position: relative;
+}
+.places-menu summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 48px;
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+  cursor: pointer;
+  list-style: none;
+}
+.places-menu summary::-webkit-details-marker {
+  display: none;
+}
+.places-menu summary[aria-current] {
+  color: var(--color-accent-hover);
+}
+.places-menu ul {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: -1rem;
+  z-index: 20;
+  width: 19rem;
+  margin: 0;
+  padding: 0.5rem;
+  list-style: none;
+  border: 1px solid var(--color-bronze-line);
+  border-radius: var(--radius-card);
+  background: var(--color-deep);
+  box-shadow: var(--shadow-dialog);
+}
+.desktop-nav .places-menu ul a {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  align-items: center;
+  min-height: 52px;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-control);
+}
+.desktop-nav .places-menu ul a::after {
+  display: none;
+}
+.places-menu-numeral {
+  font-family: var(--font-display);
+  color: var(--color-accent);
+}
+.places-menu-name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1rem;
+}
+.places-menu-verb {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  color: var(--color-muted);
+}
+.places-menu ul a[aria-current] {
+  background: var(--color-surface);
+}
+.mobile-nav-heading {
+  padding: 0.75rem 0.5rem 0.25rem;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+.mobile-nav nav a.mobile-nav-place {
+  padding-left: 1rem;
+  font-family: var(--font-display);
+}
+.mobile-nav-place span {
+  margin-right: 0.5rem;
+  color: var(--color-accent);
+}
+
+/* ── Place pages: shared frame and temperature ───────────────────────────── */
+.place {
+  --place-bg: var(--color-ink);
+  --place-accent: var(--color-accent);
+  position: relative;
+  background: var(--place-bg);
+}
+.place-wilds-page {
+  --place-bg: var(--color-mist-deep);
+  --place-accent: var(--color-mist);
+}
+.place-hearth-page {
+  --place-bg: var(--color-ember-deep);
+  --place-accent: var(--color-ember);
+}
+.place-village-page {
+  --place-bg: var(--color-surface);
+  --place-accent: var(--color-accent-hover);
+}
+.place-bestiary-page {
+  --place-bg: var(--color-charcoal);
+  --place-accent: var(--color-ember);
+}
+.place-kingdoms-page {
+  --place-bg: var(--color-dusk);
+  --place-accent: var(--color-accent-hover);
+}
+.place h1 em,
+.place h2 em,
+.place .eyebrow {
+  color: var(--place-accent);
+}
+.place-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  min-height: max(620px, 86svh);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: var(--color-charcoal);
+}
+.place-hero-art {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  display: block;
+}
+.place-hero-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.place-hero-hearth .place-hero-art img {
+  object-position: 50% 82%;
+}
+.place-hero-wilds .place-hero-art img {
+  object-position: 55% 40%;
+}
+.place-hero-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(
+      0deg,
+      var(--place-bg) 2%,
+      color-mix(in oklch, var(--place-bg) 55%, transparent) 30%,
+      transparent 62%
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in oklch, var(--color-charcoal) 70%, transparent) 0%,
+      transparent 55%
+    );
+}
+.place-hero-copy {
+  padding-block: 9rem 2.5rem;
+}
+.place-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  margin-bottom: 1.5rem;
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+  color: var(--color-paper);
+  text-decoration: none;
+}
+.place-hero h1,
+.bestiary-hero h1 {
+  max-width: 12ch;
+  margin: 1rem 0 1.25rem;
+  font-size: clamp(2.75rem, 1.5rem + 3.8vw, 5.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+}
+.place-hero-summary {
+  max-width: 40ch;
+  font-size: clamp(1.125rem, 1rem + 0.35vw, 1.3125rem);
+  line-height: 1.6;
+}
+.place-hero-caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  padding-bottom: 1.5rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  color: var(--color-muted);
+}
+
+/* Travel on: status, mini map and neighbours. */
+.travel {
+  padding-block: clamp(4rem, 8vw, 7rem);
+  border-top: 1px solid var(--color-bronze-line);
+  background: color-mix(in oklch, var(--color-charcoal) 55%, var(--place-bg));
+}
+.travel-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 3rem clamp(3rem, 6vw, 6rem);
+  align-items: start;
+}
+.travel-status .system-parts {
+  margin-top: 1.25rem;
+}
+.travel-status .note {
+  margin-top: 1.25rem;
+  max-width: 40ch;
+}
+.travel-title {
+  margin-bottom: 1.25rem;
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2.25rem);
+}
+.minimap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--color-bronze-line);
+  border-radius: var(--radius-card);
+}
+.minimap .minimap-canvas {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  translate: none;
+}
+.minimap-canvas picture,
+.minimap-canvas img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: saturate(0.75) brightness(0.72);
+}
+.minimap .pin-link {
+  translate: -16px -16px;
+}
+.minimap .pin-mark {
+  width: 32px;
+  height: 32px;
+}
+.minimap .pin-mark::before {
+  width: 10px;
+  height: 10px;
+}
+.minimap .pin:not(.is-current) .pin-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.minimap .pin.is-current .pin-mark::before {
+  scale: 1.3;
+  background: var(--color-accent-hover);
+}
+.minimap .pin-name {
+  font-size: 0.875rem;
+}
+.travel-next {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.travel-link {
+  display: grid;
+  gap: 0.25rem;
+  min-height: 44px;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  text-decoration: none;
+}
+.travel-link-next {
+  text-align: right;
+}
+.travel-name {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+}
+
+/* ── The High Wilds ──────────────────────────────────────────────────────── */
+.field-lede {
+  max-width: 30ch;
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 1.2rem + 1.8vw, 3rem);
+  line-height: 1.2;
+}
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.field-grid li {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid color-mix(in oklch, var(--color-mist) 35%, transparent);
+}
+.field-numeral {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--color-mist);
+}
+.field-grid h3 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+.field-grid p {
+  margin: 0 0 0.5rem;
+  color: var(--color-muted);
+}
+.field-grid .status-tag {
+  justify-self: start;
+  white-space: normal;
+}
+.atlas {
+  position: relative;
+  overflow: clip;
+  background: var(--color-vellum);
+  color: var(--color-vellum-ink);
+}
+.place .atlas .eyebrow,
+.place .atlas h2 em {
+  color: var(--color-vellum-muted);
+}
+.atlas-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+  grid-template-areas:
+    'head map'
+    'key map';
+  gap: 2rem clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+.atlas-head {
+  grid-area: head;
+}
+.atlas-head h2 {
+  margin-block: 1rem 1.25rem;
+}
+.atlas-head p {
+  color: var(--color-vellum-muted);
+}
+.atlas-head .status-tag {
+  --tag-color: var(--color-vellum-ink);
+}
+.atlas-map {
+  grid-area: map;
+  position: relative;
+  margin: 0;
+}
+.atlas-map img {
+  width: 100%;
+  border-radius: var(--radius-card);
+  box-shadow: 0 30px 60px color-mix(in oklch, var(--color-vellum-ink) 35%, transparent);
+}
+.atlas-marks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.atlas-marks li {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-vellum);
+  background: var(--color-vellum-ink);
+  color: var(--color-vellum);
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: scale var(--duration-fast) var(--ease-out);
+}
+.atlas-marks li:nth-child(1) {
+  left: 25%;
+  top: 28%;
+}
+.atlas-marks li:nth-child(2) {
+  left: 34.5%;
+  top: 44%;
+}
+.atlas-marks li:nth-child(3) {
+  left: 57.5%;
+  top: 18%;
+}
+.atlas-marks li:nth-child(4) {
+  left: 65.5%;
+  top: 50%;
+}
+.atlas-marks li:nth-child(5) {
+  left: 80%;
+  top: 40%;
+}
+.atlas-marks li:nth-child(6) {
+  left: 86.5%;
+  top: 66%;
+}
+.atlas-marks li:nth-child(7) {
+  left: 84%;
+  top: 24%;
+}
+.atlas-key {
+  grid-area: key;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: atlas;
+}
+.atlas-key li {
+  counter-increment: atlas;
+  display: grid;
+  grid-template-columns: 1.75rem 1fr;
+  column-gap: 0.75rem;
+  padding-block: 0.6rem;
+  border-top: 1px solid var(--color-vellum-line);
+}
+.atlas-key li::before {
+  content: counter(atlas);
+  grid-row: span 2;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  color: var(--color-vellum-muted);
+}
+.atlas-key h3 {
+  margin: 0;
+  font-size: 1.0625rem;
+}
+.atlas-key p {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-vellum-muted);
+}
+.atlas-trees {
+  position: absolute;
+  inset: auto -5% -8%;
+  color: var(--color-mist-deep);
+  opacity: 0.12;
+  pointer-events: none;
+}
+.atlas-trees svg {
+  width: 100%;
+  height: 160px;
+}
+@media (hover: hover) {
+  .atlas:has(.atlas-key li:nth-child(1):hover) .atlas-marks li:nth-child(1),
+  .atlas:has(.atlas-key li:nth-child(2):hover) .atlas-marks li:nth-child(2),
+  .atlas:has(.atlas-key li:nth-child(3):hover) .atlas-marks li:nth-child(3),
+  .atlas:has(.atlas-key li:nth-child(4):hover) .atlas-marks li:nth-child(4),
+  .atlas:has(.atlas-key li:nth-child(5):hover) .atlas-marks li:nth-child(5),
+  .atlas:has(.atlas-key li:nth-child(6):hover) .atlas-marks li:nth-child(6),
+  .atlas:has(.atlas-key li:nth-child(7):hover) .atlas-marks li:nth-child(7) {
+    scale: 1.45;
+    background: var(--color-ember);
+    color: var(--color-charcoal);
+  }
+}
+
+/* ── The Hearth ──────────────────────────────────────────────────────────── */
+.embers {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  height: max(620px, 86svh);
+  overflow: hidden;
+  pointer-events: none;
+}
+.embers span {
+  position: absolute;
+  bottom: 12%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--color-ember);
+  box-shadow: 0 0 6px 2px color-mix(in oklch, var(--color-ember) 60%, transparent);
+  opacity: 0;
+}
+.embers span:nth-child(odd) {
+  width: 2px;
+  height: 2px;
+}
+.embers span:nth-child(1) {
+  left: 44%;
+}
+.embers span:nth-child(2) {
+  left: 47%;
+}
+.embers span:nth-child(3) {
+  left: 50%;
+}
+.embers span:nth-child(4) {
+  left: 52%;
+}
+.embers span:nth-child(5) {
+  left: 55%;
+}
+.embers span:nth-child(6) {
+  left: 48.5%;
+}
+.embers span:nth-child(7) {
+  left: 46%;
+}
+.embers span:nth-child(8) {
+  left: 53.5%;
+}
+.embers span:nth-child(9) {
+  left: 51%;
+}
+.embers span:nth-child(10) {
+  left: 43%;
+}
+.embers span:nth-child(11) {
+  left: 57%;
+}
+.embers span:nth-child(12) {
+  left: 49.5%;
+}
+.ritual-head {
+  max-width: 44rem;
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+}
+.ritual-head h2 {
+  margin-block: 1rem 1.25rem;
+}
+.ritual-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0 0 2.5rem;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid color-mix(in oklch, var(--color-ember) 40%, transparent);
+}
+.ritual-steps li {
+  padding: 2rem 2rem 2rem 0;
+}
+.ritual-steps li + li {
+  padding-left: 2rem;
+  border-left: 1px solid var(--color-line);
+}
+.ritual-index {
+  display: block;
+  margin-bottom: 1.5rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 2rem + 1.5vw, 3.75rem);
+  line-height: 1;
+  color: var(--color-ember);
+}
+.ritual-steps h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+.ritual-steps p {
+  margin: 0;
+  color: var(--color-muted);
+}
+.place-hearth-page .model-showcase {
+  background: linear-gradient(180deg, var(--color-ember-deep) 0%, var(--color-charcoal) 100%);
+}
+
+/* ── The Village: a day, coloured by the hour ────────────────────────────── */
+.daybook-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(2.5rem, 6vw, 6rem);
+  align-items: start;
+}
+.daybook-head {
+  position: sticky;
+  top: 7rem;
+}
+.daybook-head h2 {
+  margin-block: 1rem 1.25rem;
+}
+.daybook-head .status-tag {
+  margin-top: 1rem;
+  white-space: normal;
+}
+.daybook-hours {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hour {
+  --sky: var(--color-accent);
+  position: relative;
+  padding: 2.5rem 0 2.5rem 2.5rem;
+  border-left: 2px solid var(--sky);
+}
+.hour::before {
+  content: '';
+  position: absolute;
+  left: -9px;
+  top: 2.9rem;
+  width: 16px;
+  height: 16px;
+  rotate: 45deg;
+  background: var(--sky);
+  box-shadow: 0 0 18px 4px color-mix(in oklch, var(--sky) 40%, transparent);
+}
+.hour-1 {
+  --sky: color-mix(in oklch, var(--color-danger) 80%, var(--color-paper));
+}
+.hour-2 {
+  --sky: var(--color-accent-hover);
+}
+.hour-3 {
+  --sky: var(--color-ember);
+}
+.hour-4 {
+  --sky: color-mix(in oklch, var(--color-mist) 70%, var(--color-mist-deep));
+}
+.hour-name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.5rem + 1.6vw, 3.25rem);
+  line-height: 1;
+  color: var(--sky);
+}
+.hour p {
+  max-width: 36ch;
+  margin: 0.75rem 0 0;
+  font-size: 1.125rem;
+  color: var(--color-paper);
+}
+.belong {
+  background: var(--color-ink);
+}
+.belong-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 2rem clamp(3rem, 6vw, 6rem);
+  align-items: start;
+}
+.belong-grid h2 {
+  font-size: clamp(2.25rem, 1.6rem + 2vw, 3.5rem);
+}
+.belong-grid p {
+  max-width: 44ch;
+  color: var(--color-muted);
+}
+
+/* ── The Bestiary ────────────────────────────────────────────────────────── */
+.bestiary-hero {
+  position: relative;
+  overflow: clip;
+  padding-block: 8rem 3rem;
+  background:
+    radial-gradient(
+      ellipse 55% 65% at 70% 50%,
+      color-mix(in oklch, var(--color-dusk) 85%, transparent),
+      transparent 70%
+    ),
+    var(--color-charcoal);
+}
+.bestiary-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 2rem;
+  align-items: center;
+}
+.specimens-head {
+  max-width: 44rem;
+  margin-bottom: 3rem;
+}
+.specimens-head h2 {
+  margin-block: 1rem 1.25rem;
+}
+.specimens-head p {
+  color: var(--color-muted);
+}
+.specimen-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.specimen-plate {
+  display: block;
+  overflow: clip;
+  aspect-ratio: 1;
+  border: 1px solid var(--color-bronze-line);
+  border-radius: var(--radius-card);
+  background: radial-gradient(ellipse at 50% 45%, var(--color-raised), var(--color-deep) 75%);
+}
+.specimen-plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale var(--duration-reveal) var(--ease-out);
+}
+.specimen-copy {
+  padding-top: 1.25rem;
+}
+.specimen-numeral {
+  font-family: var(--font-display);
+  color: var(--color-ember);
+}
+.specimen-copy h3 {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 1.75rem;
+}
+.specimen-copy p {
+  color: var(--color-muted);
+}
+.specimen-copy dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-line);
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+}
+.specimen-copy dt {
+  font-size: var(--text-caption);
+  color: var(--color-muted);
+}
+.specimen-copy dd {
+  margin: 0.25rem 0 0;
+}
+.wings {
+  background: linear-gradient(180deg, var(--color-charcoal), var(--color-dusk));
+}
+.wings-grid,
+.wings-grid > div {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+.wings-grid h2 {
+  margin-block: 1rem 1.25rem;
+  font-size: clamp(3rem, 1.8rem + 4.4vw, 6.25rem);
+}
+.wings-grid .lede {
+  max-width: 34ch;
+  margin-bottom: 1.5rem;
+}
+.wings-mark {
+  width: min(22rem, 70vw);
+  height: 5rem;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+  background:
+    linear-gradient(160deg, transparent 46%, var(--color-accent) 47%, transparent 49%) left / 50%
+      100% no-repeat,
+    linear-gradient(20deg, transparent 46%, var(--color-accent) 47%, transparent 49%) right / 50%
+      100% no-repeat;
+}
+
+/* ── The Kingdoms ────────────────────────────────────────────────────────── */
+.verbs-title {
+  max-width: 18ch;
+  margin-bottom: 3rem;
+}
+.verb-wall {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0 0 3rem;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-bronze-line);
+}
+.verb-wall li {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 1.5rem 1rem 1.5rem 0;
+  border-bottom: 1px solid var(--color-bronze-line);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.4rem + 2.2vw, 3.75rem);
+  line-height: 1;
+}
+.verb-wall li span {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  color: var(--color-accent);
+}
+.verbs-lede {
+  max-width: 44ch;
+}
+.ladder {
+  background: var(--color-charcoal);
+}
+.ladder-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(2.5rem, 6vw, 6rem);
+  align-items: start;
+}
+.ladder-grid header h2 {
+  margin-block: 1rem 1.25rem;
+}
+.ladder-grid header p {
+  max-width: 38ch;
+  color: var(--color-muted);
+}
+.ladder-steps {
+  display: grid;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ladder-steps li {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+.ladder-banner {
+  display: grid;
+  place-items: start center;
+  height: 6rem;
+  padding-top: 0.9rem;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklch, var(--color-danger) 45%, var(--color-charcoal)),
+    color-mix(in oklch, var(--color-danger) 30%, var(--color-charcoal))
+  );
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--color-accent-hover);
+}
+.ladder-steps li:nth-child(2) .ladder-banner {
+  height: 7.5rem;
+}
+.ladder-steps li:nth-child(3) .ladder-banner {
+  height: 9rem;
+}
+.ladder-steps h3 {
+  margin: 0.5rem 0;
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2.25rem);
+}
+.ladder-steps p {
+  max-width: 40ch;
+  color: var(--color-muted);
+}
+
+/* ── Community ───────────────────────────────────────────────────────────── */
+.community-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  padding-block: 11rem 8rem;
+  background: var(--color-charcoal);
+  text-align: center;
+}
+.community-hero-copy {
+  display: grid;
+  justify-items: center;
+}
+.community-hero h1 {
+  max-width: 16ch;
+  margin-block: 1.25rem;
+  font-size: clamp(2.5rem, 1.6rem + 3vw, 4.75rem);
+}
+.community-hero h1 em {
+  color: var(--color-accent);
+  font-style: normal;
+}
+.community-hero .lede {
+  max-width: 46ch;
+}
+.follow-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+.follow-item {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 0.75rem;
+  padding: 2rem;
+  border: 1px solid var(--color-bronze-line);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+.follow-numeral {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--color-accent);
+}
+.follow-item h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+.follow-item p {
+  color: var(--color-muted);
+}
+.community-note {
+  margin-top: 2rem;
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+  color: var(--color-muted);
+}
+
+/* ── Interaction and motion ──────────────────────────────────────────────── */
+@media (hover: hover) and (pointer: fine) {
+  .place-card:hover .place-card-art img {
+    scale: 1.05;
+    filter: saturate(1) brightness(0.95);
+  }
+  .specimen-plate:hover img {
+    scale: 1.04;
+  }
+  .travel-link:hover,
+  .desktop-nav .places-menu ul a:hover {
+    background: var(--color-surface);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pin-mark::after {
+    animation: pin-pulse 3.2s var(--ease-out) infinite;
+  }
+  .pin:nth-child(2) .pin-mark::after {
+    animation-delay: 0.6s;
+  }
+  .pin:nth-child(3) .pin-mark::after {
+    animation-delay: 1.2s;
+  }
+  .pin:nth-child(4) .pin-mark::after {
+    animation-delay: 1.8s;
+  }
+  .pin:nth-child(5) .pin-mark::after {
+    animation-delay: 2.4s;
+  }
+  .minimap .pin-mark::after {
+    animation: none;
+  }
+  [data-ambient].is-active span {
+    animation: ember-rise 5.5s linear infinite;
+  }
+  .embers span:nth-child(3n) {
+    animation-duration: 7s;
+  }
+  .embers span:nth-child(4n + 1) {
+    animation-delay: 1.4s;
+  }
+  .embers span:nth-child(5n + 2) {
+    animation-delay: 2.6s;
+  }
+  .embers span:nth-child(3n + 1) {
+    animation-delay: 3.7s;
+  }
+  @keyframes pin-pulse {
+    0% {
+      opacity: 0.8;
+      scale: 1;
+    }
+    70%,
+    100% {
+      opacity: 0;
+      scale: 3.2;
+    }
+  }
+  @keyframes ember-rise {
+    0% {
+      opacity: 0;
+      translate: 0 0;
+    }
+    12% {
+      opacity: 0.95;
+    }
+    100% {
+      opacity: 0;
+      translate: 3vw -55svh;
+    }
+  }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 75rem) {
+  .places-index {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .ritual-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ritual-steps li:nth-child(3) {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+@media (max-width: 60rem) {
+  .places-index {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .travel-grid,
+  .atlas-grid,
+  .daybook-grid,
+  .belong-grid,
+  .bestiary-hero-grid,
+  .ladder-grid {
+    grid-template-columns: 1fr;
+  }
+  .atlas-grid {
+    grid-template-areas: 'head' 'map' 'key';
+  }
+  .daybook-head {
+    position: static;
+  }
+  .field-grid,
+  .specimen-list,
+  .follow-grid {
+    grid-template-columns: 1fr;
+  }
+  .verb-wall {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .valley-zone {
+    display: none;
+  }
+}
+@media (max-width: 45rem) {
+  /* Phones: intro first, then the painting as a panorama you swipe across. */
+  .valley {
+    height: auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    container-type: normal;
+  }
+  .valley::after {
+    display: none;
+  }
+  .valley-intro {
+    position: static;
+    order: 1;
+    width: auto;
+    padding: 6rem 1.25rem 1.5rem;
+  }
+  .valley-intro h1 {
+    font-size: clamp(2.25rem, 9vw, 3rem);
+  }
+  .valley-scroller {
+    position: relative;
+    order: 2;
+    height: 66svh;
+    min-height: 420px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .valley-scroller::-webkit-scrollbar {
+    display: none;
+  }
+  .valley .valley-canvas {
+    position: relative;
+    left: 0;
+    top: 0;
+    width: auto;
+    height: 100%;
+    translate: none;
+  }
+  .valley-caption {
+    position: static;
+    order: 3;
+    padding: 1rem 1.25rem 0;
+  }
+  .valley-down {
+    position: static;
+    order: 4;
+    padding: 0.5rem 1.25rem 1rem;
+  }
+  .valley-lantern {
+    display: none;
+  }
+  .pin-name {
+    font-size: 0.9375rem;
+  }
+  .places-index {
+    grid-template-columns: 1fr;
+  }
+  .place-card {
+    min-height: 22rem;
+  }
+  .ritual-steps {
+    grid-template-columns: 1fr;
+  }
+  .ritual-steps li,
+  .ritual-steps li + li {
+    padding: 1.5rem 0;
+    border-left: 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .verb-wall {
+    grid-template-columns: 1fr;
+  }
+  .travel-next {
+    grid-template-columns: 1fr;
+  }
+  .travel-link-next {
+    text-align: left;
+  }
+  .place-hero-copy {
+    padding-top: 7rem;
+  }
+  .bestiary-hero {
+    padding-top: 6.5rem;
+  }
+}

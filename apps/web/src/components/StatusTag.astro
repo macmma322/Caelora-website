@@ -1,0 +1,12 @@
+---
+import { statusLabel, statusMeaning, type Status } from '../data/media';
+interface Props {
+  status: Status;
+  label?: string;
+}
+const { status, label = statusLabel[status] } = Astro.props;
+---
+
+<span class="status-tag" data-status={status} title={statusMeaning[status]}>
+  {label}
+</span>

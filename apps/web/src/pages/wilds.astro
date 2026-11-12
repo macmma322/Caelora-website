@@ -1,0 +1,116 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PlaceHero from '../components/PlaceHero.astro';
+import PlaceTravel from '../components/PlaceTravel.astro';
+import ArtPicture from '../components/ArtPicture.astro';
+import StatusTag from '../components/StatusTag.astro';
+import PineVeil from '../components/PineVeil.astro';
+import { media } from '../data/media';
+import { placeById } from '../data/places';
+const place = placeById('wilds');
+// Atlas key. The names are the concept map's own illustrative labels, not final locations.
+const atlas = [
+  ['Eldergrove', 'Old forest: deep woodland, timber, and somewhere to shelter from the rain.'],
+  ['Oakridge', 'A village by the water. The nearest lights after a long walk.'],
+  ['Stonehelm Peaks', 'Snow, thin air and the passes between the valleys.'],
+  ['Thornfield Pass', 'The road through the hills, where the map gets vaguer.'],
+  ['Emberfall Ruins', 'Stone left by someone before you. Worth a careful look.'],
+  ['Mossdeep Caves', 'Water and dark beneath the cliffs.'],
+  ['Ashenreach', 'Where the dragons are said to nest. Few maps go further.'],
+];
+---
+
+<SiteLayout
+  title="The High Wilds — Caelora"
+  description="Forests, high passes, ruins and caves: exploration in Caelora, an independent medieval-fantasy voxel sandbox in development."
+>
+  <main id="main" class="place place-wilds-page">
+    <PlaceHero place={place} title="Take the long way <em>home.</em>" />
+
+    <section class="field-notes section-space" aria-labelledby="notes-title">
+      <div class="container">
+        <h2 id="notes-title" class="sr-only">
+          Field notes
+        </h2>
+        <p class="field-lede" data-reveal>
+          A light beyond the pines. Snow on the high passes. Ruins across the river. Somewhere the
+          road gives way to a question only you can answer.
+        </p>
+        <ol class="field-grid">
+          <li data-reveal>
+            <span class="field-numeral" aria-hidden="true">
+              i.
+            </span>
+            <h3>Read the land</h3>
+            <p>
+              Forest, meadow, scree and snow each hold different things. Where something grows tells
+              you what is worth carrying home.
+            </p>
+            <StatusTag status="development" label="Terrain in development" />
+          </li>
+          <li data-reveal>
+            <span class="field-numeral" aria-hidden="true">
+              ii.
+            </span>
+            <h3>Go under and around</h3>
+            <p>
+              Ruins and caves wait off the obvious path. Nobody will tell you which ones matter.
+            </p>
+            <StatusTag status="development" label="Ruins and caves in development" />
+          </li>
+          <li data-reveal>
+            <span class="field-numeral" aria-hidden="true">
+              iii.
+            </span>
+            <h3>Mind the sky</h3>
+            <p>
+              Day turns to night and weather rolls over the ridge. A clear morning is a different
+              valley from a storm.
+            </p>
+            <StatusTag status="development" label="Day, night and weather in development" />
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="atlas section-space" aria-labelledby="atlas-title">
+      <div class="container atlas-grid">
+        <div class="atlas-head" data-reveal>
+          <span class="eyebrow">From the cartographer's table</span>
+          <h2 id="atlas-title">
+            An uncharted <em>beginning.</em>
+          </h2>
+          <p>
+            An early atlas of the valley. Each number in the key is marked on the map. The names are
+            the concept's own; the final world will be its own.
+          </p>
+          <StatusTag status="concept" label="Atlas concept · not a final map" />
+        </div>
+        <figure class="atlas-map" data-reveal>
+          <ArtPicture item={media.atlas} sizes="(max-width:60rem) 92vw, 760px" />
+          <ol class="atlas-marks" aria-hidden="true">
+            {atlas.map((_, index) => (
+              <li>{index + 1}</li>
+            ))}
+          </ol>
+        </figure>
+        <ol class="atlas-key">
+          {atlas.map(([name, note]) => (
+            <li>
+              <h3>{name}</h3>
+              <p>{note}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div class="atlas-trees" aria-hidden="true">
+        <PineVeil />
+      </div>
+    </section>
+
+    <PlaceTravel place={place} />
+  </main>
+  <script>
+    import '../scripts/experience';
+  </script>
+</SiteLayout>

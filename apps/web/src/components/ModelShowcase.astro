@@ -1,37 +1,78 @@
-<section class="model-showcase" aria-labelledby="model-showcase-title" data-model-showcase>
+---
+import StatusTag from './StatusTag.astro';
+import type { Status } from '../data/media';
+// Reusable 3D study. The poster is the complete experience; WebGL is an opt-in enhancement that
+// loads only when the visitor asks for it. Add a subject by supplying a web-ready GLB + poster.
+interface Props {
+  id: string;
+  model: string;
+  poster: { src: string; srcset?: string; width: number; height: number; alt: string };
+  /** Short subject name used in control labels, e.g. "travel cloak". */
+  subject: string;
+  caption: string;
+  status?: Status;
+}
+const { id, model, poster, subject, caption, status = 'model' } = Astro.props;
+const titleId = `${id}-title`;
+---
+
+<section class="model-showcase" aria-labelledby={titleId} data-model-showcase data-model={model}>
   <div class="container model-showcase-grid">
-    <div class="model-copy">
-      <p class="eyebrow">A thing you can carry</p>
-      <h2 id="model-showcase-title">The road leaves a mark.</h2>
-      <p>
-        The travel cloak is an existing Caelora equipment asset, presented here as a quiet study in
-        material, silhouette and movement. It is a website derivative of the source model, not a
-        promise of a released inventory system.
-      </p>
-      <p class="small-note">Drag to turn the study · WebGL optional · Source asset preserved</p>
+    <div class="model-copy" data-reveal>
+      <slot name="eyebrow" />
+      <h2 id={titleId}>
+        <slot name="title" />
+      </h2>
+      <slot />
+      <StatusTag status={status} />
     </div>
-    <div class="model-stage" data-model-stage>
-      <canvas
-        tabindex="0"
-        aria-label="Interactive 3D study of the Caelora travel cloak. Use the turn controls or arrow keys to rotate."
-      ></canvas>
-      <div class="model-controls" aria-label="Model rotation controls">
-        <button type="button" data-model-turn="-1" aria-label="Turn cloak left">
-          ←
-        </button>
-        <button type="button" data-model-turn="1" aria-label="Turn cloak right">
-          →
-        </button>
+    <figure class="model-stage" data-model-stage>
+      <div class="model-viewport">
+        <img
+          class="model-poster"
+          src={poster.src}
+          srcset={poster.srcset}
+          sizes="(max-width:60rem) 92vw, 620px"
+          width={poster.width}
+          height={poster.height}
+          alt={poster.alt}
+          loading="lazy"
+          decoding="async"
+        />
+        <canvas
+          hidden
+          tabindex="0"
+          aria-label={`Interactive 3D study of the ${subject}. Drag or use the arrow keys to turn it, plus and minus to zoom, zero to reset.`}
+        ></canvas>
+        <div class="model-controls" role="group" aria-label={`${subject} view controls`} hidden>
+          <button type="button" data-model-turn="-1" aria-label={`Turn ${subject} left`}>
+            ←
+          </button>
+          <button type="button" data-model-turn="1" aria-label={`Turn ${subject} right`}>
+            →
+          </button>
+          <button type="button" data-model-zoom="1" aria-label="Zoom in">
+            +
+          </button>
+          <button type="button" data-model-zoom="-1" aria-label="Zoom out">
+            −
+          </button>
+          <button type="button" data-model-reset aria-label="Reset view">
+            Reset
+          </button>
+        </div>
       </div>
-      <div class="model-loading" role="status">
-        Preparing the study…
+      <div class="model-bar">
+        <div class="model-start" hidden>
+          <button type="button" class="button secondary" data-model-start>
+            Inspect in 3D <span aria-hidden="true">⟲</span>
+          </button>
+          <span class="model-note">Optional · loads about 0.9 MB of WebGL</span>
+        </div>
+        <p class="model-message" role="status" aria-live="polite"></p>
       </div>
-      <noscript>
-        <p class="model-fallback">
-          Enable JavaScript to inspect the model. The written study remains available.
-        </p>
-      </noscript>
-    </div>
+      <figcaption>{caption}</figcaption>
+    </figure>
   </div>
 </section>
 <script>

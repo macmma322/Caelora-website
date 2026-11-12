@@ -1,8 +1,14 @@
-/* Caelora operational surfaces: literary type, restrained bronze, familiar controls. */
+/*
+ * Caelora operational surfaces (account portal and Studio).
+ * Account: immersive but calm. Studio: dense and efficient. Both use design tokens only,
+ * Cinzel for page titles, EB Garamond for lead prose and --font-ui for labels, controls and data.
+ */
 body {
   overflow-wrap: break-word;
   font-size: 1.125rem;
 }
+
+/* ---------- Header ---------- */
 
 .portal-header {
   position: relative;
@@ -15,6 +21,7 @@ body {
   padding: 1rem clamp(1.25rem, 5vw, 5rem);
   gap: 2rem;
   background: var(--color-deep);
+  font-family: var(--font-ui);
 }
 
 .portal-brand {
@@ -54,7 +61,7 @@ body {
   min-height: 44px;
   color: var(--color-muted);
   text-decoration: none;
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   font-weight: 600;
 }
 
@@ -91,6 +98,7 @@ body {
   border: 1px solid var(--color-bronze-line);
   border-radius: var(--radius-control);
   color: var(--color-paper);
+  font-size: var(--text-sm);
   font-weight: 600;
 }
 
@@ -127,6 +135,8 @@ body {
   text-align: left;
   text-decoration: none;
   font: inherit;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
   cursor: pointer;
 }
 
@@ -136,6 +146,8 @@ body {
   border-radius: 0 0 var(--radius-control) var(--radius-control);
   color: var(--color-danger);
 }
+
+/* ---------- Layout and typography ---------- */
 
 .portal-layout {
   width: min(1280px, calc(100% - 6rem));
@@ -152,11 +164,11 @@ body {
   padding: 3.5rem 1.5rem 3rem 0;
   gap: 0.3rem;
   border-right: 1px solid var(--color-line);
+  font-family: var(--font-ui);
 }
 
 .nav-label {
   color: var(--color-faint);
-  font-size: 0.75rem;
   letter-spacing: 0.08em;
   margin: 0 0.85rem 1.4rem;
 }
@@ -172,7 +184,7 @@ body {
   border: 1px solid transparent;
   border-radius: var(--radius-control);
   text-decoration: none;
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   font-weight: 600;
 }
 
@@ -180,6 +192,7 @@ body {
   background: var(--color-surface);
   color: var(--color-paper);
   border-color: var(--color-bronze-line);
+  box-shadow: inset 2px 0 0 var(--color-accent);
 }
 
 .nav-signout {
@@ -192,18 +205,22 @@ body {
   color: var(--color-muted);
   text-align: left;
   font: inherit;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
   cursor: pointer;
 }
 
 .account-mobile-nav {
   display: none;
+  font-family: var(--font-ui);
 }
 
 .portal-layout main {
   width: 100%;
   min-width: 0;
   max-width: 980px;
-  padding: 4rem clamp(2rem, 6vw, 6rem) 5rem;
+  padding: 3.5rem clamp(2rem, 6vw, 6rem) 5rem;
 }
 
 .portal-layout h1,
@@ -214,10 +231,10 @@ body {
 
 .portal-layout h1 {
   max-width: 19ch;
-  margin-block: 0.85rem 1.25rem;
-  font-size: clamp(2.4rem, 4vw, 3.9rem);
+  margin-block: 0.75rem 1rem;
+  font-size: clamp(2.25rem, 3.6vw, 3.5rem);
   font-weight: 500;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
   line-height: 1.12;
   overflow-wrap: anywhere;
   text-wrap: balance;
@@ -245,50 +262,175 @@ body {
   line-height: 1.55;
 }
 
-.portal-guest {
+/* Page header primitive: eyebrow, Cinzel title, lead and an optional status row. */
+.page-header {
+  margin-bottom: 2.5rem;
+}
+
+.page-header h1 {
+  margin-bottom: 1rem;
+}
+
+.page-header .lead {
+  margin-bottom: 0;
+}
+
+.portal-layout .page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  max-width: none;
+  margin: 0 0 1.25rem;
+}
+
+.portal-layout .lead + .page-meta {
+  margin-top: 1rem;
+}
+
+.account-section {
+  margin-top: 3rem;
+}
+
+.account-section > h2 {
+  margin-top: 0;
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+}
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+/* ---------- Guest and authentication layout ---------- */
+
+.portal-layout.portal-guest {
   display: block;
   width: 100%;
-  min-height: calc(100svh - 165px);
-  background:
-    radial-gradient(circle at 18% 16%, oklch(34% 0.035 155 / 35%), transparent 36rem),
-    linear-gradient(112deg, var(--color-ink), var(--color-deep));
+  background: var(--color-ink);
 }
 
 .portal-guest main {
-  position: relative;
-  max-width: 700px;
+  max-width: 30rem;
   margin-inline: auto;
-  padding: 4.75rem 2rem 5.5rem;
-}
-
-.portal-guest main::before {
-  content: '';
-  display: block;
-  width: 4.5rem;
-  height: 1px;
-  margin-bottom: 2rem;
-  background: var(--color-accent);
+  padding: 3.5rem 1.5rem 4.5rem;
 }
 
 .portal-guest h1 {
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-size: clamp(2.25rem, 4vw, 3rem);
 }
 
+.portal-guest .lead {
+  font-size: 1.1875rem;
+}
+
+.auth-scene {
+  position: relative;
+  min-height: 0;
+  margin: 0;
+  overflow: hidden;
+  background: var(--color-deep);
+}
+
+.auth-scene figure {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+}
+
+.auth-scene picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.auth-scene img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 66% 76%;
+}
+
+.auth-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, var(--color-clear) 35%, var(--color-ink) 100%);
+}
+
+.auth-scene figcaption {
+  position: absolute;
+  z-index: 1;
+  left: 1.25rem;
+  bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  line-height: 1.4;
+  color: var(--color-paper);
+}
+
+.auth-scene-note {
+  display: none;
+}
+
+.portal-layout.auth-split {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-split .auth-scene {
+  height: 6rem;
+  flex: none;
+}
+
+/* Form column primitives (shared by every form page). */
 .portal-layout form {
   max-width: 520px;
   margin-block: 2rem;
 }
 
+.portal-guest form {
+  max-width: none;
+  margin-block: 1.5rem 0;
+}
+
+.form-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.form-fieldset:disabled {
+  opacity: 0.5;
+}
+
+.form-fieldset:disabled button {
+  opacity: 1;
+  cursor: not-allowed;
+}
+
 .form-field {
-  margin-bottom: 1.55rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-field label,
 .field-label {
   display: block;
-  margin-bottom: 0.55rem;
+  margin-bottom: 0.5rem;
   color: var(--color-paper);
-  font-size: 1rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
   font-weight: 600;
 }
 
@@ -298,7 +440,7 @@ body {
   min-height: 52px;
   border-color: var(--color-line);
   background: var(--color-deep);
-  font-size: 1.125rem;
+  font-size: 1rem;
 }
 
 .form-field input:hover,
@@ -327,7 +469,8 @@ body {
   background: var(--color-surface);
   color: var(--color-accent);
   font: inherit;
-  font-size: 1rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
 }
@@ -335,18 +478,24 @@ body {
 .field-help,
 .form-state {
   display: block;
-  margin-top: 0.55rem;
+  margin-top: 0.5rem;
   color: var(--color-muted);
-  font-size: 0.9375rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
   line-height: 1.5;
   overflow-wrap: anywhere;
+}
+
+.portal-layout p.field-help {
+  font-size: var(--text-sm);
 }
 
 .field-error {
   display: block;
   margin-top: 0.5rem;
   color: var(--color-danger);
-  font-size: 1rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
   line-height: 1.5;
 }
 
@@ -355,18 +504,38 @@ body {
   margin-block: 1.5rem;
   padding: 1rem 1.15rem;
   border-radius: var(--radius-card);
-  font-size: 1rem;
+  font-size: var(--text-base);
   line-height: 1.55;
 }
 
+.portal-guest .alert {
+  max-width: none;
+}
+
+.portal-layout .button {
+  min-height: 48px;
+}
+
+.portal-guest form .button {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+/* Secondary row of related links under an auth form. */
 .auth-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem 1.5rem;
+  gap: 0 1.5rem;
   max-width: 520px;
   margin-top: 2rem;
-  padding-top: 1rem;
+  padding-top: 0.75rem;
   border-top: 1px solid var(--color-line);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+}
+
+.portal-guest .auth-links {
+  max-width: none;
 }
 
 .auth-links a,
@@ -380,16 +549,180 @@ body {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
+  font-weight: 600;
 }
 
-.portal-layout .button {
-  min-height: 48px;
+/* ---------- Status, empty and loading primitives ---------- */
+
+.status-line {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-block: 1.5rem;
+  color: var(--color-muted);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
 }
 
-.portal-guest form > .button {
+.portal-layout p.status-line {
+  font-size: var(--text-sm);
+}
+
+.status-line-mark {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--color-accent);
+  transform: rotate(45deg);
+}
+
+.status-panel {
+  --panel-tone: var(--color-bronze-line);
+  display: grid;
+  justify-items: start;
+  gap: 0.9rem;
+  max-width: 62ch;
+  margin-block: 1.5rem;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--color-bronze-line);
+  border-left: 3px solid var(--panel-tone);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  font-family: var(--font-ui);
+}
+
+.status-panel[data-tone='unavailable'] {
+  --panel-tone: var(--color-warning);
+}
+
+.status-panel[data-tone='error'] {
+  --panel-tone: var(--color-danger);
+}
+
+.portal-layout .status-panel p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.portal-guest .status-panel {
+  max-width: none;
+}
+
+.status-panel .account-actions {
+  margin-top: 0.25rem;
+  gap: 0.5rem;
+}
+
+.portal-layout .status-panel .button {
+  min-height: 44px;
+  padding: 0.6rem 1.1rem;
+}
+
+.empty-state {
+  display: grid;
+  justify-items: start;
+  gap: 0.6rem;
+  max-width: 62ch;
+  margin-block: 1.5rem;
+  padding: 1.5rem 0;
+  border-block: 1px solid var(--color-line);
+}
+
+.empty-state h2,
+.empty-state h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.portal-layout .empty-state p {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+}
+
+.portal-layout .empty-state.is-compact {
+  margin-block: 0.75rem;
+  padding-block: 1rem;
+  border-top: 0;
+}
+
+.loading-block {
+  display: grid;
+  gap: 0.75rem;
+  min-height: 6rem;
+  margin-block: 2rem;
+  padding: 1.5rem;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+.loading-bar {
+  display: block;
+  height: 0.75rem;
+  border-radius: var(--radius-control);
+  background: var(--color-raised);
+}
+
+.loading-bar:nth-of-type(odd) {
+  width: 70%;
+}
+
+.loading-bar:nth-of-type(even) {
+  width: 45%;
+}
+
+/* Dense table primitive for operational data (Studio). Wrap in .data-table-wrap on narrow screens. */
+.data-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
   width: 100%;
-  margin-top: 0.35rem;
+  border-collapse: collapse;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  text-align: left;
 }
+
+.data-table caption {
+  padding-bottom: 0.75rem;
+  color: var(--color-muted);
+  text-align: left;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid var(--color-line);
+  vertical-align: top;
+}
+
+.data-table th {
+  color: var(--color-faint);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.data-table td.is-numeric,
+.data-table th.is-numeric {
+  text-align: right;
+}
+
+.data-table tbody tr:hover {
+  background: var(--color-surface);
+}
+
+/* ---------- Dashboard content ---------- */
 
 .notice {
   max-width: 65ch;
@@ -400,8 +733,7 @@ body {
   background: var(--color-surface);
 }
 
-.notice h2,
-.service-check h2 {
+.notice h2 {
   margin-top: 0;
   font-size: 1.3rem;
 }
@@ -410,10 +742,67 @@ body {
   margin-bottom: 0;
 }
 
-.service-check {
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--color-line);
+.portal-card-grid,
+.later-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.portal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  height: 100%;
+  padding: 1.25rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color var(--duration-fast) ease;
+}
+
+.portal-card h3,
+.later-list h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.portal-layout .portal-card p,
+.portal-layout .later-list p {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+.portal-card-cta {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  color: var(--color-accent);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+/* Planned, inert items: dashed and without links so they never read as controls. */
+.later-list li {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 0.6rem;
+  padding: 1.25rem;
+  border: 1px dashed var(--color-line);
+  border-radius: var(--radius-card);
+}
+
+.later-block > p {
+  margin-bottom: 0;
 }
 
 .portal-footer {
@@ -426,7 +815,8 @@ body {
   border-top: 1px solid var(--color-line);
   background: var(--color-deep);
   color: var(--color-muted);
-  font-size: 0.875rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
 }
 
 .boot-message {
@@ -436,16 +826,20 @@ body {
 }
 
 .account-summary {
-  margin-block: 2rem;
-  padding-block: 0.35rem;
+  margin-block: 1rem 0;
+  padding-block: 0.25rem;
   border-block: 1px solid var(--color-line);
 }
 
-.account-status-list {
+.account-status-list,
+.definition-rows {
   margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
 }
 
-.account-status-list > div {
+.account-status-list > div,
+.definition-rows > div {
   display: grid;
   grid-template-columns: minmax(8rem, 0.65fr) minmax(0, 1.35fr);
   gap: 1.25rem;
@@ -453,19 +847,22 @@ body {
   border-bottom: 1px solid var(--color-line);
 }
 
-.account-status-list > div:last-child {
+.account-status-list > div:last-child,
+.definition-rows > div:last-child {
   border-bottom: 0;
 }
 
 .account-status-list dt,
 .account-details dt {
   color: var(--color-faint);
-  font-size: 0.9375rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
   font-weight: 600;
 }
 
 .account-status-list dd,
-.account-details dd {
+.account-details dd,
+.definition-rows dd {
   min-width: 0;
   margin: 0;
   color: var(--color-paper);
@@ -486,8 +883,9 @@ body {
 }
 
 .account-details {
-  margin-top: 3rem;
-  font-size: 1rem;
+  margin-top: 1rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
 }
 
 .account-details dt {
@@ -527,7 +925,8 @@ body {
   background: transparent;
   color: var(--color-accent);
   font: inherit;
-  font-size: 1rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
 }
@@ -544,7 +943,8 @@ body {
 
 .session-list article p {
   margin: 0.65rem 0 0;
-  font-size: 1rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
 }
 
 .security-events > div {
@@ -553,21 +953,15 @@ body {
   gap: 1.5rem;
   padding: 0.85rem 0;
   border-bottom: 1px solid var(--color-line);
-  font-size: 1rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
   overflow-wrap: anywhere;
 }
 
 .security-events time {
   flex-shrink: 0;
   color: var(--color-muted);
-}
-
-.loading-block {
-  min-height: 6rem;
-  margin-block: 2rem;
-  padding: 1.5rem;
-  border-radius: var(--radius-card);
-  background: var(--color-surface);
+  font-variant-numeric: tabular-nums;
 }
 
 .confirmation-dialog {
@@ -610,7 +1004,7 @@ body {
   border-radius: var(--radius-control);
   background: var(--color-raised);
   color: var(--color-accent);
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
   text-align: center;
 }
@@ -623,6 +1017,8 @@ body {
 
 .notification-toolbar p {
   margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
 }
 
 .notification-list article {
@@ -649,7 +1045,8 @@ body {
   align-items: center;
   gap: 0.5rem 0.8rem;
   color: var(--color-faint);
-  font-size: 0.875rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
   text-transform: capitalize;
 }
 
@@ -669,7 +1066,8 @@ body {
   display: block;
   margin: 0.7rem 0;
   color: var(--color-muted);
-  font-size: 0.9375rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
 }
 
 .pagination {
@@ -679,6 +1077,8 @@ body {
   gap: 1rem;
   margin-block: 2rem;
   flex-wrap: wrap;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
 }
 
 .checkbox-label {
@@ -687,6 +1087,8 @@ body {
   align-items: center;
   min-height: 44px;
   margin-block: 1.2rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
   cursor: pointer;
 }
 
@@ -715,7 +1117,7 @@ body {
 
 .provisioning-uri {
   margin-top: 1rem;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 .recovery-code-list {
@@ -745,9 +1147,131 @@ body {
   line-height: 1.65;
 }
 
+/* ---------- Caelora Studio (dense register) ---------- */
+
+.studio-header {
+  grid-template-columns: auto 1fr;
+  min-height: 64px;
+  padding-block: 0.5rem;
+}
+
+.studio-header .portal-brand img {
+  width: 140px;
+}
+
+.studio-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.studio-label {
+  padding-left: 1rem;
+  border-left: 1px solid var(--color-bronze-line);
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.studio-nav {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
+}
+
+.studio-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding-inline: 0.75rem;
+  border-radius: var(--radius-control);
+  color: var(--color-muted);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.studio-nav a.active {
+  color: var(--color-paper);
+  box-shadow: inset 0 -2px 0 var(--color-accent);
+  border-radius: 0;
+}
+
+.portal-layout.studio-layout {
+  display: block;
+  /* Align with the header's inline padding so the wordmark and page content share a left edge. */
+  width: auto;
+  margin-inline: clamp(1.25rem, 5vw, 5rem);
+  min-height: calc(100svh - 140px);
+}
+
+.studio-layout main {
+  max-width: none;
+  padding: 2.5rem 0 4rem;
+}
+
+.studio-layout h1 {
+  max-width: 24ch;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.studio-layout p {
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+}
+
+.studio-layout .lead {
+  max-width: 62ch;
+  font-size: var(--text-lg);
+}
+
+.studio-layout .page-header {
+  margin-bottom: 2rem;
+}
+
+.studio-section {
+  max-width: 52rem;
+  margin-top: 2rem;
+}
+
+.studio-section > h2 {
+  margin-block: 0 0.5rem;
+  font-size: 1.125rem;
+  letter-spacing: 0.02em;
+}
+
+.studio-section .definition-rows {
+  border-top: 1px solid var(--color-line);
+}
+
+.studio-section .definition-rows > div {
+  padding-block: 0.7rem;
+  font-size: var(--text-sm);
+}
+
+.studio-section .definition-rows dt {
+  color: var(--color-paper);
+  font-weight: 600;
+}
+
+.studio-section .definition-rows dd {
+  color: var(--color-muted);
+}
+
+.portal-layout .studio-actions {
+  margin-block: 2rem 0;
+}
+
+/* ---------- Interaction ---------- */
+
 @media (hover: hover) and (pointer: fine) {
   .portal-nav a:hover,
-  .account-menu nav a:hover {
+  .account-menu nav a:hover,
+  .studio-nav a:hover {
     background: var(--color-surface);
     color: var(--color-paper);
   }
@@ -759,10 +1283,60 @@ body {
     color: var(--color-accent);
   }
 
+  .portal-card:hover {
+    border-color: var(--color-accent);
+  }
+
+  .auth-links a:hover,
+  .text-link:hover {
+    color: var(--color-accent-hover);
+  }
+
   .session-action:hover,
   .password-toggle:hover {
     border-color: var(--color-accent);
     background: var(--color-raised);
+  }
+}
+
+/* ---------- Responsive ---------- */
+
+@media (min-width: 60rem) {
+  .portal-layout.auth-split {
+    display: grid;
+    grid-template-columns: minmax(0, 44fr) minmax(0, 56fr);
+  }
+
+  .auth-split .auth-scene {
+    height: auto;
+    min-height: calc(100svh - 165px);
+  }
+
+  .auth-scene img {
+    object-position: 66% 72%;
+  }
+
+  /* Dark gradient toward the form side, plus a base scrim for the caption. */
+  .auth-scene::after {
+    background:
+      linear-gradient(to right, var(--color-clear) 45%, var(--color-ink) 100%),
+      linear-gradient(to top, var(--color-scrim), var(--color-clear) 30%);
+  }
+
+  .auth-scene figcaption {
+    left: 2rem;
+    bottom: 2rem;
+  }
+
+  .auth-scene-note {
+    display: block;
+    max-width: 22rem;
+  }
+
+  .auth-split main {
+    align-self: center;
+    justify-self: center;
+    padding: 4rem clamp(1.5rem, 4vw, 4rem);
   }
 }
 
@@ -801,6 +1375,33 @@ body {
     width: 145px;
   }
 
+  .studio-header {
+    grid-template-columns: 1fr;
+    gap: 0;
+    min-height: 60px;
+  }
+
+  .studio-nav {
+    justify-content: flex-start;
+    margin-inline: -0.75rem;
+  }
+
+  .studio-nav a {
+    white-space: nowrap;
+  }
+
+  .studio-header .portal-brand img {
+    width: 120px;
+  }
+
+  .studio-brand {
+    gap: 0.75rem;
+  }
+
+  .studio-label {
+    padding-left: 0.75rem;
+  }
+
   .account-menu > summary {
     max-width: 10rem;
   }
@@ -828,6 +1429,7 @@ body {
     justify-content: space-between;
     padding: 0.65rem 1.25rem;
     color: var(--color-paper);
+    font-size: var(--text-sm);
     font-weight: 600;
   }
 
@@ -850,6 +1452,8 @@ body {
     text-align: left;
     text-decoration: none;
     font: inherit;
+    font-family: var(--font-ui);
+    font-size: var(--text-sm);
   }
 
   .account-mobile-nav button {
@@ -858,11 +1462,23 @@ body {
 
   .portal-layout main,
   .portal-guest main {
-    padding: 2.75rem 1.25rem 4rem;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+
+  .portal-layout.studio-layout {
+    margin-inline: 1.25rem;
+  }
+
+  .studio-layout main {
+    padding: 2rem 0 3rem;
   }
 
   .portal-layout h1 {
-    font-size: clamp(2.2rem, 12vw, 3rem);
+    font-size: clamp(2rem, 10vw, 2.75rem);
+  }
+
+  .studio-layout h1 {
+    font-size: clamp(1.625rem, 8vw, 2.25rem);
   }
 
   .portal-layout h2 {
@@ -873,7 +1489,12 @@ body {
     font-size: 1.125rem;
   }
 
-  .account-status-list > div {
+  .page-header {
+    margin-bottom: 2rem;
+  }
+
+  .account-status-list > div,
+  .definition-rows > div {
     grid-template-columns: 1fr;
     gap: 0.2rem;
   }
@@ -907,10 +1528,18 @@ body {
     padding: 0.9rem;
   }
 
+  .status-panel .account-actions {
+    width: 100%;
+  }
+
+  .status-panel .account-actions .button {
+    flex: 1 1 auto;
+  }
+
   .portal-footer {
     min-height: 84px;
     gap: 0.4rem;
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     line-height: 1.6;
   }
 
@@ -926,6 +1555,18 @@ body {
 
   .portal-brand img {
     width: 126px;
+  }
+
+  .studio-header .portal-brand img {
+    width: 104px;
+  }
+
+  .studio-nav a {
+    padding-inline: 0.5rem;
+  }
+
+  .portal-layout.studio-layout {
+    margin-inline: 1rem;
   }
 
   .account-menu > summary {
