@@ -1,12 +1,19 @@
-<span class="eyebrow">Account security</span>
-<h1>Keep your account yours.</h1>
-<p class="lead">Authenticator protection, browser sessions and recent security activity.</p>
+<header class="page-header">
+  <span class="eyebrow">Account security</span>
+  <h1>Keep your account yours.</h1>
+  <p class="lead">Authenticator protection, browser sessions and recent security activity.</p>
+</header>
 @if(error()){
 <div class="alert error" role="alert">{{error()}}</div>
 } @if(message()){
 <div class="alert success" role="status">{{message()}}</div>
 } @if(loading()){
-<div class="loading-block" role="status">Loading security details…</div>
+<div class="loading-block" role="status" aria-busy="true">
+  <span class="loading-label">Loading security details…</span>
+  <span class="loading-bar" aria-hidden="true"></span>
+  <span class="loading-bar" aria-hidden="true"></span>
+  <span class="loading-bar" aria-hidden="true"></span>
+</div>
 } @if(!loading()&&!data()){<button class="button secondary" (click)="load()">Try again</button>}
 @if(mfa();as status){
 <section class="security-panel" aria-labelledby="authenticator-title">
@@ -100,7 +107,7 @@
       </p>
     </article>
     }@empty{
-    <p>No active sessions were returned.</p>
+    <div class="empty-state is-compact"><p>No active sessions were returned.</p></div>
     }
   </div>
   <div class="account-actions">
@@ -124,7 +131,7 @@
       ><time [attr.datetime]="event.occurredAt">{{event.occurredAt|date:'medium'}}</time>
     </div>
     }@empty{
-    <p>No security activity yet.</p>
+    <div class="empty-state is-compact"><p>No security activity yet.</p></div>
     }
   </div>
 </section>

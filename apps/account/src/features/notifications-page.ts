@@ -21,17 +21,24 @@ interface NoticePage {
   standalone: true,
   imports: [DatePipe],
   template: `
-    <span class="eyebrow">Security inbox</span>
-    <h1>Your account, in view.</h1>
-    <p>
-      Notifications reflect stored security events. No location tracking or invented online status.
-    </p>
+    <header class="page-header">
+      <span class="eyebrow">Security inbox</span>
+      <h1>Your account, in view.</h1>
+      <p class="lead">
+        Notifications reflect stored security events. No location tracking or invented online
+        status.
+      </p>
+    </header>
     @if (error()) {
       <div class="alert error" role="alert">{{ error() }}</div>
       <button class="button secondary" (click)="load(page())">Try again</button>
     }
-    @if (loading()) {
-      <div class="loading-block" role="status">Loading notifications…</div>
+    @if (loading() && !data()) {
+      <div class="loading-block" role="status" aria-busy="true">
+        <span class="loading-label">Loading notifications…</span>
+        <span class="loading-bar" aria-hidden="true"></span>
+        <span class="loading-bar" aria-hidden="true"></span>
+      </div>
     }
     @if (data(); as result) {
       <div class="notification-toolbar">
@@ -44,7 +51,7 @@ interface NoticePage {
           Mark all as read
         </button>
       </div>
-      <div class="notification-list">
+      <div class="notification-list" [attr.aria-busy]="loading()">
         @for (item of result.items; track item.id) {
           <article [class.unread]="!item.readAt">
             <div class="notification-meta">
@@ -63,7 +70,10 @@ interface NoticePage {
             }
           </article>
         } @empty {
-          <p>No notifications yet.</p>
+          <div class="empty-state">
+            <h2>Nothing to report.</h2>
+            <p>Security events such as sign-ins and changes to your account will appear here.</p>
+          </div>
         }
       </div>
       <nav class="pagination" aria-label="Notification pages">

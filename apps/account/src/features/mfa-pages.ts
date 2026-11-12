@@ -2,54 +2,64 @@ import { Component, inject, signal, type OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AccountApi, type AccountProfile } from '../core/account-api';
+import { PlatformStatus } from '../shared/platform-status';
 
 @Component({
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, PlatformStatus],
   template: `
-    <span class="eyebrow">Second factor</span>
-    <h1>Confirm your sign-in.</h1>
-    <p>Enter a fresh authenticator code, or use one of your single-use recovery codes.</p>
+    <header class="page-header">
+      <span class="eyebrow">Second factor</span>
+      <h1>Confirm your sign-in.</h1>
+      <p class="lead">
+        Enter a fresh authenticator code, or use one of your single-use recovery codes.
+      </p>
+    </header>
+    <caelora-platform-status />
     @if (error()) {
       <div class="alert error" role="alert">{{ error() }}</div>
     }
     @if (api.mfaChallenge()) {
       <form [formGroup]="form" (ngSubmit)="submit()" [attr.aria-busy]="busy()">
-        <div class="form-field">
-          <label for="mfa-code">{{ recovery() ? 'Recovery code' : 'Authenticator code' }}</label>
-          <input
-            id="mfa-code"
-            formControlName="code"
-            autocomplete="one-time-code"
-            [attr.inputmode]="recovery() ? 'text' : 'numeric'"
-            maxlength="32"
-            required
-            aria-describedby="mfa-help"
-          />
-          <p id="mfa-help" class="field-help">
-            {{
-              recovery()
-                ? 'A recovery code can be used once.'
-                : 'Codes already used to activate or sign in cannot be reused. Wait for a fresh code.'
-            }}
-          </p>
-        </div>
-        <label class="checkbox-label"
-          ><input
-            type="checkbox"
-            [checked]="recovery()"
-            (change)="recovery.set(!recovery()); form.reset()"
-          />
-          Use a recovery code</label
-        >
-        <button class="button" [disabled]="busy() || form.invalid" [attr.aria-busy]="busy()">
-          {{ busy() ? 'Verifying…' : 'Verify and sign in' }}
-        </button>
+        <fieldset class="form-fieldset" [disabled]="!api.accountsOpen()">
+          <div class="form-field">
+            <label for="mfa-code">{{ recovery() ? 'Recovery code' : 'Authenticator code' }}</label>
+            <input
+              id="mfa-code"
+              formControlName="code"
+              autocomplete="one-time-code"
+              [attr.inputmode]="recovery() ? 'text' : 'numeric'"
+              maxlength="32"
+              required
+              aria-describedby="mfa-help"
+            />
+            <p id="mfa-help" class="field-help">
+              {{
+                recovery()
+                  ? 'A recovery code can be used once.'
+                  : 'Codes already used to activate or sign in cannot be reused. Wait for a fresh code.'
+              }}
+            </p>
+          </div>
+          <label class="checkbox-label"
+            ><input
+              type="checkbox"
+              [checked]="recovery()"
+              (change)="recovery.set(!recovery()); form.reset()"
+            />
+            Use a recovery code</label
+          >
+          <button class="button" [disabled]="busy() || form.invalid" [attr.aria-busy]="busy()">
+            {{ busy() ? 'Verifying…' : 'Verify and sign in' }}
+          </button>
+        </fieldset>
       </form>
     } @else {
       <p>Your sign-in challenge is missing or expired. Start again.</p>
     }
-    <a routerLink="/sign-in">Return to sign in</a>
+    <nav class="auth-links" aria-label="Account help">
+      <a routerLink="/sign-in">Return to sign in</a>
+    </nav>
   `,
 })
 export class MfaChallengePage {
@@ -62,7 +72,7 @@ export class MfaChallengePage {
     code: ['', [Validators.required, Validators.maxLength(32)]],
   });
   async submit(): Promise<void> {
-    if (this.form.invalid || this.busy()) return;
+    if (this.form.invalid || this.busy() || !this.api.accountsOpen()) return;
     this.busy.set(true);
     this.error.set('');
     try {
@@ -87,12 +97,14 @@ export class MfaChallengePage {
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink],
   template: `
-    <span class="eyebrow">Authenticator setup</span>
-    <h1>Add an authenticator.</h1>
-    <p class="lead">
-      Use an authenticator app that supports TOTP. Setup expires after ten minutes. Activation ends
-      all browser sessions.
-    </p>
+    <header class="page-header">
+      <span class="eyebrow">Authenticator setup</span>
+      <h1>Add an authenticator.</h1>
+      <p class="lead">
+        Use an authenticator app that supports TOTP. Setup expires after ten minutes. Activation
+        ends all browser sessions.
+      </p>
+    </header>
     @if (error()) {
       <div class="alert error" role="alert">{{ error() }}</div>
     }
@@ -141,7 +153,7 @@ export class MfaChallengePage {
     <p class="field-help">
       If recent authentication is required, return to Security & sessions and confirm your identity.
     </p>
-    <a routerLink="/account/security">Back to security</a>
+    <a class="text-link" routerLink="/account/security">Back to security</a>
   `,
 })
 export class MfaSetupPage implements OnDestroy {
@@ -206,8 +218,10 @@ export class MfaSetupPage implements OnDestroy {
   standalone: true,
   imports: [RouterLink],
   template: `
-    <span class="eyebrow">Your recovery codes</span>
-    <h1>Keep a way back in.</h1>
+    <header class="page-header">
+      <span class="eyebrow">Your recovery codes</span>
+      <h1>Keep a way back in.</h1>
+    </header>
     @if (api.recoveryCodes().length) {
       <div class="alert" role="status">{{ api.notice() }}</div>
       <p>
@@ -225,8 +239,11 @@ export class MfaSetupPage implements OnDestroy {
       </div>
       <p role="status">{{ message() }}</p>
     } @else {
-      <p>No codes are available to display. Sign in to manage authenticator security.</p>
-      <a routerLink="/sign-in">Sign in</a>
+      <div class="empty-state">
+        <h2>No codes to show.</h2>
+        <p>No codes are available to display. Sign in to manage authenticator security.</p>
+        <a class="button secondary" routerLink="/sign-in">Sign in</a>
+      </div>
     }
   `,
 })

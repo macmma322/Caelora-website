@@ -1,4 +1,12 @@
-import { Component, ElementRef, HostListener, ViewChild, inject, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  ViewChild,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { RUNTIME_CONFIG } from '../../../packages/api-client/src/portal-bootstrap';
 import { AccountApi } from './core/account-api';
@@ -15,6 +23,9 @@ export class AccountShell {
   private readonly router = inject(Router);
   readonly signingOut = signal(false);
   readonly error = signal('');
+  /** True while a routed page is shown, so the guest scene never flashes during the sign-in guard. */
+  readonly routed = signal(false);
+  readonly showScene = computed(() => this.routed() && !this.api.user());
   @ViewChild('accountMenu') private accountMenu?: ElementRef<HTMLDetailsElement>;
   @ViewChild('mobileAccountMenu') private mobileAccountMenu?: ElementRef<HTMLDetailsElement>;
 

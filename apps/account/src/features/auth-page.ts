@@ -9,6 +9,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AccountApi } from '../core/account-api';
+import { PlatformStatus } from '../shared/platform-status';
 
 type Kind = 'register' | 'sign-in' | 'forgot-password' | 'reset-password' | 'verify-email';
 const copy: Record<Kind, { label: string; title: string; description: string; action: string }> = {
@@ -55,7 +56,7 @@ function matching(control: AbstractControl): ValidationErrors | null {
 
 @Component({
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, PlatformStatus],
   templateUrl: './auth-page.html',
 })
 export class AuthPage {
@@ -126,6 +127,7 @@ export class AuthPage {
     state.update((visible) => !visible);
   }
   async submit(): Promise<void> {
+    if (!this.api.accountsOpen()) return;
     this.submitted.set(true);
     this.error.set('');
     this.message.set('');
